@@ -1,0 +1,22 @@
+<group name='dimensioned'>
+	<property name='left' type='numeric dimension'/>
+	<property name='top' type='numeric dimension'/>
+	<expression name='right' type='number'/>
+	<expression name='bottom' type='number'/>
+	<property name='width' type='numeric dimension'/>
+	<property name='min[imum] width' type='numeric dimension'/>
+	<property name='max[imum] width' type='numeric dimension'/>
+
+	<property name='height' type='numeric dimension'/>
+	<property name='min[imum] height' type='numeric dimension'/>
+	<property name='max[imum] height' type='numeric dimension'/>
+
+	<expression name='bounds' type='set' export='true'/><!-- set in cache -->
+	<condition name='is within (rectangle)'/>
+	<condition name='contains point (point)'/>
+	<expression name='edge of (point)' type='define as many of:n,s,e,w,c'/>
+
+	<property name='mouse slop' type='number' default='2'/><!-- pixels around the element which count as click on the element -->
+	<condition name='almost contains (point)'/><!-- within the mouse slop -->
+	<condition name='is almost within (rectangle)'/><!-- within the mouse slop -->
+</group>

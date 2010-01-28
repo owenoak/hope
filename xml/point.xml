@@ -1,0 +1,8 @@
+<thing type='point'>
+	<property name='{x|left}' type='numeric dimension' default='0'/>
+	<property name='{y|top}' type='numeric dimension' default='0'/>
+	<property name='{z}' type='depth dimension' default='0'/>
+</thing>
+
+
+

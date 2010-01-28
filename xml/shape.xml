@@ -1,0 +1,29 @@
+<thing type='shape'  isa='drawable'>
+	<list name='paths' each='path' type='path'/>
+	<property name='path'/>
+	<property name='closed' type='flag' default='true'/>
+
+	<command syntax='draw (shape)'/>
+	<command syntax='draw border of (shape)'/>
+	<command syntax='draw fill of (shape)'/>
+	<command syntax='draw (shape) as [a] mask'/>
+	<command name='erase'/>
+	
+	<!-- fillable, bordered, text style and border style from drawable -->
+	<group ref='showing points'/>
+
+	<property name='center point' type='point' save='false'/>
+	<property name='showing center' type='flag' default='false'/>
+	<property name='center style' type='style'/>
+	<command name='show center'/>
+	<command name='hide center'/>
+
+	<property name='mouse hit style' type='define as:rect or path or none'/>
+
+	<!-- assiging to an event will install it on the element-->
+	<group ref='mouse events'/>
+	<group ref='keyboard events'/>
+	<group ref='container events'/>
+	<group ref='mouse events'/>
+	<group ref='gestures'/>
+</thing>

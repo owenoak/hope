@@ -1,0 +1,10 @@
+<!-- this defines a new type and parsers which will each yield a number -->
+<type name='numeric dimension' isa='number'>
+	<expression syntax='auto'/>
+	<expression syntax='flex'/>
+	<expression syntax='(number)'/>
+	<expression syntax='(percent)'/>
+	<expression syntax='(expression)'/>
+	<format name='number' default='true'/>
+	<format name='string'/>
+</type>

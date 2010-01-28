@@ -1,0 +1,62 @@
+<!-- todo: how to do polymorphism (eg: 'parents' -> 'container', 'children' -> 'items'? -->
+<mixin name='tree'>
+	<property name='children' type='list'>
+		<setter>
+			set list (my children) to it
+		</setter>
+		<on event="added" with="child and index">
+			set (the parent of child) to me
+			signal event "child added" with child and index and me
+		</on>
+		<on event="removed" with="child and index">
+			if (the parent of child) is defined then
+				signal event "child removed" with child and index and (the parent of child)
+				clear (the parent of child)
+			end if
+		</on>
+	</property>
+
+	<property name='parent'>
+		<setter>
+			if it is (my parent) then return
+			if (my parent) is defined then 
+				remove me from (my parent's children)
+			end if
+			set (my parent) to it
+			signal "parent set" with (my parent)
+		</setter>
+	</property>
+
+	<expression syntax='parents' alias='ancestors' returns='list'>
+		create list (parents)
+		put me into (ancestor)
+		while ancestor is defined
+			add ancestor to the end of parents
+			set ancestor to the parent of ancestor
+		end while
+		return parents
+	</expression>
+	
+	<expression syntax='[an] ancestor of (child)' returns='flag'>
+		if (the ancestors of child) contains me then return true
+		return false
+	</expression>
+
+	<expression syntax='[a] child of (parent)' type='truth'>
+		return (the children of parent) contains me
+	</expression>
+
+	<expression syntax='[a] descendant of (parent)' type='truth'>
+		put me into it
+		for each ancestor in (my ancestors)
+			if (the children of ancestor) contains it then return true
+			put ancestor into it
+		end for
+		return false
+	</expression>
+	
+	<command name='orphan'>
+		set my parent to empty
+	</command>
+	
+</mixin>

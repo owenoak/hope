@@ -1,0 +1,73 @@
+<!-- 
+
+	Note: default is to draw from a template.   Override to do some other scheme.
+	
+	TODO:
+		- Events? define special events here or in element?
+		- layout semantics (both child layout semantics and flex/location/etc)
+		- give drawable as much of the same interface as element as remotely makes sense
+	
+	Interesting to maybe do:
+		- key map:		set of 'key+modifier+modifier' to 'action' bindings
+		- fancy hover (get a dynamic property of element?)
+		- showif/enable if ?
+
+-->
+
+<thing type='drawable' isa="tree" is='dimensioned,editable,selectable,enabled,focusable'>
+	<set name='attributes' each='attribute' save='yes'/>
+	<!-- aliases for attributes: 
+			- if not set on part, will be saved via the attributes themselves 
+			- default part is 'element'
+			- setting attribute on drawable will set on specified part
+	-->
+	<expression name='id [of (part)]'/>
+	<expression name='class [of (part)]'/>	<!-- get class methods from element -->
+	<expression name='style [of (part)]'/>	<!-- get style methods from element -->
+	<expression name='tool tip [of (part)]'/>
+	<expression name='tab index [of (part)]' alias='tabIndex [of (part)]'/>
+	<expression name='access key [of (part)]' alias='accessKey [of (part)]'/>
+	<expression name='drag resize [of (part)]' alias='dragResize [of (part)]'>
+	<expression name='drag move [of (part)]' alias='dragMove [of (part)]'/>
+
+	<!-- drawing -->
+	<command syntax='draw (drawable)'/>
+	<condition syntax='drawn'/>
+
+	<group ref='fill style'/>
+	<group ref='border style'/>
+	<group ref='showing handles'/>
+	<group ref='css transforms'/>
+
+	<!-- redrawing/updating different elements of the ui.  Updates values and does showif/enable if. -->
+	<command syntax='redraw (drawable)'/>
+
+	<property name='update style' alias='updateStyle' type='update styles' default='redraw'>
+	<command syntax='update (drawable)'/>
+	<set name='updatable parts' type='elements' settable='false'/>
+	
+	<set name='dynamic parts' type='elements' settable='false'/><!-- showif/enableif -->
+
+
+	<set name='templates' each='template' type='template'/>
+	<command name='expand [(name)] template [of (drawable)]'/>	<!-- default template is thing type -->
+
+
+	<!-- outer element of the drawable -->
+	<expression name='element' type='element'/>
+
+	<!-- parts: sub-elements of our UI.  Parts in our main element after draw are auto-added as direct properties -->
+	<set name='parts' each='part' type='element' export='true' settable='false'/>
+	<expression name='body' returns='element'/> <!-- body: container for our children -->
+
+	<!-- context menu.  Set to a string to apply by reference. -->
+	<property name='menu' type='menu'/>
+	<command syntax='show menu'/>
+
+	<!-- assiging to an event will install it on the main element or part-->
+	<group ref='mouse events'/>
+	<group ref='keyboard events'/>
+	<group ref='container events'/>
+	<group ref='resize events'/>
+	<group ref='gestures'/>
+</thing>

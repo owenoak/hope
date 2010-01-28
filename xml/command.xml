@@ -1,0 +1,10 @@
+<thing type='command'>
+	<property name='name'/>
+	<property name='arguments'/>
+	<property name='inherit' type='define:before,after,no'/>
+	<property name='inline' type='flag'/>
+	<property name='english'/>
+	<property name='javascript'/>
+	<command name='translate [from (language)] [into|to] (other language)'/>
+	<command name='execute [(language}]'/>
+</thing>

@@ -1,0 +1,7 @@
+<group name='keyboard events'/>
+	<event name='focus [{for|in} (part)]'/>
+	<event name='blur [{for|in} (part)]'/>
+	<event name='keydown [{for|in} (part)]'/>
+	<event name='keypress [{for|in} (part)]'/>
+	<event name='keyup [{for|in} (part)]'/>
+</group>

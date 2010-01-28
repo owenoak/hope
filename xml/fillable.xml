@@ -1,0 +1,7 @@
+<group name='fillable'/>
+	<property name='[fill] style' type='fill style'/>
+	<expression name='showing fill' type='flag'/>
+	<expression name='fill color' type='color'/>
+	<command name='show fill'/>
+	<command name='hide fill'/>
+</group>

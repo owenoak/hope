@@ -1,0 +1,7 @@
+<group name='enabled'>
+	<!-- enable/disable -->
+	<property name="enabled" type='flag' default='true'/>
+	<expression name='[all] parents of (drawable) are enabled' returns='flag'/>
+	<command syntax='enable (drawable)'/>
+	<command syntax='disable (drawable)'/>
+</group>

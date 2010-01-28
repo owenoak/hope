@@ -1,0 +1,5 @@
+<group name='selectable'>
+	<property name='selected' type='flag' default='false' signals='selected,deselected'/>
+	<command syntax='select (drawable)'/>
+	<command syntax='deselect (drawable)'/>
+</group>

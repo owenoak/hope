@@ -1,0 +1,11 @@
+<thing name='promise'>
+	<property name='controller' type='controller'/>
+
+	<property name='[when done|callback]' type='(action)'/>
+	<property name='[on error|errback]' type='(action)'/>
+
+	<!-- default for a promise is to tell its controller (if defined) that the thing is done -->
+	<event name='when done' with='reply'/>
+	<event name='on error' with='error'/>
+
+</thing>

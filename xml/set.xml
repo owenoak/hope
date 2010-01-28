@@ -1,0 +1,32 @@
+<!-- a set is an object/hash/map -->
+<thing type='set'>
+	<group name='set condition'>
+		<condition syntax='(set) {is|am} empty' returns='flag'/>
+		<condition syntax='(set) {is|am} not empty' returns='flag'/>
+	
+		<condition syntax='(set) {contains|contain} (thing)'/>
+		<condition syntax='(set) {does not contain|do not contain} (thing)'/>
+		<condition syntax='(set) {starts|begins|start|begin} with (thing)'/>
+		<condition syntax='(set) {ends with} (thing)'/>
+	</group>
+	
+	<expression syntax='[(ordinal)] item where (condition)'/>
+	<expression syntax='items where (condition)'/>
+	
+	<expression syntax='property names' returns='list of strings'/>
+	<expression syntax='property values' returns='list'/>
+
+	<command syntax='merge (set) with (other set) [and (other set)]*'/><!-- shallow copy -->
+	<command syntax='[fully|deeply] merge (set) with (other set) [and (other set)]*'/>
+
+	<command syntax='add (value) to (set) as (name)'/>
+	<command syntax='remove (value) from (set)'/>
+	<command syntax='clear item (name) [of|in] (set)'/>
+	
+	<format as='{text|string}'/>
+	<format as='attributes'/>
+	<format as='query'/>
+	<format as='json'/>
+	<format as='xml'/>
+</thing>
+
