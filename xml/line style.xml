@@ -1,5 +1,0 @@
-<type name='line style' extends='fill style'>
-	<expression syntax='line width' alias='line size' type='number'/>
-	<expression syntax='line join style'/>
-	<expression syntax='line cap style'/>
-</type>

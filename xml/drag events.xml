@@ -1,9 +1,0 @@
-<group name='drag events'>
-	<!-- drag and drop -->
-	<event name='drag start [{for|in} (part)]'/>
-	<event name='drag end [{for|in} (part)]'/>
-	<event name='drag [{for|in} (part)]'/>
-	<event name='drag enter [{for|in} (part)]'/>
-	<event name='drag leave [{for|in} (part)]'/>
-	<event name='drop [{for|in} (part)]'/>
-</group>

@@ -1,6 +1,0 @@
-<thing type='rectangle' isa='path' width='10' height='10' shape='0,0|0,10|10,10|10,0' maxPoints='4'>
-	<expression syntax='top left' alias='tl'/>
-	<expression syntax='top right' alias='tr'/>
-	<expression syntax='bottom left' alias='bl'/>
-	<expression syntax='bottom right' alias='br'/>
-</thing>

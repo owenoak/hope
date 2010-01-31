@@ -1,4 +1,0 @@
-<group name='container events'>
-	<event name='container resize'/>
-	<event name='scroll'/>
-</group>
