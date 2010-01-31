@@ -1,0 +1,7 @@
+To build this "sc-runtime.js" file (with the base SC-Object stuff baked in):
+
+1) add to: ...samples/Buildfile
+	config :all, :minify => false
+2) cd ...samples
+3) sc-build sproutcore/runtime -rc --build=current
+4) grab: .../samples/tmp/build/static/sproutcore/runtime/en/current/javascript-packed.js
