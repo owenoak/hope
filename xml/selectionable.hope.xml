@@ -1,0 +1,19 @@
+<mixin name='selectionable'>
+	<mixin name='selection type'>single,multiple</mixin>
+	<property name='selection type' type='selection type' default='single'/>
+
+	<property name='selection' save='no'/>
+	<property name='selection target' type='list'/>
+
+	<command syntax='select (thing)'/>
+	<command syntax='select each [(itemName)] [in|from] (list)'/>
+	<command syntax='select all'/>
+
+	<command syntax='deselect [(thing)]'/>
+	<command syntax='deselect each [(itemName)] [in|from] (list)'/>
+	<command syntax='deselect all'/>
+
+	<event name='selected' with='things'/>
+	<event name='deselected' with='things'/>
+	<event name='selected all' with='elements'/>
+</mixin>

@@ -1,0 +1,15 @@
+<mixin name='gestures' alias='gesture events'>
+	<event name='pinch open [{for|in} (part)]'/>
+	<event name='pinch close [{for|in} (part)]'/>
+	<event name='rotate' with='direction [{for|in} (part)]'/>
+
+	<event name='swipe left [{for|in} (part)]'/>
+	<event name='swipe right [{for|in} (part)]'/>
+	<event name='swipe up [{for|in} (part)]'/>
+	<event name='swipe down [{for|in} (part)]'/>
+
+	<event name='flick left [{for|in} (part)]'/>
+	<event name='flick right [{for|in} (part)]'/>
+	<event name='flick up [{for|in} (part)]'/>
+	<event name='flick down [{for|in} (part)]'/>
+</mixin>

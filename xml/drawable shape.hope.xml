@@ -1,0 +1,9 @@
+<thing type='drawable shape' isa='drawable and shape'>
+	<!-- selectable,editable,enabled,focusable from drawable -->
+	
+</thing>
+
+<thing type='drawable point' isa='drawable shape'>
+	<property name='point' type='point'/>
+</thing>
+

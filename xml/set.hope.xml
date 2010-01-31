@@ -1,0 +1,41 @@
+<!-- a set is an object/hash/map -->
+<thing type='set'>
+	<ordinal name='set ordinal' with='item'/>
+
+	<property name='value'/>	<!-- the actual hash or list, etc -->
+
+	<!-- conditions for dealing with sets -->
+	<condition syntax='(set) {is|am} empty' returns='flag'/>
+	<condition syntax='(set) {is|am} not empty' returns='flag'/>
+
+	<condition syntax='(set) {contains|contain} (thing)'/>
+	<condition syntax='(set) {does not contain|do not contain} (thing)'/>
+	<condition syntax='(set) {starts|begins|start|begin} with (thing)'/>
+	<condition syntax='(set) {ends with} (thing)'/>
+
+	<!-- length / emptyness -->
+	<expression syntax='length of (list)' returns='number'/>
+	<expression syntax='number of (items) [of|in] (list)' returns='number'/>
+	
+	<!-- pulling items out of the set -->
+	<expression syntax='(set ordinal) of (set)'/>
+	<expression syntax='[(ordinal)] item where (condition)'/>
+	<expression syntax='items where (condition)'/>
+	
+	<expression syntax='property names' returns='list of strings'/>
+	<expression syntax='property values' returns='list'/>
+
+	<command syntax='merge (set) with (other set) [and (other set)]*'/><!-- shallow copy -->
+	<command syntax='[fully|deeply] merge (set) with (other set) [and (other set)]*'/>
+
+	<command syntax='add (value) to (set) as (name)'/>
+	<command syntax='remove (value) from (set)'/>
+	<command syntax='clear (name) [of|in] (set)'/>
+	
+	<format as='{text|string}'/>
+	<format as='attributes'/>
+	<format as='query'/>
+	<format as='json'/>
+	<format as='xml'/>
+</thing>
+

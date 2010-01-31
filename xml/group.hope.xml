@@ -1,0 +1,4 @@
+<!-- group organizes and forwards commands children -->
+<thing type='group' is='drawable'>
+	<list name='drawables' type='drawable'>
+</thing>

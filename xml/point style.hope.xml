@@ -1,0 +1,3 @@
+<type name='point style' extends='line style'>
+	<expression syntax='{square|circle|diamond|x}'/>
+</type>

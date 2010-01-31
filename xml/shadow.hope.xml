@@ -1,0 +1,8 @@
+<mixin name='css shadow'>
+	<list name='shadows' type='css shadow'/>
+	<expression name='shadow offset' type='point'/>
+	<expression name='shadow color' type='color'/>
+	<expression name='shadow opacity' type='opacity'/>
+	<command name='show shadow'/>
+	<command name='hide shadow'/>
+</mixin>

@@ -1,0 +1,114 @@
+<english>
+<!-- generic blocks -->
+	<structure group='action' syntax='(command)'/>
+	<structure group='action block' syntax='(command)*'/>
+
+
+<!-- if/then/else -->
+	<structure group='if block'		syntax='if (condition) then (action)'/>
+	<structure group='if block'		syntax='if (condition) then¬(action block)¬{(else if block)|(else block)|end if}'/>
+	<structure group='else if block' syntax='else if (condition) then (action)'/>
+	<structure group='else if block' syntax='else if (condition) then¬(action block)¬{(else if block)|(else block)|end if}'/>
+	<structure group='else block'	syntax='else (action)'/>
+	<structure group='else block'	syntax='else¬(action block)¬end if'/>
+
+<!-- loops -->
+
+	<!-- basic for loop for lists or sets -->
+	<structure syntax='for each (value) {in|of} (set) [as (name)] [do] (action)'/>
+	<structure syntax='for each (value) {in|of} (set) [as (name)] [do]¬(action block)¬end for'/>
+	
+	<structure syntax='while (condition) [do] (action)'/>
+	<structure syntax='while (condition) [do]¬(action block)¬end while'/>
+	
+	<structure syntax='repeat¬(action block)¬while (condition)'/>
+
+	<!-- ??? more complicated for's, including backwards, step every other, etc? What did HC do? -->
+
+
+<!-- generic conditions -->
+	<condition syntax='not (condition)'/>
+	<condition syntax='(condition) and (condition)'/>
+	<condition syntax='(condition) or (condition)'/>
+	
+	<!-- "==" or "!=" -->
+	<condition syntax='(expression) {is|am} (other expression)' returns='flag'/>
+	<condition syntax='(expression) {is not|am not} (other expression)' returns='flag'/>
+
+	<!-- 'not defined' == null -->
+	<condition syntax='(expression) is defined' returns='flag'/>
+	<condition syntax='(expression) is not defined' returns='flag'/>
+
+	<!-- 'empty' == null or empty string -->
+	<condition syntax='(expression) {is|am} empty' returns='flag'/>
+	<condition syntax='(expression) {is not|am not} empty' returns='flag'/>
+
+	<!-- type checking -->
+	<condition syntax='(expression) {is|am} {a|an} (thing type)'/>
+	<condition syntax='(expression) {is|am} not {a|an} (thing type)'/>
+
+
+
+<!-- generic commands -->
+	<command syntax='set (container) to (expression)'/>
+	<command syntax='put (expression) into (container)'/>
+
+	<command syntax='create [a] [new] (type) [called (name)] [with (arguments)]'/>
+	<expression syntax='new (type) [called (name)] [with (arguments)]'/>
+
+	<command syntax='clone (thing)'/>
+	<expression syntax='[a] clone [of] (thing)'/>
+	
+
+
+<!-- ordinals:
+	- NOTE: declare specific ordinals in classes, eg: for ordinals like "first parent", use	
+				<ordinal name='parent ordinal' with='parent'/>
+
+	- subclasses can alias, so both "first parent" and "first ancestor" would work:
+				<alias for='parent ordinal' with='ancestor'/>
+-->
+	<ordinal syntax='(item)'/>	<!-- == first -->
+	<ordinal syntax='(item) (number)'/>
+	<ordinal syntax='(number)[st|nd|rd|th] (item)'/>
+	<mixin name='ordinal name'>
+		<expression syntax='first'>1</expression>
+		<expression syntax='second'>2</expression>
+		<expression syntax='third'>3</expression>
+		<expression syntax='fourth'>4</expression>
+		<expression syntax='fifth'>5</expression>
+		<expression syntax='sixth'>6</expression>
+		<expression syntax='seventh'>7</expression>
+		<expression syntax='eighth'>8</expression>
+		<expression syntax='ninth'>9</expression>
+		<expression syntax='tenth'>10</expression>
+		<!-- todo: some clever way to do 'thirty third'? -->
+	</mixin>
+	<ordinal syntax='(ordinal name) (item)'/>
+
+
+<!-- speeds for animations and such -->
+	<mixin group='speed'>
+		<expression syntax='very slowly'>1000</expression>
+		<expression syntax='slowly'>500</expression>
+		<expression syntax='normal'>300</expression>
+		<expression syntax='quickly'>200</expression>
+		<expression syntax='very quickly'>100</expression>
+		<expression syntax='instantly'>0</expression>
+		<expression syntax='(number)s'>number*1000</expression>
+		<expression syntax='(number)ms'>number</expression>
+		<expression syntax='{in|for} (number) {sec|sec|seconds}'>number*1000</expression>
+		<expression syntax='{in|for} (number) {msec|milliseconds}'>number</expression>
+	</mixin>
+
+	<!-- horizontal/vertical/both axis -->
+	<mixin name='axis'>
+		<expression syntax='{h|horizontal}'>"horizontal"</expression>
+		<expression syntax='{v|vertical}'>"vertical"</expression>
+		<expression syntax='both'>"both"</expression>
+	</mixin>
+
+	<!-- direction: up/down/left/right -->
+	<mixin name='direction'>up,down,left,right</mixin>
+
+</english>

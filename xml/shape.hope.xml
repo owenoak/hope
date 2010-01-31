@@ -1,0 +1,20 @@
+<thing type='shape'  isa='drawable'>
+	<property name='path' type='path'/>
+	<property name='closed' type='flag' default='true'/>
+
+	<command syntax='draw (shape)'/>
+	<command syntax='draw border of (shape)'/>
+	<command syntax='draw fill of (shape)'/>
+	<command syntax='draw (shape) as [a] mask'/>
+	<command name='erase'/>
+	
+	<!-- fillable, bordered, text style and border style from drawable -->
+	<mixin ref='showing points'/>
+	<mixin ref='center point'/>
+
+	<!-- assiging to an event will install it on the element-->
+	<mixin ref='mouse events'/>
+	<mixin ref='keyboard events'/>
+	<mixin ref='container events'/>
+	<mixin ref='gestures'/>
+</thing>

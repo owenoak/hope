@@ -1,0 +1,179 @@
+<thing type='element' set='elements' isa='tree'>
+
+	<!-- css selector expressions -->
+	<mixin name='selector'>
+		<condition for='element' syntax='(selector) and (selector)'/>
+		<condition for='element' syntax='(selector) or (selector)'/>
+		<condition for='element' syntax='where (css selector)'/>
+		<condition for='element' syntax='with attribute (attribute name)'/>
+		<condition for='element' syntax='where attribute (attribute name) (string condition)'/>
+		<condition for='element' syntax='with id (id)'/>
+		<condition for='element' syntax='where class (class name) (string condition)'/>
+		<condition for='element' syntax='which [has|have] class (class name)'/>
+		<condition for='element' syntax='which [does not have|do not have] class (class name)'/>
+		<condition for='element' syntax='of type (tag name)'/>
+	</mixin>
+
+
+	<on event='create'/>	<!-- hook up dom node after create -->
+	<on event='destroy'/>	<!-- remove/clear dom node on destroy -->
+	
+	<expression syntax='[element type|element name|tag name]'/>
+	
+	<expression name='parent' save='no'/>
+	<list name='parents' type='elements' save='no'/>
+	<expression syntax='parents of (element) (selector)'/>
+	<expression syntax='[(parent ordinal)] of (element) (selector)'/>
+
+
+	<!-- children -->
+	<list name='children' type='elements'/>
+
+	<expression syntax='children of (element) (where|which matches) (selector)'/>
+	<expression syntax='[(child ordinal)] of (element) (where|which matches) (selector)'/>
+	
+	<!-- css matching -->
+	<condition syntax='(element) {match|matches} (selector)' returns='flag'/>
+	<condition syntax='(element) {does not match|do not match} (selector)' returns='flag'/>
+
+
+	<!-- class manipulation -->
+	<property name='class'/>
+	<set name='classes' returns='list of strings'/>
+	<command syntax='add class (class) to (element)'/>
+	<command syntax='remove class (class) from (element)'/>
+	<command syntax='toggle class (class) of (element) [with (flag)]'/>
+
+
+	<!-- attributes -->	
+	<set name='attributes' each='attribute'/>
+	<expression name='id'/>
+	<expression name='html'/>
+	
+	<set name='styles' each='style' save='no'/>
+	
+
+	<!-- visibility -->
+	<property syntax='visible'/>
+	<command syntax='show (element) [(speed)] [and then (action)]'/>
+	<command syntax='hide (element) [(speed)] [and then (action)]'/>
+
+
+	<!-- animation -->
+	<mixin name='animation styles'>none,fade,slide</mixin>
+	<property name='animation style' type='animation styles' default='none'/>
+	<property name='animation speed' type='speed' value='quick'/>
+
+	<command syntax='animate property (name) of (element) [from (start) to (end) [(speed)] [and then (action)]'/>
+	<command syntax='animate properties of (element) with (set) [(speed)] [and then (action)]'/>
+	<command syntax='stop [all] animations (of|for) (element)'/>
+
+	<command syntax='fade in (element) [(speed)] [and then (action)]'/>
+	<command syntax='fade out (element) [(speed)] [and then (action)]'/>
+	<command syntax='cross fade (new element) (for|with) (element) [(speed)] [and then (action)]'/>
+
+	<command syntax='slide in (element) [(speed)] [and then (action)]'/>
+	<command syntax='slide out (element) [(speed)] [and then (action)]'/>
+	<command syntax='slide replace (new element) (for|with) (element) [(speed)] [and then (action)]'/>
+	
+	
+	<!-- enabled: sets attribute 'disabled' when not set -->
+	<property name="enabled" type='flag' default='true'/>
+	<command syntax='enable (element)'/>
+	<command syntax='disable (element)'/>
+	<event name='enabled'>
+	<event name='disabled'>
+	
+	<!-- selected: adds class 'Selected' when set -->
+	<property name="selected" type='flag' default='false'/>
+	<command syntax='select (element)'/>
+	<command syntax='deselect (element)'/>
+	<event name='selected'/>
+	<event name='deselected'/>
+	
+	<!-- selected: adds class 'Focused' when set -->
+	<property name="focused" type='flag' default='false'/>
+	<command syntax='focus (in|on) (element)'/>
+	<command syntax='blur (element)'/>
+	<event name='focused'/>	
+	<event name='blurred'/>	
+	
+
+<!-- dimensions -->
+	
+	<!-- includes padding + border, but not margins -->
+	<property name='width'/>
+	<property name='height'/>
+
+	<!-- includes margin + padding + border -->
+	<property name='outer width'/>
+	<property name='outer height'/>
+
+	<!-- inner content only, does not include margins, padding or border -->
+	<property name='inner width'/>
+	<property name='inner height'/>
+
+	<!-- amount of us that is actually visible (?) -->
+	<expression syntax='visible width'/>
+	<expression syntax='visible height'/>
+
+	<!-- amount that does not fit within our container, includes padding + border, but not margin -->
+	<expression syntax='scroll width'/>
+	<expression syntax='scroll height'/>
+
+	<!-- amount we have scrolled -->
+	<property name='[scroll left|horizontal scroll]'/>
+	<property name='[scroll top|vertical scroll]'/>
+
+	<command name='scroll (element) to (left)[, (top)] [(speed)]'/>
+	<command name='set the scroll left of (element) to (left) [(speed)]'/>
+	<command name='set the scroll top of (element) to (top) [(speed)]'/>
+
+	<command name='scroll (element) [left|right|horizontally] to (left) [(speed)]'/>
+	<command name='scroll (element) [up|down|vertically] to (top) [(speed)]'/>
+
+	<command name='scroll (element) [left|right|horizontally] by (delta) [(speed)]'/>
+	<command name='scroll (element) [up|down|vertically] by (delta) [(speed)]'/>
+
+
+	<!-- local to enclosing context -->
+	<property name='left'/>
+	<property name='right'/>
+	<property name='top'/>
+	<property name='bottom'/>
+
+	<!-- global to page -->
+	<expression syntax='page left'/>
+	<expression syntax='page right'/>
+	<expression syntax='page top'/>
+	<expression syntax='page bottom'/>
+	
+	<command name='move (element) to (x), (y)'/>
+	<command name='move (element) to (x), (y)'/>
+	<command name='move (element) near (other element)'/>
+
+	<!-- z-index -->
+	<property name='z index' />
+	<command syntax='(move|bring) (element) to front'/>
+	<command syntax='(move|send) (element) to back'/>
+	<command syntax='(move|bring) (element) forward'/>
+	<command syntax='(move|bring) (element) backward[s]'/>
+	<command syntax='move (element) in front of (other element)'/>
+	<command syntax='move (element) behind (other element)'/>
+
+
+	<!-- event hookup -->
+	<command syntax='on event (event name) of (element) do (action)'/>
+	<command syntax='on next event (event name) (of|for) (element) do (action)'/>		<!-- once -->
+	<command syntax='register event (event name) (of|for) (element) (with|to do) (action)'/>
+	<command syntax='add event (event name) (of|for) (element) with (action)'/>
+	<command syntax='remove event (event name) from (element) with (action)'/>	<!-- ??? -->
+	<command syntax='remove [all] (event name) events from (element)'/>
+	
+	<!-- assiging to an event will install it on the element-->
+	<mixin ref='mouse events'/>
+	<mixin ref='keyboard events'/>
+	<mixin ref='container events'/>
+	<mixin ref='mouse events'/>
+	<mixin ref='gestures'/>
+</thing>

@@ -1,0 +1,92 @@
+<!-- Notes: 
+			- works for horizontal/vertical/both scrolling
+			- works for different scrolling 'type' (see below)
+			- to use this:
+				- drawable MUST have a separate main element and body for 'bar' and 'button' styles
+			- when we detect that we need to scroll:
+				- we will automatically add scroll mask + scroll buttons if not already present
+				- will make sure that main element will be position:relative or absolute
+-->
+<mixin className="scrollable" for="drawable">
+
+	<!-- fired when we scroll -->
+	<event name='scroll' with='left and top'/>
+
+	<!-- horizontal/vertical/both -->
+	<property name='scroll axis' type='axis'/>
+
+	<!-- scroll mode:
+			browser = use css overflow
+			button	= show scroll buttons at left and right
+			bar		= show made-up scroll bar
+	-->
+	<mixin name='scroll type'>browser,button,bar</mixin>
+	<property name='scroll type' type='scroll type'/>
+	
+	<!-- are we currently scrolling? -->
+	<property name='scrolling' type='flag'/>
+
+	<!-- amount we have scrolled -->
+	<property name='scroll left'/>
+	<property name='scroll top'/>
+
+	<!-- max amounts we could scroll -->
+	<expression name='h[orizontal] scroll max' type='number'/>
+	<expression name='v[ertical] scroll max' type='number'/>
+
+	<command syntax='scroll (drawable) (direction) to (amount) [(speed)]'/>
+	<command syntax='scroll (drawable) (direction) by (amount) [(speed)]'/>
+	<command syntax='scroll (drawable) to (x) {,|and} (y) [(speed)]'>/>
+	<command syntax='show child (child) of (drawable) [(speed)]'/><!-- make sure child is visible -->
+
+
+	<!-- handle resize event to set whether or not we are scrolling -->
+	<on event='resize'/>
+
+	<!-- event handlers for the scroll bars -->
+	<on name='mousedown' part='horizontal scroll bar'/>
+	<on name='mousedown' part='horizontal scroll thumb'/>
+	<on name='mousedown' part='vertical scroll bar'/>
+	<on name='mousedown' part='vertical scroll thumb'/>
+
+	<!-- event handlers for the scroll buttons -->
+	<on name='mousedown' part='scroll left button'/>
+	<on name='mousedown' part='scroll right button'/>
+	<on name='mousedown' part='scroll up button'/>
+	<on name='mousedown' part='scroll down button'/>
+
+	<!-- generic templates for parts we may have to add -->
+	<template name='scroll mask'>
+		<div class='{{thing type}}ScrollMask ScrollMask' part='scroll mask'></div>
+	</template>
+	
+	<!-- scroll bars -->
+	<template name='horizontal scroll bar'>
+		<div class='{{thing type}}HorizontalScrollBar HorizontalScrollBar' part='horizontal scroll bar'>
+			<div class='{{thing type}}ScrollLeftButton ScrollLeftButton' part='scroll left button'/>
+			<div class='{{thing type}}HorizontalScrollThumb HorizontalScrollThumb' part='horizontal scroll thumb'/>
+			<div class='{{thing type}}ScrollRightButton ScrollRightButton' part='scroll right button'/>
+		</div>
+	</template>
+	<template name='vertical scroll bar'>
+		<div class='{{thing type}}VerticalScrollBar VerticalScrollBar' part='vertical scroll bar'>
+			<div class='{{thing type}}ScrollUpButton ScrollUpButton' part='scroll up button'/>
+			<div class='{{thing type}}VerticalScrollThumb VerticalScrollThumb' part='vertical scroll thumb'/>
+			<div class='{{thing type}}ScrollDownButton ScrollDownButton' part='scroll down button'/>
+		</div>
+	</template>
+
+	<!-- scroll button -->
+	<template name='scroll left button'>
+		<div class='{{thing type}}ScrollLeftButton ScrollLeftButton' part='scroll left button'/>
+	</template>
+	<template name='right scroll button'>
+		<div class='{{thing type}}ScrollRightButton ScrollRightButton' part='scroll right button'/>
+	</template>
+	<template name='scroll up button'>
+		<div class='{{thing type}}ScrollUpButton ScrollUpButton' part='scroll up button'/>
+	</template>
+	<template name='scroll down button'>
+		<div class='{{thing type}}ScrollDownButton ScrollDownButton' part='scroll down button'/>
+	</template>
+</mixin>

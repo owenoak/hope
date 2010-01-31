@@ -1,0 +1,15 @@
+<mixin name='resize events'>
+	<property name='resizable' alias='resizeable' type='flag'>
+	<property name='resizing' type='flag'>
+	<property name='resize edges'>
+
+	<condition syntax='(point) is in edge'/>
+	<expression syntax=''/>
+	<expression syntax=''/>
+	
+	<command syntax='move edge to (x), (y) (speed=instantly)'/>
+
+	<event name='resize start'  with='width and height and edge'/>
+	<event name='resizing' with='width and height'/>
+	<event name='resize end' with='width and height'/>
+</mixin>

@@ -1,0 +1,6 @@
+<mixin name='focusable'>
+	<!-- focus/blur -->
+	<property name='focused' type='flag' default='false'/>
+	<command syntax='focus [[in|on]] (drawable)'/>
+	<command syntax='blur (drawable)'/>
+</mixin>

@@ -1,0 +1,7 @@
+<mixin name='center point'>
+	<expression name='center point' type='point'/><!-- stores actual center point in cache -->
+	<property name='showing center' type='flag' default='false'/>
+	<property name='center style' type='style'/>
+	<command name='show center'/>
+	<command name='hide center'/>
+</mixin>

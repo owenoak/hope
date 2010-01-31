@@ -1,0 +1,7 @@
+<type name='fill style'>
+	<expression syntax='visible'/>
+	<expression syntax='hidden'/>
+	<expression syntax='(color)'/>
+	<expression syntax='(opacity)'/>
+	<expression syntax='crisp' type='flag'/><!-- crisp lines -->
+</type>

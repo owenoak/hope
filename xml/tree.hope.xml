@@ -1,0 +1,30 @@
+<!-- TODO: 
+			- can this be both a mixin and a superclass?
+-->
+<thing name='container'>
+
+	<!-- ordinals for containers/items -->
+	<ordinal name='container ordinal' with='container'/>
+
+	<condition syntax='(container) {has|have} items'/>
+	<condition syntax='(container) {does not have|do not have} items'/>
+
+	<condition syntax='(container) {is|am} [an] ancestor of (item)'/>
+	<condition syntax='(container) {is not|am not} [an] ancestor of (item)'/>
+	<condition syntax='(container) {is|am} [a] item of (container)'/>
+	<condition syntax='(container) {is not|am not} [a] item of (container)'/>
+	<condition syntax='(container) {is|am} [a] descendant of (container)'/>
+
+	<!-- containers -->
+	<property name='container'/>
+	<list name='containers' each='container' alias='ancestors' save='no'/>
+	<expression syntax='(container ordinal) of (container)'/>
+	<expression syntax='containers of (container) where (condition)'/>
+	<expression syntax='[(container ordinal)] of (container) where (condition)'/>
+
+	<!-- items -->
+	<list name='items' each='item'/>
+	<expression syntax='(item ordinal) of (container)'/>
+	<expression syntax='items of (container) {where|which matches} (selector)'/>
+	<expression syntax='[(item ordinal)] of (container) {where|which matches} (selector)'/>
+</thing>

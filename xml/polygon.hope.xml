@@ -1,0 +1,4 @@
+<thing type='polygon' isa='shape'>
+	<property name='max[imum] [number of] points' type='number'/>
+</thing>
+
