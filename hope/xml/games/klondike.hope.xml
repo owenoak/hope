@@ -1,0 +1,146 @@
+---=======---
+--- BOARD ---
+---=======---
+on Deal
+on ShowDealList theState
+on HideDealList 
+function DealList newList
+on CheckForNextMoveToAce thePile
+on CheckWinCondition
+function WinCondition
+on DeletePiles
+on MakePiles
+on ClearPiles pileList
+function Shuffle  
+function ShuffleCards cardList
+
+---=========---
+--- PLAYERS ---
+---=========---
+on MakePlayers playerCount  
+on DeletePlayers
+
+---=======---
+--- PILES ---
+---=======---
+on ShowPile thePile  
+on SetCards thePile, cardList
+on AssignCards thePile, cardList, theDirection  
+on AssignCardTo thePile, theCard, theDirection
+on RemoveFromPile theCard
+function PileTop thePile
+function PileCount thePile
+function PileContents thePile
+function WhichPile theLoc
+function PileType thePile, newType
+function BasePileList newList
+on ShowPileList theState
+on HidePileList
+on SetPileList
+function PileList theType
+on QuickAssign thePile, theCards, theDirection
+on QuickMove thePile, theCard, theDirection
+function PileLoc thePile, pileCount
+function FlipTopCard thePile, dontCheckForAce
+function MoveToPile thePile, cardList, theDirection, dontAnimate
+
+---==========================---
+--- SLOT -- subclass of Pile ---
+---==========================---
+function SlotList
+
+---==========================---
+--- GOAL -- subclass of Pile ---
+---==========================---
+function GoalList
+function IsGoalTop theCard
+
+---===========================---
+--- STOCK -- subclass of Pile ---
+---===========================---
+on ShowStock theState
+on HideStock
+on MakeStock cardList
+on DeleteStock
+function StockContents
+function StockSize
+function StockCount
+function StockLoc
+on StockFlip
+on ResetStock
+
+---================---
+--- DECK AND CARDS ---
+---================---
+on mouseDown
+on mouseStillDown
+on mouseUp
+on doubleClick
+function LegalMoves theCard
+function FirstLegalMove theCard
+function IsLegalMove thePile, theCard
+function CardValue theCard
+function CardStrings cardList  
+function ColorName theCard
+function SuitName theCard
+function ValueName theCard
+function CardValue theCard
+function IsACard theObject
+on SortBaseCards
+function SortCards CardList  
+function ValueList
+function SuitList
+function CardValue thisCard  
+function CardDirection theCard, newDirection  
+function CardNames cardList
+on ShowCard theCard, theLoc, theDirection
+on HideCard theCard
+on QuickShowCards cardList, theLoc, theDirection  
+on ShowCards cardList, theLoc, theDirection
+on HideCards cardList  
+function CardList
+function PileRank theCard
+function PileName theCard
+function NewShuffle numberOfDecks
+on DeleteCards
+on MakeDeck numDecks
+on MakeCards cardList
+function BaseCardGroups
+on DeleteBaseCards
+on ShowBaseCards theState
+on HideBaseCards
+function BaseCardList
+function BaseCardCount
+on ImportBaseCards
+function CardCount
+
+---==================---
+---   Status Line    ---
+---==================---
+function CurrentStatusLevel
+on ShowStatus theMessage, theLevel
+on ClearStatus
+function StatusLevelCodes
+function StatusLevel statusLevelCode
+function StatusLevelCode statusLevel
+on StatusLine theLevel
+
+---====================---
+---    Progress bar
+---====================---
+function ShowingProgress
+on ShowProgress
+on StartProgress totalCount, theMessage, statusLevel
+on ClearProgress theMessage, statusLevel
+--- LURE -- attracts people to play ---
+on Lure
+on EndLure
+
+---============---
+--- UNDO STACK ---
+---============---
+on ClearUndoStack
+function BuildUndoString cardList
+on AddToUndoStack undoLine, dontClear
+on Undo
+on animateCard theCard, startLoc, endLoc

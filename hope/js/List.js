@@ -28,12 +28,15 @@
 
 
 //	TODO:
+//			- reconfigure List to use Array methods whenever possible:
+//				- define static Array.splice, Array.slice, Array.map
+//				- rewrite key ListMethods to use those (maybe still with getList())
+//				- use 'indexBy' to differentiate for others
+//
 //			- check out Giammarchi's Stack-extensions for speed
-//			- For list subclasses (eg: ElementList)
-//				- ElementList.clone(someOtherListLikeThing) => returns ElementList
-//				- 
-//			- redo foreach using native map, creating a function to do the lookup if string method?
+//
 //			- 1-based lists?
+//
 //			- foreach makes a new instance of the same type of object?
 //				- listConstructor which defaults to constructor?
 //
@@ -45,17 +48,15 @@
 (function(hope) {	/* Begin hidden from global scope */
 
 // copy of slice and splice so we can use them below
-var splice = Array.prototype.splice, 
-	slice = Array.prototype.slice,
-	map  = Array.prototype.map
+var AP = Array.prototype,
+	splice = AP.splice, 
+	slice = AP.slice,
+	push = AP.push,
+	map  = AP.map
 ;
 var ARRAY_KEYS = [];
 
-
-// identity comparison function
-var IDENTITY_EQUALS = function(a,b) {	return (a === b);	}
-
-
+var IDENTITY_EQUALS = function(a,b){return a === b};
 
 //
 //	Methods for dealing with something that IS a linear list of items 
@@ -66,6 +67,11 @@ var ListMethods = {
 		NOTE: Your subclass may need to override some of the following few methods, 
 				but you'll get everything below getKeys() for free.
 	*/
+
+	/** The default for lists is to index by number.  
+		Set to "string" for sets, etc where we index by name instead.
+	*/
+	indexBy : "number",
 
 	/** Return a pointer to the list. 
 		Override this if your list is not your main object.
@@ -93,7 +99,7 @@ var ListMethods = {
 	/** Add one or more items to this array at a certain position, pushing other things back. */
 	addItem : function addItem(index, item1, item2, etc) {
 		if (index == null) index = this.length;
-		var args = hope.args(arguments, 1, [index, 0]),
+		var args = hope.args(1, [index, 0]),
 			list = this.getList()
 		;
 		splice.apply(list, args);
@@ -183,7 +189,7 @@ var ListMethods = {
 		May not work well for non-linear variants. 
 	*/
 	add : function(item1, item2, etc) {
-		var args = hope.args(arguments, 0, [this.length]);
+		var args = hope.args(0, [this.length]);
 		this.addItem.apply(this, args);
 	},
 
@@ -396,10 +402,7 @@ var ListMethods = {
 				}
 			}
 		}
-	},
-	
-	/** Clear the list items out of the cache.  Override if your list maintains cached items. */
-	// clearListCache : function() {}
+	}
 
 };// end ListMethods
 
@@ -410,8 +413,7 @@ new hope.Mixin(
 		name : "ListLike", 
 		overwrite  : hope.MERGE,					// default is to NOT overwrite
 		prototype : ListMethods,
-		classDefaults : hope.makeAppliers(ListMethods),
-		mixin : "Observable"
+		statics : hope.makeAppliers(ListMethods)
 	}
 );
 
@@ -422,13 +424,16 @@ new hope.Mixin(
 
 
 
+/** Create a List class. */
 new hope.Class({
 	name : "List",
 	constructor : function List() {
+		if (arguments.length == 0) return this;
+		var args = (arguments.length == 1 && hope.isListLike(it) ? arguments[0] : slice.call(arguments));
 		push.apply(this, slice.call(arguments));
-		this.initialize();
+		this.onCreate();
 	},
-	mixins : "ListLike",	// also gets Observable, Cacheable
+	mixins : "ListLike,Observable",
 	prototype : {
 		length : 0
 	}
@@ -436,6 +441,22 @@ new hope.Class({
 
 
 
+/** Create a basic ElementList class. 
+	Note that we will later do something smarter than this.
+*/
+new hope.Class({
+	name : "ElementList",
+	constructor : function List() {
+		if (arguments.length == 0) return this;
+		var args = (arguments.length == 1 && hope.isListLike(it) ? arguments[0] : slice.call(arguments));
+		push.apply(this, slice.call(arguments));
+		this.onCreate();
+	},
+	mixins : "ListLike,Observable",
+	prototype : {
+		length : 0
+	}
+});
 
 
 
@@ -445,7 +466,7 @@ new hope.Class({
 //	NOTE: you MUST provide a getList() method -- everyting else is automatic.
 //			And your getList() MUST return at least an empty array.
 //
-var ListManagerMethods = hope.extend(hope.IGNORE, {}, ListMethods, {
+var ListManagerMethods = hope.extend({}, ListMethods, {
 
 	/** Pitch a fit if they didn't define "getList" */
 	getList : function(){
@@ -464,8 +485,7 @@ new hope.Mixin(
 		name : "ListManager", 
 		overwrite  : hope.MERGE,					// default is to NOT overwrite
 		prototype : ListManagerMethods,
-		classDefaults : hope.makeAppliers(ListManagerMethods),
-		mixin : "Observable"
+		statics : hope.makeAppliers(ListManagerMethods)
 	}
 );
 
@@ -486,7 +506,11 @@ new hope.Mixin(
 
 //	TODO: some way of setting up prototypes?
 //
-var SetMethods = hope.extend(hope.IGNORE, {}, ListMethods, {
+var SetMethods = hope.extend({}, ListMethods, {
+
+	/** Default for sets is to index by string. */
+	indexBy : "string",
+
 	/** Return a pointer to the set. 
 		Override this if your set is stored in some specific object.
 	*/
@@ -512,7 +536,7 @@ var SetMethods = hope.extend(hope.IGNORE, {}, ListMethods, {
 	
 	/** We will cache keys for speed. */
 	clearListCache : function() {
-		this.cache("list.keys", hope.CLEAR);
+		if (this.cache) delete this.cache["list.keys"];
 	},
 
 	/** Length for a non-linear list is the length of its keys. */
@@ -522,16 +546,18 @@ var SetMethods = hope.extend(hope.IGNORE, {}, ListMethods, {
 	/** Define a bogus setter just so we don't get errors if someone trys to assign to it. */
 	set_length : function(){},
 	
-	/** Generate the keys from the keys in our main object. */
+	/** Generate the keys from the keys in our main object. 
+		Note: if this set is cacheable, will 
+	*/
 	getKeys : function getKeys() {
 		var keys;
-		if (keys = this.cache("list.keys")) return keys;
+		if (this.cache && (keys = this.cache["list.keys"])) return keys;
 		keys = [];
 		var set = this.getList();
 		for (var key in set) {
 			keys[keys.length] = key;
 		}
-		return this.cache("list.keys", keys);
+		return (cache ? (this.cache["list.keys"] = keys) : keys);
 	},
 	
 	/** If they pass a number into getItem, return that item in the keys. */
@@ -638,15 +664,20 @@ new hope.Mixin(
 		name : "SetLike", 
 		overwrite  : hope.MERGE,					// default is to NOT overwrite
 		prototype : SetMethods,
-		classDefaults : hope.makeAppliers(SetMethods)//,
-//		mixins : "Observable"
+		statics : hope.makeAppliers(SetMethods)
 	}
 );
 
 
 new hope.Class({
 	name : "Set",
-	mixins : "SetLike"
+	mixins : "SetLike,Observable",
+	constructor : function(properties) {
+		if (!properties) return this;
+		for (var key in properties) {
+			this.addItem(key, properties[key]);
+		}
+	}
 });
 
 

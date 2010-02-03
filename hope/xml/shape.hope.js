@@ -17,7 +17,7 @@ new Thing({
 	],
 
 	prototype : {
-		initialize : function(){},
+		onCreate : function(){},
 		
 		set_path : function(path) {	
 			hope.types.path.normalize(path);
@@ -37,8 +37,8 @@ new Thing({
 		erase : function() {}
 	},
 	
-	// initialize the Shape class
-	initialize : function() {
+	// onCreate the Shape class
+	onCreate : function() {
 		// set up the path/paths notification binding
 		hope.bind
 	
