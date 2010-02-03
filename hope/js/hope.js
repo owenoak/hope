@@ -145,11 +145,12 @@ var hope = {
 		} catch (error) {
 			console.group(context || "Error evaluating script:");
 			console.error(error);
-			console.groupCollapsed("Offending script:");
-			console.debug(script);
+console.dir(error);
+//			console.group("Offending script:");
+//			console.debug(script);
+//			console.groupEnd();
 			console.groupEnd();
-			console.groupEnd();
-			
+			throw error;
 			return error;
 		}
 	},
@@ -618,7 +619,9 @@ var hope = {
 			Default is to just create an anonymous object.
 		*/
 		// TODO: introduce namespaces
-		Parsers : {},
+		Parsers : {
+			hope : {}
+		},
 		register : function(tagName, callback, namespace) {
 			if (namespace == null) namespace = "hope";
 			if (!this.Parsers[namespace]) this.Parsers[namespace] = {}; 
@@ -979,9 +982,9 @@ function packageLoaded() {
 	
 	function processScript() {
 		try {
-			hope.execute(request.responseText);
+			hope.execute(request.responseText, "Error excuting script from :"+url);
 			loadNext();
-		} catch (e) {	console.error(e)	}
+		} catch (e) {	console.error(url, e)	}
 	}
 	
 	function loadNext() {
@@ -1004,7 +1007,7 @@ function hopeScriptsLoaded() {
 	
 	// mark the script files as loaded, and load the rest of the preload stuff
 	hope.hopePackage.markAsLoaded("preload", "Script");
-	hope.loadPreloads();
+	hope.hopePackage.loadPreloads();
 	
 	// 2) grab any code inside the hopeScript and execute it
 	var script = hope.hopeScript.textContent;

@@ -390,17 +390,9 @@ new hope.File.subclass({
 			var i = 0, file;
 			while (file = files[i++]) {
 				this.setFile(file);
-				this._files.push(file);
-				if (file.group) {
-					var groups = file.group.split(hope.Patterns.splitOnCommas), group, g = 0;
-					while (group = groups[g++]) {
-						(this._fileGroup[group] || (this._fileGroup[group] = [])).push(file);
-					}
-				}
 			}
-			console.dir(this._fileGroup);
 		},
-		*/
+
 		/* Called as we absorb each file in turn.  
 		   Puts the file in the appropriate group(s).
 		*/
@@ -409,9 +401,9 @@ new hope.File.subclass({
 			if (file.group) {
 				var groups = file.group.split(hope.Patterns.splitOnCommas), group, i = 0;
 				while (group = groups[i++]) {
-					var group = (this._fileGroup[group] || (this._fileGroup[group] = []));
-					var list = group
-					().push(file);
+					var group = (this._fileGroup[group] || (this._fileGroup[group] = {}));
+					var list = (group[file.classType] || (group[file.classType] = []));
+					list.push(file);
 				}
 			}
 		},
