@@ -1,0 +1,45 @@
+<class name='Gear6.Service' super='hope.Model'>
+	<attributes>
+		<string name='name' required='true' validate='identifier,unique'/>
+		<flag name='status' values='enabled|disabled'/>
+		<string name='package' alt='pkg'/>
+			<!-- "alt" means we'll also store/manage as "pkg", in this case because "package" is a reserved word -->
+		<number name='tcpPort' min='0' max='65535'/>
+		<number name='udpPort' min='0' max='65535'/>
+		<date name='startDate'/>
+		<list name='instances' itemType='Gear6.MemcacheInstance'/>
+	</attributes>
+	<api>
+		<operation name='load'/>
+		<operation name='save'/>
+	</api>
+	<script>
+		<!-- JS for now, eventually english -->
+	</script>
+</class>
+
+
+<class name='Gear6.MemcacheInstance' super='hope.Model'>
+	<attributes>
+		<string name='hostname'/>
+		<ip name='ip'/>
+		<number name='port' max='65535'/>
+		<flag name='status' values='running|pending|shutting-down|terminated' message='instance-status-titles-*'/>
+				<!-- message == automatic dereference of user-visible values for this flag -->
+		<flag name='memcacheState' values='active|leaving|joining|unreachable' message='instance-memcacheState-titles-*'/>
+		<boolean name='reporterEnabled'/>
+		<number name='memory'/>
+		<number name='used'/>
+		<number name='free'/>
+		<boolean name='rehashing'>
+		<number name='rehashPercent' if='rehashing'/>
+		<list name='config' type='Gear6.config'/>
+	</attributes>
+	<api>
+		<operation name='startReporting'/>
+		<operation name='stopReporting'/>
+	</api>
+	<script>
+		<!-- JS for now, eventually english -->
+	</script>
+</class>

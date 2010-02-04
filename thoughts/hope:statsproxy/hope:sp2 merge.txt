@@ -1,0 +1,295 @@
+Hope/Statsproxy2 merge
+
+- FOCUS:
+	- get stable loader/class/widget thing going
+	- parse XML to instantiate
+	- save XML to server
+	- make a rudimentary editor
+	- bootstrap editor development as we do hope development
+	- make a XML->JS converter for the back-end (v8?)
+	
+
+- THINK THROUGH
+	- "hope" is the *editor*, not an active participant in the library?
+	- simple debug protocol (when/what to throw)
+	- event naming semantics (when is "onX", etc)
+	- class semantics
+	- css semantics / naming
+	- container semantics separate from Drawable (?)
+		- pull itemConstructor() into ListManager?
+		- Container subset of ListManager with parenting semantics built in?
+	- define API clearly, avoid doing calls() when calling super by assuming # of arguments
+	- patch firebug so it outputs fns and objects w/explicit toString() cleanly?
+	- layout semantics -- look at: 
+		- UKI: 	http://ukijs.org/
+		- ext
+		- atlas thinger
+
+
+- METHODOLOGY
+	- define JS API for each bit
+	- define english API for that bit
+	- write docs in the code
+	- write explanation on the wiki if necessary
+	- write unit tests (even if only a few) for each FIRST
+	- check other implementations, choose the best
+	- then write code
+
+
+
+- METHODOLOGY 2
+	- think through XML format w/statsproxy as a guide
+	- get that loading w/ minimal set
+	- think through english format w/statsproxy as a guide
+
+
+- FOCUS FEARS/NOTES
+	- don't want to spend another 2 weeks fucking with underpinnings
+	- don't want to re-write everything again when there's code there
+	- don't want 2 (many) active, interesting threads
+		= unify code bases ASAP
+	- having a specific app we're working on keeps things nicely focused & provides momentum
+	- don't want to ignore english too long (?)
+		- or does english not really matter, since we'll be layering on top anyway?
+		- english is a new problem to solve
+		- solving english without widgets seems kinda silly since we can't show anything
+
+
+- PLAN
+	- Set up a (public? on db?  on gitHub?) wiki for documenting things
+	- Think through the "think throughs" and write them up in wiki
+	- Get doc parser working (and doc how it works!!!!)
+	- Assert w/ just jQuery
+	- Loader
+	- Class/Mixin
+	- Package
+	- Function/Object/Array/String/Number/Date/Cookie/JSON
+	- Stylesheet
+	- Template
+	- MessageDictionary
+	- ListManger/Container
+	- Drawable/Control
+	- XML/fromXML()/toXML()
+	- basic editor functionality
+	- Controller
+	- Site/App/Page/View
+	- Model/Loading/Saving data
+	- Go crazy with widgets
+
+
+
+
+- hope.js
+	- nothing in basic hope.js ?
+	
+
+- Loader
+	- pull simplified loader from hope
+		- named directories
+		- simplified Location stuff?
+		- manifest format?
+		- think through cache semantics
+		- load many scripts in parallel
+		- examine loading behavior to load many via scripts w/o race conditions
+	- load scripts
+	- load stylesheets
+		- 
+	- load templates
+	- load packages
+
+
+- Class
+	- use SP2 version
+	- autoRegister semantics in the class (NOT part of init in that case)
+	- Class.getIdentifier(thing) -- uses simple getIdentifierBase() function
+	- $.asClass("method", this, argsArray) for super calls
+	- pull ajax out?
+	- some way to indicate per-instance arrays/objects when constructing a class
+		(assign Array/Object to the prototype?)
+	- load stylesheets/templates automatically
+	- some sort of 'ready/defer' thing?
+		- use jQuery to add ready events?
+	- pay attention to:
+		- method/property footprint on class instances
+		- Class creation time
+		- Class creation code -- do we need all of that?
+		- instance creation time
+		- speed of notify()
+	- ajax?
+	- delay?  (have some external class for this -- TimedAction ?)
+	- clone?
+	- "Containable" mixin for tellContainer()  (rename?)
+		- assume container is just "container" and children are "items"
+
+- Mixin
+	- super simple
+	- $.Mixin("Name", thingWith.mixinTo()) to register mixin
+		- mixins register $.asMixin("method", this, argsArray)
+	- $.Mixins.Name == pointer to the mixin
+
+	
+- XML
+	- $.xml.toObject(xml|xmlString, descriptor)
+		- descriptor indicates shape of output object -- how to specify?
+			? descriptor is object of "path.to.thing" -> "type" or method()
+	- $.xml.toXML(object, descriptor)
+		- different descriptor?  can we make the same one work for both?
+	- Class.fromXML()
+	- instance.toXML()  (export all non-underscore unique properties?)
+
+
+- Array
+	- have shim library which ads ES5 methods onto global array
+	- modify base forEach() to:
+		- return results
+		- take string method
+	- $.array(args,startAt) -- can work with anything, tuned for function args
+	- $.combine(array1, array2, etc)
+	- $.contains()
+	- $.compact()?
+	
+- JSON
+	- JSON serialize/deserialize semantics ala ES5 if not defined
+
+- String
+	- add trim() to S.proto
+	- interpolate()?
+	- patterns for common regexps
+
+- MessageDictionary
+	- simple, standard message dictionary stuff
+	- if $.messages is defined, interpolate will use that
+	- auto-pull from HTML on create (patch jQ create from html?)
+	- 
+	
+	
+- Function
+	- add bind() to Fn.proto
+
+- Cookie
+	- $.cookie
+
+- Date
+	- merge hope & SP2 Date.js
+		- date.js (auto-required)
+			- MSEC_PER_HOUR
+			- MSEC_PER_DAY
+			- clone()   [  use new Date(date) ? ]
+			- setTime()
+			- addDays()
+			- print()
+			- printDate()
+			- printTime()
+			- printTimestamp()
+			- parseTimestamp()
+			- parse()
+				- has list of parsers, including new Date(), parseTimestamp()
+				- other date files can add to
+				- returns undefined if can't parse (NaN ?)
+			
+		- date-timestamp.js
+			- parse/output YYYY-MM-DDTHH:MM:SS dates
+			
+		- date-format.js
+			- simplified hope/Date-format.js
+			- instead of full functions, FORMATTER_FUNCTONS are expressions
+				- join together to make a function (will later do this on server side)
+			- define a number of simple formats (look to HC)
+			- duration code
+		
+		- date-timezone.js
+			- enhance all date object printing stuff to work with (single?) timezone delta
+			- how?				
+
+- String
+	- pull most from hope/String.js
+	- clean up/streamline chop(), chopOnTag(), forEachTag()
+	
+
+- Number
+	- pull g6 Number stuff into a few files
+
+
+- Object
+	- toArray()
+	- arrayToObject()
+	- protoClone()
+	- select()/selectParent()
+		- eval and try/catch?
+		- should handle functions with string arguments, etc
+
+
+
+- Stylesheet (separable project)
+	- stylesheet pre-processor
+		- {{var=x}} 		sets variable
+		- {{x}} 			retreives a variable
+		- {{lighten(x)}}
+		  {{darken(x)}} 	for adjusting colors
+		  
+		- @import(rule)  pulls contents of another rule in to this one (?)
+		- assume we will quickly have a back-end processor for this
+	- build hope/widget stylesheets in layers
+
+
+- Template
+	- explicit args for template
+	- nested templates
+	- {{#}}...{{/#}}  ?  {#}...{/#} ?
+	- each semantics?
+	- simplify chop semantics, forget (or use) line number stuff (?)
+		- do we need chop() if we use {{...}} ?
+	- instantiate templates as functions, so we can do:
+		$.Templates.foo(a,b,c)		-- returns HTML
+		$($.Templates.foo(a,b,c))	-- returns elements
+		
+
+- ListManager
+	- add item constructor semantics
+		- initItem(item) instead of prepareToAdd()
+	- forEach() is confusing unless we have same semantics in array
+	- unique/compact semantics?
+	- check chainability
+	- multi-select?
+		- selectable:  false|"single"|"multiple" ?
+		- selection can be array
+		- selectAll()
+		- deselectAll()
+
+
+- Element
+	- $.create() to create from JS (XML?)
+
+
+- Drawable
+	- check API w/ $(element)
+	- select()
+	- parts semantics
+	- message semantics
+	- events
+		- make $.on() stuff works w/jQuery paradigm
+			- check efficiency
+			- make sure inlining is cool
+			- global handlers for remembering position/button/key persistently?
+				(from Event.js, capture phase doesn't work in IE)
+			
+		- hover w/delay
+		- stilldown
+		- drag (what does jQ have?)
+
+	
+- Model
+	- type semantics built in to model
+		- for enum, have message dict semantics built in
+		- model.print(x)?
+	- 
+
+
+
+- Preference/Preferences
+	- something similar to hope/Preference.js
+		- use localStorage to remember
+		- way to pull from backing store?
+	- some way to indicate per-instance preferences when constructing a class
+
+

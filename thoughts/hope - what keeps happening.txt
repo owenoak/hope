@@ -1,0 +1,34 @@
+What keeps happening with hope
+	- keep starting from trying to build a class system/loader/widget set
+		- 5 serious efforts so far!
+	- keep getting bogged down in the details of how to do each of the above
+	- keep making base class structure incredibly complex for most folks
+	- keep switching the base technology (custom, prototype, jquery)
+	- keep getting bored / feeling like wrong direction / starting over again
+
+What is constant?
+	- desires to program in XML + english and have that translate into live programs
+	- desire for live, bespin-like editor
+	- desire for awesome templating/updating/message dict scheme
+	- desire for semantic classes (closer to Prototype/Moo than jquery)
+	- api of what pieces DO is pretty constant (code & approach changes)
+	- desire to use what I'm creating for my clients relatively soon
+	- writing in english makes me really focus what it is I'm trying to accomplish
+
+
+What if:
+	- start by defining all classes/concepts we'll need in XML + english
+		- classes/widgets/mixins/etc
+		- do gear6 statsproxy app
+	- collect all the syntax and analyse for patterns
+		- hopefully we have a bunch of primitives and then other things fall into a pattern
+	- write a parser for the english -> JS
+	- let that inform a quick set of base classes in JS - KISS!
+	- write a bespin-based editor/saver
+	
+
+How?
+	- will we need types for compilation?
+	- 
+	
+What if the path so far has been perfect?

@@ -1,0 +1,208 @@
+Merge Hope stuff with jQuery/Statsproxy stuff:
+
+	- better scheme for widget naming
+		- className for each widget is:
+			"<widget.className> _<ClassName> <widget.baseClass>"
+		
+		- default <widget.baseName> == "_widget"
+		- continue to do attributes for flags (selected, disabled, etc)
+			- easy way to do custom flags, eg: section?
+
+		- move to spans rather than LI's?
+
+	- pick up attributes on original element when we replace it...
+
+	- get basic service drawing
+	- get templates and interpolate using message dictionary if set in $.messages 
+
+		
+	- TableListViewer
+	- base MemcacheInstanceViewer on TableListViewer
+	
+	
+	- basic styling for widgets from G6
+	- clickmask
+	- notifier
+	- section/dialog
+	- observable cleanup
+		- when to use and when not to use?
+			- tight, known coupling (like selected) vs. loose coupling
+			- some message passing thing, like "selectItem" in tab passes through tabGroup->tabBar?
+		- 			- itemSelected vs. selectItem vs. onSelectItem ?
+
+	- timer thinger - multiple timers or one per page?
+	- redo page html/css completely (?)
+
+	- have ListManager take itemDefaults
+		- NOTE: may need to make extend() work with multiple objects
+
+	- only make messages/templates/etc cachable in debug mode...
+	
+	- pattern of throwing errors on value changed will lead to debuggging mess
+		- return instance of function and check against that?
+		
+	
+	- so much throwing makes me nervous
+		- how about  
+				return InvalidArgument(message, returnvalue)
+			- which in debug mode will throw an exception, and in other mode swallows error?
+
+	- simple makefile to:
+		- combine scripts
+		- compile templates into JS
+		- compile message dictionaries into JS
+		- minify (jsmin?)
+		? some way to instantiate classes more quickly after compile?
+		? base on a simple 'package.txt' file?
+		? have 'dependencies' in classes as hints?
+
+
+Thoughts
+	- simplify getIdentifier() -- forget identifierKeys and have a method we implement per class
+	- $.on() events should pass up the message hierarchy if not set... ?
+		- some way to attach a custom event name?
+	- in LV, instead of "prepareToAdd", move to "addItem"
+	- have message dictionary be a singleton by default
+	- add to instances by index as well as name?
+
+	- have an 'es5' library which we automatically pull in if some things are not defined
+		(string.trim, array.forEach, etc)
+	
+	- ListManager
+		- rename to "container" ?
+		- could install items on listManager as 0,1,2 and have length (?)
+			then we could do:   $.Services[0]
+		- install map, filter, some, every?  invoke?
+		
+	- autoDraw if no parent (how to do dynamic parent name?)
+	- attributes for common things:
+		- text selectable
+		- visible
+		- round
+			- round="big" or "big t" or "big tl br" etc ?  worth it?
+		- inline
+		- fullsize, etc
+		
+	- some quicker way to output events & attributes?  Is it fast enough?
+	- rename "identifierKeys"
+	- event names:  if we're picking them up from attributes, they will be lowercase...  reverse map?
+	- if template, etc not loaded, defer draw?
+	- not having 'Class' as an actual base class is really wierd...
+	- how is the typeMap different than having "setX" in your app?
+		- todo: build typeMap from setters on class creation as just property->setter?
+	- auto-load of templates and stylesheets
+	- some sort of dependency mapping
+	- interpolate and template are so close... ?
+	- do we need "asClass"?  "asSuper" ?  maybe "$.asClass.xxx"
+	- load the template files with a script tag so we get the same async loading behavior?
+
+
+TODO:
+	- figure out licensing
+		- MIT?  AFL?
+		- make sure in top of every file
+		- LICENSE.txt
+		
+	- README.txt
+
+	- stubs into github BEFORE Atom2 release
+	
+	- Number.js
+		- stuff from lib
+	
+	- Date.js
+		- stuff from lib
+		
+	- Base64.js
+		- modify base64 library directly?
+	
+
+		---- LATER ----
+		
+		- URL.js
+			- $.URL
+				- absolute URL munging
+				- relative path stuff
+
+		- Loader.js (deps: hope, URL -- auto-loads them if necessary)
+			- $.Loader
+			- $.loaded(callee, x,y,z)
+				- if any of those things are not found:
+					- loads them
+					- calls the calling function back (?) when loaded
+					- returns false
+					
+				- eg, at top of class file:
+				
+					if (!$.loaded(callee, "Class","Observable")) return;
+					... stuff that requires those classes to be loaded ...
+					
+			- how to bootstrap?
+			- registry for loading other types of things
+			- use this to load models, etc?
+		
+		- Package.js (deps: Class, Loader)
+			- $.Package
+			- manifest format?
+	
+		- Stylesheet (deps: Class, Loader)
+			- $.Stylesheet for variables in stylesheets
+	
+
+	- Dependencies
+		- cookie:		http://plugins.jquery.com/files/jquery.cookie.js	
+		- back:			bbq ?
+			
+
+	- Rewrite/break out sub-projects
+		- Class (the new statsproxy class system is feeling good)
+			- super simple 'Mixin' semantics:
+				- class.mixins
+				- <object>.mixinTo(...)
+				- new Mixin() ?
+
+		- observer mixin
+
+		- loader
+			- script/stylesheet
+			
+		- templates
+		
+		- css animation
+		
+		- MVC
+		
+		- controls/widget library
+
+
+
+Questions:
+	? protocol for including other plugins within hope?  can we make it automatic?
+
+
+Should we Base hope on jquery?
+	+ jQuery is quick and small (56K)
+	+ will help to keep us honest and stop dicking around with shit
+		+ can do gear6 right away
+	+ there's a hell of a lot there already
+	+ would be MUCH more acceptible to the general public
+ 		+ would go from fringy/stupid to square in the middle of mainstream of development
+	+ get bulk of IE compatibility for free, even if we don't use it initially
+		+ there is no way Gear6 would use hope if it does not support IE.
+		+ can we say 'IE8 only'?  (39% of web is IE6+7)
+	+ we can release pieces as separate jQuery projects
+	+ MUCH easier to integrate hope into other sites/apps
+	+ MUCH easier to integrate other things into hope
+	
+	- the syntax is decidedly unlovely
+	- does this trivialize hope?  do we care?
+
+	? window.hope or $.hope ?
+	? write cover routines for the ugliest stuff?
+	? How do we do things like "makeLegalId()"?  
+		- deep extend? 
+		- put on hope?
+
+
+
+

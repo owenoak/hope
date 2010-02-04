@@ -1,0 +1,123 @@
+<app name='AssertUI' bindTo='Assert'>
+	<panel resizable='true' rows='300,0'>
+		<section>
+			<header>
+				<title value='{{message:Assert.title}}'/>
+				<toolbar>
+					<button name='stop' enabled='{{Assert.Suites.length}}' 
+										selected='!{{Assert.running}}' 
+										action='Assert.stop()' 
+										value='{{message:Stop}}'/>
+					<button name='go' 	enabled='{{Assert.Suites.length}}' 
+										selected='{{Assert.running}}' 
+										action='Assert.go()' 
+										value='{{message:Go}}'/>
+				</toolbar>
+			</header>
+			<body>
+				<listViewer name='viewer' bindTo='Assert.Suites' itemTemplate='TestSuite.summary' />
+			</body>
+			<footer value='{{Assert.status}}'/>
+		</section>
+		<LogViewer bindTo='viewer.selected.log'>
+	</panel>
+</app>
+
+<Class type='LogViewer' Super='Panel' bindAs='log' resizable='true' rows='*,200'>
+	<section>
+		<header>
+			<title bindTo='log.title' />
+			<toolbar>
+				<checkbox name='showSuccess' bindTo='log.showSuccess' 
+						  label='#message:Show Successful Tests' />
+			</toolbar>
+		</header>
+		<body>
+			<listViewer name='viewer' bindTo='log.items' />
+		</body>
+		<footer bindTo='log.status' />
+	</section>
+	<section name='test' bindTo='log.viewer.selected' visible='#log.viewer.selected'>
+		<header value='#selected.test.name' />
+		<body scroll='vertical' value='#selected.test.method'/>
+	</section>
+</Class>
+
+
+
+// scope contains "Assert"
+AssertUI.onBindingChange = function (Assert) {
+	var it, value, scope = this.scope;
+	scope.Assert = Assert;
+	
+	it = this.select("title");
+	if (it) it.value = message("Assert.title", this, scope);
+
+	it = this.select(":stop");
+	if (it) {
+		it.enabled = scope("Assert.suites.length");
+		it.selected = !scope("Assert.suites.running");
+		it.value = message("Stop", this, scope);
+	}
+	
+	it = this.select(":go");
+	if (it) {
+		it.enabled = scope("Assert.suites.length");
+		it.selected = scope("Assert.suites.running");
+		it.value = message("Stop", this, scope);
+	}
+
+	it = this.select("footer");
+	if (it) {
+		it.value = Assert.status;
+	}
+
+	it = this.select(":viewer");
+	if (it) {
+		it.onBindingChange(it, scope("Assert.Suites"));
+	}
+
+	it = this.select("LogViewer");
+	if (it) {
+		it.onBindingChange(scope("viewer.selected.log"));
+	}
+}
+
+
+
+LogViewer.onBindingChange = function (log) {
+	var it, value, scope = this.scope;
+	scope.log = log;
+	
+	it = this.select(":showSuccess");
+	if (it) {
+		it.value = scope("log.showSuccess");
+	}
+	
+	it = this.select(":viewer");
+	if (it) {
+		it.value = scope("log.items");
+	}
+	
+	it = this.select(":test")
+	if (it) {
+		it.visible = scope("log.viewer.selected");
+		it.onBindingChange(scope("log.viewer.selected"));
+	}
+}
+
+
+Test.onBindingChange = function (selected) {
+	var it, value, scope = this.scope;
+	scope.selected = selected;
+	
+	var it = this.select("header");
+	if (it) {
+		it.value = scope("selected.test.name");
+	}
+
+	var it = this.select("body");
+	if (it) {
+		it.value = scope("selected.test.method");
+	}
+}

@@ -1,0 +1,45 @@
+Parser Agenda by 1/30/10
+------------------------
+
+Goal
+	- read in xml
+	- pull into parse tree structure
+	- visualize parse tree structure
+	- output JS
+
+
+Tasks	
+	- class.type to "class type"
+	- remove "of (element)" from properties
+	- remove "of (element)" from expressions, leave "(element)" where it's necessary
+	- "of (element)" is not optional for commands
+	
+	- put "specials" english into xml w/JS translations
+		subs in JS are generally implicit, use <foo> or <Foo> for explicit
+		
+	- make xml class reader
+		- simple package file for load order
+		- create simple Parser.Class, Parser.Property, Parser.Expression, Parser.List, etc objects
+				- for the parse tree, not for actual implementation
+				- eventually the same?
+		- load xml and convert to bag of JS Parser.x objects, each attached to its XML element
+		- make a visualizer for this
+
+	- parse tree
+		- pull all xml element syntax into a single parse tree
+		- structure ???
+		
+	- parsing algorithm:
+		- pull all xml element syntax is in the parse tree
+		- for each thing in package
+			- for each language element
+				- if element does not have a JS translation, create one
+			- create a JS class definition for the thing by exporting all of the JS
+			
+
+
+Notes:
+	- "each" as array comprehension 
+		- automatically works after first word of command
+		- expressions and properties?
+	- "toggle" as alternate to "set"

@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package name='hope' base='{{hope}}'>
+	<script src='js/Url.js' group='preload'/>
+	<script src='js/xml.js' group='preload'/>
+	<script src='js/elements.js' group='preload'/>
 	<script src='js/Class.js' group='preload'/>
+	<script src='js/Mixin.js' group='preload'/>
+	<script src='js/TimedQueue.js' group='preload'/>
+	<script src='js/Observable.js' group='preload'/>
+	<script src='js/Operation.js' group='preload'/>
 	<script src='js/File.js' group='preload'/>
+	<script src='js/Package.js' group='preload'/>
+	<script src='js/Notifier.js' group='preload'/>
 	<script src='js/List.js' group='preload'/>
+	<script src='js/format.js'/>
 	<on event='loaded' part='package'>
 		console.warn("hope package loaded");
 	</on>

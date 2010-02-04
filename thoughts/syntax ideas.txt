@@ -1,0 +1,290 @@
+
+Base types
+	- text (string - default type if not specified)
+	- number (number)
+	- whole number (integer)
+	- flag (boolean)
+	- enum ?
+	- list (array)
+	- set (hash)
+	- attribute set -- a set which toString()s to a='b' b='c'
+	- element (html element)
+	- template
+	- document (xml/etc document -- "file"?)
+	- request (http request)
+	- timer
+	- selector
+
+
+'hope.Type' as a simpler type mechansim thing
+		- can be based on another type
+		- has input/output formatters/validtors
+		- handles enumerated values
+		- defined for 'number' (number variable), flag (boolean), etc
+
+
+Specials
+	- "each" as array comprehension modifier for ANY function?
+		eg:  <action> each [<item>] of <list> <...>
+
+	- "globalize <thing> as <name>" makes something globally available as var (watch for keywords)
+		eg:   	globalize app "statsproxy" as "SP"
+		then	tell SP to perform action "save" with blah and blah and blah
+
+
+Tags
+	- for everything
+	<property name=>			- value which is remembered
+	<expression syntax=>		- calculated value
+	<command syntax=>			- method
+	<template name=>			- template which is pre-compiled
+	<on event=>					- watcher for a signalled event (difference between 'signal' and 'command' ?)
+	
+	- for drawables
+	<part name=>				- sub part for drawables, auto-hooked up as property on draw()
+	<event name=>				- event handler we'll automatically look for and hook up (?)
+
+
+
+
+Generic syntax stuff
+
+	type of <it> is <type>		eg:  type of it is array
+	new <type>
+	create <type> (name)
+
+	get reference to <it>		-- it would be, eg, "menu id 'foo'" to do dynamic referencing
+
+	get [the] foo and [the] var and [the] blah of it	-> returns a hash
+	
+	Strings
+		+ or & 		add two strings
+		++ or &&	add two strings with a space between
+
+	Global constants
+		empty
+		undefined
+		defined
+		space
+		comma
+		return
+	
+	Ordinals
+		first (thing)
+		second (thing)
+		...
+		second to last (thing)	(?)
+		last (thing)
+		
+		1st (thing)
+		
+
+	With	
+		with (thing) [do]
+			// in here "my" or "me" or "I" is (thing)
+		end with
+
+	Formatters
+		(thing) as (type)	-- get list from liquid?
+
+	Working with lists
+		anything that can take a single item can take a list by adding "each", 
+			eg	<command> (item) with (arg1) and...
+				<command> each (itemVar) of (list) with (arg1) and...
+		
+	Working with sets/objects/maps
+		for each [(property)] in (set) [as (value)]...end for
+		return property (name) of (map)
+		(set) as (attribute list)	a='aval' b='bval'
+
+
+	List:  -- lists are a sub-set of sets
+		set item <number> of <list> to <it>
+		put <it> into {item <number>|[the] <ordinal> item} of <list>
+		
+		add <it> to <list> [at <position>]
+		add <it> to [the] {start of|beginning of} <list>
+		add <it> to [the] {end of} <list>
+		append <it> to <list>
+		prepend <it> to <list>
+		
+		remove <it> from <list>
+		clear <list>
+		empty <list>
+		
+		replace <this> with <that> in <list>
+		
+		for each <variable> of <list>...end for
+		get property <name> of each <item> in <list>
+		tell each <list> to <command>
+		
+		<list> {contains|contain} <item>
+		{index|item number} of <item> in <list>
+
+
+	Working with property values
+		set (thing) to (value)
+		put (value) into (thing)
+		toggle (thing) with (value)		-- for a flag, toggles true/false
+										-- for other, toggles "add"/"remove" ?
+
+	Events as first-class items, so you can say
+		set mousemove of element to "blah blah"
+
+	Speeds (for things like show/etc)
+		very quick[ly]
+		quick[ly]
+		normal
+		slow[ly]
+		very slow[ly]
+		{for|over} <number> of {secs|seconds}
+		{for|over} <number> of {msec|milliseconds}
+		
+		
+	Effects
+		fade in/out
+		slide up/down/left/right
+		
+
+	Expressions
+		<expression>
+		
+		not <expression>
+		
+		<expression> or <expression>
+		
+		<expression> and <expression>
+
+	Entity:
+		me
+		my
+		I
+		
+		"am" vs "are"
+		
+		
+		the foo of bar ==  my bar's foo
+
+	Super call
+		<command> as <thing>
+
+		- xml syntax
+			<command syntax='foo (thing) with (var1) and (var2)' inherit='before|after|no'/>
+		- override to direct super
+			inherit
+		- call same method/arguments as another class
+			do as (thing)
+		- call a different method/with diff arguments
+			as (thing) do (action with arguments)
+
+
+	Property expressions:
+		[the] <property> of <entity>
+		
+		<entity>'s <property>
+		<entity>s <property>
+		
+		I have [a|an] <thing>		-- this.thing != null
+
+		I am <property>				-- (!!this.property)
+		I am not <property>			-- (!this.property)
+
+
+	Comparitors
+		is
+		is not
+		is greater than
+		is less than
+		has
+		have
+		contains
+		does not contain
+
+	Conditionals
+		if <expression> then <command>
+
+		if <expression>
+		then <command>
+
+		if <expression1> then
+			<command1>
+		else if <expression2> then
+			<command2>
+		else
+			<command3>
+		end if
+		
+
+	Setting
+		put <expression> into <container>
+		put <expression> into <piece> of <container>
+		set <container> to <expression>
+		set <piece> of <container> to <expression>
+
+
+
+
+	SelectorExpressions
+		with identifier <id>
+		with attribute <attribute>
+		where attribute <attribute> <comparitor> <expression>
+		where class <comparitor> <expression>
+		which {has|have} class <thing>
+		which {does|do} not {have|has} class <thing>
+		of type <tag name>
+		which matches [selector] <css selector string>
+
+	Templates
+		- evaluate <expression> with <subs> and...
+		- need way to events and updaters in english dynamically at runtime
+			- compile them when compiling the template and associate with something on the outer element?
+			- updaters as "onupdate="
+		- can we do a generic "evaluate" at runtime?
+		- templates can come from another file as src='path/to/file#name'
+		- skins can override templates?
+		- have "templates" and "html templates"?
+
+
+	Async operations
+		- syntax:
+			do
+				some (single) async command
+			when done
+				callback code
+			on error
+				errback code
+			end do
+			
+			more code here
+			
+		- breaks "when done", "on error" and "more code here" into sub-functions and attaches
+			them to the async call as "callback", "errback", "oncomplete"s
+
+		- the async command must have a standard interface
+			or use promises?
+			
+		- make sure it works with more than one do block in the same file
+
+		-	tell [my server|[the] server] to (operation)
+
+		
+	Try/catch
+		- syntax:
+			try
+				code
+				code
+				code
+			on error
+				more code which can examine 'error', which probably should be a string
+			end try
+
+		- don't worry about multiple error types
+	
+	Time
+		5s 	= 5 sec = 5 seconds
+		5ms = 5 msec = 5 milliseconds
+	
+	Number
+		(normal numbers)
+		10%	=> .1
+		first, 1st

@@ -1,0 +1,152 @@
+Instantiation Patterns
+======================
+
+- what if there's a reason I've been tooling and re-tooling the hope stack
+	- riding the wave of thought on view source vs. compiling
+
+
+- A fundamental tenant of he system is that it must be blazingly fast
+
+- Complex views composed of a lot of different components,
+	like ServiceView in statsproxy
+  would be relatively slow to instantiate on the fly if we had to create new widgets/layouts/etc
+  for each instance of service.  Especially true if we add instances as full-fledged widgets 
+  within a service, as we'd like to do for efficiency of specification.
+ 
+- The flyweight pattern I have going with the current ServiceView code is interesting:
+	- only instantiate JS versions of widgets/layouts/etc once
+	- bind it to a particular service as needed
+		- on draw
+			- creates all the HTML elements
+			- doesn't need to create JS objects for each widget for each service -- only one
+			- embed rendering data in the element
+				- as attributes on elements and/or
+				- as jQuery data object bound to outer element
+
+		- on manipulate
+			- event handlers from widget elements specify which service we're dealing with
+				 (we have something similar with non-flyweight event handling anyway)
+			- 
+	
+
+	- pros:
+		+ don't need to instantiate a Drawable for each data instance
+		+ should be faster to render multiple instances of a complex (composite) class
+		+ can, eg, use any widget in a grid 'cause we're flyweighted anyway
+		+ need to hook up element to its JS object anyway
+		+ if we think of the HTML representation having the superset of the available view states
+			
+	
+	- cons:
+		- indirection and need to pass around data object is potentially confusing/annoying
+		- must save state in the render object
+			(but this can be a plus, since it separates the rendering from the data cleanly)
+		- may be less efficient for rendering single things?
+		
+
+	- questions:
+		- is this for composites only, or for everything?
+		- what is standard methodology for linking a JS object to its HTML representation?
+			- actors:
+				- XML source data object (may not be in memory at deploy time)
+				- JS version of the data object
+				- singleton 'view' object
+				- HTML element representation of the view for this particular object
+				- 'render' data we store for efficiency of re-render (needed?)
+			
+				? "binding" as the render element
+					- encapsulates the binding of flyweight view to specific data object
+					- holds all render-specific data
+					- delegates operations to the view?  can we make this efficient?
+						render.view.xyz() ?
+		
+		- what are the standard things we'd need to do to a rendering?
+			- bind
+			- draw
+			- update
+			- element manipulation (open drawer, etc)
+			- event handling
+			
+	- come up with a concrete example for statsproxy & 2 other apps
+
+
+- Interpolation semantics
+
+	- want to specify mapping of data object properties to HTML representation exactly once
+	  and have it apply automatically on draw() and on update()
+	 
+	- smarter interpolation
+		- general data mapping problem
+		- ternary operators
+		- function calls
+		- singular/pluralization
+		- pass multiple data objects into ANY string substitution
+		- message dictionary
+			- simple substitutions
+			- enums (w/default value)
+			- embed english inline in the template and extract into msg dict (closure does this?)		
+		- looping
+
+	- showif
+	- enableif
+
+	- parts to update
+		- html content
+		- any attribute
+		- css style(s)
+		- can update more than one thing on an element
+
+
+	- need update to be blazingly fast
+
+
+- XML <-> JS + compile semantics
+
+	- definitely want to specify rendering/layout in XML
+		- line gets blurred when we have dynamic data/enableif/showif etc inline
+		- easy way to specify scripts inline?
+	
+	- definitely want to have a non-compile mode for development
+		- loads from individual files
+		- loads XML and transforms to JS
+		- certain kinds of tweaking change the XML
+		- save the XML back out to disk
+		
+	- definitely want to have a compiled mode for production
+		- pre-transform the XML into JS
+		- smush together the data files/scripts for efficient loading
+		- must behave exactly the same as non-compiled mode
+
+	- eventually we want to have english in the mix
+		- don't want to transform on the front-end, startup time will be too slow
+
+	- back-end process that ALWAYS auto-transforms XML to JS
+		- what do we need?
+			- XML -> JS for data objects
+			- construct 'update' routines, etc automatically and embed them
+			- join JS files together
+			- CSS variables and functions
+
+		- MUST be in JS
+			- too painful to write/maintain otherwise
+			- installing everywhere?   we're not installing ANYWHERE now... :-)
+				- need Mac, Win, Linux installers for back-end system
+				- installing in hosted environment?
+			- persistent process or stateless?
+			- node.js thinger?
+		
+		- methodology
+			- break things into package files
+				- format? XML is the natural choice
+				- packages have:
+					- pre-load stuff
+					- named sub-pieces which are loaded dynamically
+				- packages compile so JS + CSS + HTML are loaded in one request
+				- skin as package
+					- outer HTML + css
+					- when compiling an app, compile in the skin
+					
+			- front-end pages load in terms of packages
+				- typical:  load hope + skin + site + app + page packages
+				- JS + CSS + HTML templates
+

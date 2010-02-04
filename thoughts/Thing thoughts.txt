@@ -1,0 +1,125 @@
+Thing thoughts
+
+- Things:
+	WILL
+		- almost always be created from XML
+
+	MUST
+		- know their name for introspection
+		- know their plurals for introspection/calls (xml will derive if necessary)
+		- know their mixins for introspection
+		- run prototype properties through setters on class instantiation
+		- thing constructor MUST have a function name for debugging
+		- if 'collect' is true then hope.Things will be the collection (indexed by guid)
+
+- things:
+	WILL
+		- be created from JS and from XML
+		
+	MUST
+		- use standard new [hope.]Thing() to instantiate
+		- run a single object of props through setters on construction
+		- have an "initialize" method called AFTER property setting
+		- have KVO observing
+			- however, if value does NOT change, doesn't fire
+		- have a way to set up observers/bindings on initialize w/ more-or-less SC semantics
+			(must be convenient from XML, maybe not from JS)
+		- have intelligible guid (as '_globalId') assigned BEFORE object.init()
+			(can come from property of the object?)
+		- MAY each have a unique, per-object cache (via guid)
+		- be able to use instanceOf to determine subclassability
+		- use implements("mixin") to see if we implement a mixin name
+
+	GETTERS
+		- non-derived properties are ALWAYS set directly on the object
+		- derived properties are ALWAYS done as getters and SHOULD use the cache to remember values
+		- have generic 'get' you can call as:
+			get(a,b,c)							<== getter with many arguments, for expressions?
+			get({x:null, y:null, z:null})		<== returns new object with {x: valueOfX,y:valueOfY,z:valueOfZ}
+			getFormatted('x', 'format')			<== returns value of x in specified format
+			getAll('x','y','z')					<== returns new object with {x: valueOfX,y:valueOfY,z:valueOfZ}
+	
+	SETTERS
+		- we NEVER use native setters and NEVER assign directly to public properties
+		- you ALWAYS use set(property, value [,args]) to set public properties
+		- have generic 'set' you can call as:
+			set('x','value',[args])				<== set single property
+			set('x.y.z','value',[args])			<== set path, doesn't error if y/z not available
+			set({x:1,y:2,z:3})					<== set many properties at once
+		
+		
+
+- mixins:
+	WILL
+		- almost always be added from XML
+		
+		
+	MUST
+		- be able to identify their methods/properties for introspection
+		- be able to call generic 'super'
+			- introspection and function rewriting on set?
+			- from XML only?
+
+- Super calls
+	- for each thing or mixin, we create a method
+		hope.Thing.as<Thing>Do(this, "method", args)
+
+	- this will get translated in the XML
+	- HMM, with this pattern, mixins can't be customized per class
+
+
+Properties for Things:
+	- type					-- name of the class
+	- types					-- (type+"s") name of a collection of the class
+	- collect				-- (false) if true, we will collect instances as hope[plural]
+	- isA					-- name/pointer to super
+	- mixins				-- name/pointer to mixins
+	- globalKeyName			-- name of property to use to generate guid (default is none
+	- prototype				-- properties to set on prototype
+	- classDefaults			-- properties to set on class
+	- properties			-- list of names of properties that we will remember on save
+	- setConstructor		-- name of class to use to create a set of things
+	- formatters			-- named format transformers
+
+Reserved words for instances:
+	- constructor				-- pointer to Thing
+	- thingType					-- name of Thing
+	- globalId					-- globally unique id for the element
+	- set()						-- generic setter
+	- destroy()					-- destroys object and its cache
+	- toString()				-- returns something meaningful
+	- cache(key,value,default)	-- get/set value in object's cache
+	- clearCache(key...)		-- clear entries in cache or entire cache if keys is empty
+	- notifyChange(key, val)	-- notify that a value was changed
+	- suspendNotifications()
+	- resumeNotifications()
+
+What would a setter look like?
+
+	setFoo : function(value) {
+		// first massage the value
+		value = (""+value).toUpperCase();
+		
+		// see if the value actually changed
+		var valueChanged = (this.foo != value);
+
+		// assign the value
+		this.foo = value;
+
+		if (valueChanged) this.notify("foo", value);
+	}
+
+
+	// simplest possible setter is:
+	setFoo : function(value) {
+		return (this.foo = value.toUpperCase());
+	}
+	
+	
+	// which we could wrap with:
+	var key = 'foo';
+	function(value) {
+		var old = this.cache[key];
+		if (old != value) this.notifyChange(key, value);
+		this.cache[key] = value;
+	}
