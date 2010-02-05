@@ -1,0 +1,70 @@
+<html>
+<title>Hope Docs</title>
+<style>
+	* {font-family:Tahoma; font-size:12px;}
+	
+	h2 {
+		margin-bottom:0px;
+		border-top:1px solid #eee;
+	}
+	h2:first-child {
+		border-top:0px;
+	}
+	
+	ul {
+		margin:0px;
+		-moz-padding-start:20px;
+	}
+	
+	.title {
+		position:absolute;	
+		font-size:2em; font-weight:bold;
+		border-left:1px solid #ccc;
+		background-color:#eee;
+		padding:0px 10px;
+	}
+	
+	#tocTitle {
+		top:0; height:1.5em;
+		left:0; width:380px;
+	}
+	
+	#toc {	
+		position:absolute;	
+		top:2em; bottom:310px;
+		left:0; width:373px;
+		padding:10px;
+		overflow:auto;
+	}
+	#cheat {
+		position:absolute;	
+		height:307px; bottom:0;
+		left:0; width:383px;
+		background-image:url(textileCheat.png);
+		border-top:1px solid #ccc;
+	}
+	#title {
+		top:0; height:1.5em;
+		left:385px; right:0; 
+	}
+	#contents {	
+		position:absolute;	
+		top:3em; bottom:0px;
+		left:385px; right:0; 
+		overflow:auto;
+		border-left:1px solid #ccc;
+		padding:10px;
+	}
+</style>
+<script src='../hope/hope.js'>
+	hope.hopePackage.loadTag("docs", function(){console.warn(""+hope.docs);hope.docs.launch()});
+</script>
+
+<body>
+	<div id='tocTitle' class='title'>Contents</div>
+	<div id='toc'></div>
+	<div id='cheat'></div>
+	<div id='title' class='title'></div>
+	<div id='contents'></div>
+</body>
+</html>

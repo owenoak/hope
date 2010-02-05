@@ -1,0 +1,9 @@
+h2. Todo
+* function to weed out preloads, append {{base}} for url
+* move bootstrap completion code to the end of package.js
+* have registry of scripts we've loaded before?
+* cache semantics in <script> elements (how to store?)
+* hope.Packages registry
+** @hope.getThing("package.hope")@ ?
+* load stylesheets 
+* load templates

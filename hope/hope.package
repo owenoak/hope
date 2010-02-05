@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package name='hope' base='{{hope}}'>
-	<script src='js/Url.js' group='preload'/>
-	<script src='js/xml.js' group='preload'/>
-	<script src='js/elements.js' group='preload'/>
-	<script src='js/Class.js' group='preload'/>
-	<script src='js/Mixin.js' group='preload'/>
-	<script src='js/TimedQueue.js' group='preload'/>
-	<script src='js/Observable.js' group='preload'/>
-	<script src='js/Operation.js' group='preload'/>
-	<script src='js/File.js' group='preload'/>
-	<script src='js/Package.js' group='preload'/>
-	<script src='js/Notifier.js' group='preload'/>
-	<script src='js/List.js' group='preload'/>
+	<script src='js/xml.js' tag='preload'/>
+	<script src='js/elements.js' tag='preload'/>
+	<script src='js/Class.js' tag='preload'/>
+	<script src='js/Mixin.js' tag='preload'/>
+	<script src='js/TimedQueue.js' tag='preload'/>
+	<script src='js/Observable.js' tag='preload'/>
+	<script src='js/Operation.js' tag='preload'/>
+	<script src='js/File.js' tag='preload'/>
+	<script src='js/Package.js' tag='preload'/>
+	<script src='js/Notifier.js' tag='preload'/>
+	<script src='js/List.js' tag='preload'/>
+
+
 	<script src='js/format.js'/>
+	
+	<!-- textile processing group -->
+	<script src='{{lib}}textile.js' tag='textile docs'/>
+	<script src='js/textile.js' tag='textile docs'/>
+	<script src='{{docs}}/index.js' tag='docs'/>
+	
 	<on event='loaded' part='package'>
 		console.warn("hope package loaded");
 	</on>

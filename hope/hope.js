@@ -30,47 +30,7 @@ if (isSupported == false) {
 }
 
 
-//
-//	simple cookie management
-//
-//		hope.cookie("key")				<-- returns value for cookie at key
-//		hope.cookie("key","value")		<-- sets cookie value at key
-//		hope.cookie("key", hope.CLEAR)	<-- clears a cookie
-//
-//	escapes() cookie values as they go into and out of the cookie.
-//  If passed an object, will JSON.stringify/JSON.parse the object.
-//
-// NOTE: installed as hope.cookie below
-function cookie(key, value) {
-	if (!document.cookie) return;
-
-	// get
-	if (value === undefined) {
-		value = (document.cookie || "").match(new RegExp(name+"=([^;]*)"));
-		if (!value) return;
-		value = unescape(value[1]);
-		if (value.charAt(0) === "{" && value.charAt(value.length-1) === "}") {
-			value = JSON.parse(value);
-		}
-		return value;
-	} 
-	// clear
-	else if (value == hope.CLEAR) {
-		return document.cookie = name+"=;expires="+(new Date(0)).toGMTString();
-	} 
-	// set
-	else {
-		if (typeof value === "object") value = JSON.stringify(value);
-		return document.cookie = name+"="+escape(value);
-	}
-}
-
-
 var hope = {
-
-	// see above
-	cookie : cookie,
-	
 	//! browser name == "Firefox", "WebKit", "Chrome" or "Unknown"
 	browser : {
 		name : (isFirefox ? "Firefox" 
@@ -104,7 +64,7 @@ var hope = {
 	
 	/** start of with debug at 'error' level */
 	debugging	: 1,		// TODO: pull debugging from cookie
-	cacheScripts : true,	// TODO: set cacheScripts according to debugging flag
+	cacheScripts : false,	// TODO: set cacheScripts according to debugging flag
 	safeEval : true,		// TODO: set safeEval according to debugging flag
 	
 	/** Flag indicating a non-specified value. */
@@ -152,6 +112,7 @@ var hope = {
 		runOfSpaces : /\s+/g,
 		isAllSpaces : /^\s+$/,
 		
+		splitOnSpaces : /\s+/,
 		splitOnCommas : /\s*,\s*/,
 		splitOnLines : /[\n\r]/,
 		
@@ -166,7 +127,7 @@ var hope = {
 		Very quick, does not getter/setter checking -- if you want that, use 'hope.mixin()'.
 		Returns the modified first object.
 	*/
-	extend : function(destination, source) {
+	extend : function extend(destination, source) {
 		if (!destination) return null;
 		var i = 0, length = arguments.length, key;
 		while (++i < length) {
@@ -183,7 +144,7 @@ var hope = {
 		Very quick, does not getter/setter checking -- if you want that, use 'hope.mixin()'.
 		Returns the modified first object.
 	*/
-	merge : function(destination, source) {
+	merge : function merge(destination, source) {
 		if (!destination) return null;
 		var i = 0, length = arguments.length, key;
 		while (++i < length) {
@@ -208,7 +169,7 @@ var hope = {
 		
 		TODO: pass 'DEEP' to do a deep copy?
 	*/
-	mixin : function() {
+	mixin : function mixin() {
 		var i = 0, 
 			overwrite = true,
 			length = arguments.length, 
@@ -273,7 +234,7 @@ var hope = {
 		and return what you find.  Handles function calls as well (in an eval).
 		NOTE: does not handle function calls with periods in their arguments!
 	*/
-	get : function(path, context, stopAtParent) {
+	get : function get(path, context, stopAtParent) {
 		if (context == null) context = hope.global;
 		path = path.split(".");
 		var step, i = 0, last = (stopAtParent ? path.length - 1 : path.length), index;
@@ -314,13 +275,12 @@ var hope = {
 
 		If can't find thing at path, returns.		
 	*/
-	set : function(path, value, context) {
+	set : function set(path, value, context) {
 		var it = hope.get(path, context, true);
 		if (!it) return;
 		var key = path.substr(path.lastIndexOf(".")+1);
 		it[key] = value;
 	},
-	
 	
 
 	//
@@ -328,7 +288,7 @@ var hope = {
 	//
 	
 	/** Given a string and a context, expand any 'mustaches' in the string, eg: '{{a.b.c}}' */
-	expand : function(string, context) {
+	expand : function expand(string, context) {
 		if (!string || typeof string != "string") return "";
 		if (!context) context = hope.global;
 		
@@ -344,7 +304,7 @@ var hope = {
 	/** Do an eval, trapping any errors.  
 		If there is a JS error in the code, you will see a console error.
 	*/
-	execute : function(javascript, context, fromUrl) {
+	execute : function execute(javascript, context, fromUrl) {
 		if (!javascript) return;
 
 		// add text that lets firebug know where the script came from
@@ -371,16 +331,18 @@ var hope = {
 		
 		In FF, it seems like the execution order IS the same as the load order, but it's hard to be sure.
 	*/
-	appendScript : function (url, javascript, onLoaded, remove) {
+	appendScript : function appendScript(url, javascript, onload, _remove) {
 		var head = document.querySelector("head"),
 			script = document.createElement("script")
 		;
 		script.type = "text/javascript";
 		if (url) {
+			url = hope.url(url, hope.cacheScripts);
 			script.setAttribute("src", url);
-			if (onLoaded) script.onload = onLoaded;
+			if (onload) script.onload = onload;
 			head.appendChild(script);
 		} else {
+			// TODO: work in the onload somehow?
 			script.appendChild(document.createTextNode(javascript));
 			head.insertBefore(script, head.firstChild);
 			if (remove) head.removeChild(script);
@@ -388,21 +350,21 @@ var hope = {
 	},
 	
 	
-	
 	//! Load a bunch of script files IN PARALLEL and, when they're all loaded, 
 	//	execute them in order and then call a callback.
-	loadScripts : function(urls, onLoaded) {
-		if (!urls || !urls.length) return onLoaded();
-
+	loadScripts : function loadScripts(urls, onload) {
+		if (!urls || !urls.length) return onload();
 		var completed = 0,
-			scriptCount = urls.length
+			scriptCount = urls.length,
+			i = -1, url, cacheOptions = {cache:hope.cacheScripts}
 		;
-		
 		function completelyDone() {
-			try {
-				onLoaded();
-			} catch (e) {
-				hope.exception(e, "hope.LoadScripts(): executing onLoaded");
+			if (onload) {
+				try {
+					onload();
+				} catch (e) {
+					hope.exception(e, "hope.LoadScripts(): executing onload");
+				}
 			}
 		}
 
@@ -413,19 +375,16 @@ var hope = {
 			function loadedOne() {
 				if (++completed == scriptCount) completelyDone();
 			}
-			for (var i = 0; i < scriptCount; i++) {
-				hope.appendScript(urls[i], null, loadedOne);
+			while (url = urls[++i]) {
+				hope.appendScript(url, null, loadedOne);
 			}
 		} else {
-			var results = [];
+			var results = [], cac
 			// function to load a single script.
 			//	calls loaded() with the request + index when loaded.
 			function loadOne(url, index) {
-				var request = new XMLHttpRequest();
-				request.open("GET", url, hope.ASYNC);
-				request.onload = function() {	loadedOne(request, index)	};
-				request.onerror = function(){console.error("Couldn't load "+url)};
-				request.send();
+				function loaded(){loadedOne(request,index)}
+				var request = hope.ajax(url, loaded, cacheOptions);
 			}
 			
 			// function executed when each script finishes loading.
@@ -440,18 +399,19 @@ var hope = {
 				// hope.execute() does its own error handling
 				for (var i = 0, script; i < scriptCount; i++) {
 					script = results[i];
-					hope.execute(script, "hope.loadScripts()", urls[i]);
+					hope.execute(script, "hope.loadScripts()", ""+urls[i]);
 				}
 				completelyDone();
 			}
 			
 			// start each script in turn
-			for (var i = 0; i < scriptCount; i++) {
-				loadOne(urls[i], i);
+			while (url = urls[++i]) {
+				loadOne(url, i);
 			}
 		}
 	},
-		
+	
+	
 
 	//
 	//	Things = Classes, Mixins and Types
@@ -468,7 +428,7 @@ var hope = {
 	/** Return a pointer to a named Class, Mixin or Type.
 		If you pass a Thing, it will simply be returned.
 	*/
-	getThing : function(thing, throwError) {
+	getThing : function getThing(thing, throwError) {
 		if (typeof thing == "string") {
 			// look the class up by lower case
 			//	so we don't have to worry about case sensitivity
@@ -482,7 +442,7 @@ var hope = {
 		
 	
 	/** Register a Thing so you can get it back with hope.get(). */
-	registerThing : function(name, thing) {
+	registerThing : function registerThing(name, thing) {
 		// register the thing in the list of Things
 		// and simply as hope.<name>
 		hope.Things[name.toLowerCase()] = thing;
@@ -504,15 +464,15 @@ var hope = {
 		@param	[prefix]	Array of values to add at START of array (before args)
 		@param	[suffix]	Array of values to add at the END of the array.
 	 */
-	args : function getargs(startAt, prefix, suffix) {
-		var args = slice.call(getargs.caller.arguments, startAt||0);
-		if (prefix && prefix.length)	args.push.apply(args, prefix);
-		if (suffix && suffix.length) 	args.push.apply(args, suffix);
-		return args;
+	args : function args(startAt, prefix, suffix) {
+		var list = slice.call(args.caller.arguments, startAt||0);
+		if (prefix && prefix.length)	list.push.apply(list, prefix);
+		if (suffix && suffix.length) 	list.push.apply(list, suffix);
+		return list;
 	},
 	
 	/** Is the thing like an array? */
-	isListLike : function(it) {
+	isListLike : function isListLike(it) {
 		return (it instanceof Array) || (it.length !== undefined && typeof it != "string");
 	},
 	
@@ -520,7 +480,7 @@ var hope = {
 	/** Given something that may or may not be list like,
 		convert it to a proper array.
 	*/
-	toArray : function(it) {
+	toArray : function toArray(it) {
 		if (it instanceof Array) return it;
 		if (hope.isListLike(it)) return slice.call(it, 0);
 		return [it];
@@ -558,7 +518,7 @@ var hope = {
 	/** Given a function, return another function which will that function to its first argument,
 		passing any additional arguments as normal.
 	*/
-	makeApplier : function(method) {
+	makeApplier : function makeApplier(method) {
 		return function(thing) {
 			if (!thing) return undefined;
 			var args = slice.call(arguments, 1);
@@ -567,7 +527,7 @@ var hope = {
 	},
 
 	/** Make appliers for an object of key-value pairs, returning a new object. */
-	makeAppliers : function(source) {
+	makeAppliers : function makeAppliers(source) {
 		var output = {};
 		for (var key in source) {
 			output[source] = hope.makeApplier(source[key]);
@@ -597,21 +557,21 @@ var hope = {
 	//
 
 	/** Log an info message if hope.debugging >= hope.info */
-	info : function() {
+	info : function info() {
 		if (hope.debugging >= hope.INFO) console.info.apply(console, arguments);
 	},
 	
-	warn : function() {
+	warn : function warn() {
 		if (hope.debugging >= hope.WARN) console.warn.apply(console, arguments);
 	},
 	
-	error : function() {
+	error : function error() {
 		if (hope.debugging >= hope.ERROR) console.error.apply(console, arguments);
 	},
 	
 	//! Show as much useful info as we can about an exception.
 	//  Returns the error so you can throw it if you want to.
-	exception : function(error, context, url) {
+	exception : function exception(error, context, url) {
 		msg = "Exception" + (context ? " in "+context : "")
 				+ (error.line != null ? " at line " + error.line : "") 
 				+ (url ? " in " + url : "");
@@ -621,20 +581,24 @@ var hope = {
 		return error;
 	},
 	
+	
+	//
+	//	doc viewer
+	//
+	docs : function docs(title) {
+		title = title || hope.cookie("hope.docs.lastTitle") || "The Plan";
+		hope.cookie("hope.docs.lastTitle", title);
+		var url = "{{docs}}#"+title;
+		window.open(hope.url(url).href,"hope-docs");
+	},
 
 	/** Hack in a loader for scripts of the 'hope' package.
 		The hope package will be initialized as a Package when scripts are all loaded.
 	*/
-	bootstrapHopePackage : function() {
+	bootstrapHopePackage : function bootstrapHopePackage() {
 		console.time("load hope package");
-		
-		var scripts = document.querySelectorAll("script");
-		hope.hopeScript = scripts[scripts.length-1];
-		
-		var hopePath = hope.hopeScript.getAttribute("src");
-		hopePath = hopePath.substr(0, hopePath.indexOf("hope.js"));
-		
-		var pkgUrl = hopePath + "hope.package",
+
+		var pkgUrl = "{{hope}}hope.package",
 			request
 		;
 		
@@ -643,12 +607,17 @@ var hope = {
 // TODO: check the return value -- if it's JS, just append it to the head
 			hope.pkgXML = (new DOMParser()).parseFromString(request.responseText, "text/xml").firstChild;
 			hope.pkgXML.setAttribute("src",  pkgUrl);
-			var scripts = hope.pkgXML.querySelectorAll("script[group=preload]"), script, i = -1, urls = [];
+
+			var scripts = hope.pkgXML.querySelectorAll("script[tag~=preload]"), 
+				script, i = -1, urls = [], hopePath = hope.Paths.hope
+			;
 			while(script = scripts[++i]) {
 				urls[i] = hopePath + script.getAttribute("src");
 			}
 			hope.loadScripts(urls, packageScriptsLoaded);
 		}
+
+		request = hope.ajax(pkgUrl, packageLoaded, {cache:hope.cacheScripts});
 		
 		// Callback when all package scripts have finished loading
 		function packageScriptsLoaded() {
@@ -657,23 +626,211 @@ var hope = {
 			hope.pkgXML.setAttribute("src", pkgUrl);
 			hope.hopePackage = hope.xml.toJs(hope.pkgXML, "hope");
 			
-			// mark the script files as loaded, and load the rest of the preload stuff
+			// mark the script files as loaded
 			hope.hopePackage.markAsLoaded("preload", "Script");
-			hope.hopePackage.loadPreloads();
+			// and load the rest of the preload stuff (templates and css)
+//			hope.hopePackage.loadTag("preload");
 			
 			// 2) grab any code inside the hopeScript and execute it
 			var script = hope.hopeScript.textContent;
 			if (script) hope.execute(script);
 			console.timeEnd("load hope package");
 		}
-		
-		request = new XMLHttpRequest();
-		request.open("GET",  pkgUrl + "?_"+ (new Date()).getTime(), hope.ASYNC);
-		request.onload = packageLoaded;
-		request.send();
 	}
 	
 };
+
+
+//
+// url / cookie / ajax
+//
+hope.url = (
+	// encapsulate scope so we don't leak matchUrl, etc
+	function(hope) {
+		// expand named paths in a url, and translates ".." and "." and "//" entires
+		//	if timestamp is true, appends a timestamp to the url
+		function expandUrl(url, timestamp) {
+			// if passed an array, expand them all
+			if (url instanceof Array) {
+				for (var i = 0, len = url.length; i < len; i++) {
+					url[i] = expandUrl(url[i], timestamp);
+				}
+				return url;
+			}
+			if (typeof url == "object") url = url.src || url.url;
+			url = ""+url;
+
+			if (timestamp) return hope.url.timestamp(url);
+			
+			// first expand any named paths in the url
+			if (url.indexOf("{{") > -1) url = hope.expand(url, hope.Paths);
+			
+			// convert any "//", "/./" and/or "/../" entries in the url
+			url = url.replace(/\/\.\/(\.\/)*/g,"/").replace(/([^:])\/\/+/g, "$1/");
+			url = url.split("/");
+			for (var i = 0; i < url.length; ) {
+				if (url[i] == "..") 	url.splice(--i, 2);
+				else					i++;
+			}
+			url = url.join("/");
+			return url;
+		}
+		
+		// matcher function for extracting parts of the url
+		function matchUrl(url) {
+			url = expandUrl(url);
+			return (hope.Patterns.urlParser.exec(url) || []);
+		}
+		
+		// if url == "http://server.com:81/path/to/a/file.hope.xml?foo=bar#hash
+		
+		// ==> /path/to/a/file.hope.xml
+		expandUrl.fullpath = function fullpath(url) {
+			var match = matchUrl(url);
+			return (match[7] || "") + (match[8] || "");
+		}
+		// ==> /path/to/a/
+		expandUrl.path = function path(url) {
+			return (matchUrl(url)[7] || "");
+		}
+		// ==> file.hope.xml
+		expandUrl.file = function file(url) {
+			return (matchUrl(url)[8] || "");
+		}
+		// ==> file
+		expandUrl.filename = function filename(url) {
+			return (matchUrl(url)[9] || "");
+		}
+		// ==> .hope.xml
+		expandUrl.extension = function extension(url) {
+			return (matchUrl(url)[10] || "");
+		}
+		// ==> #hash
+		expandUrl.hash = function hash(url) {
+			return (matchUrl(url)[12] || "");
+		}
+		// ==> {foo:bar}
+		expandUrl.params = function params(url) {
+			var params = (matchUrl(url)[11] || "").substr(1).split("&");
+			if (!params.length) return undefined;
+			var object = {}, i = 0, it;
+			while (it = params[i++]) {
+				it = it.split("=");
+				object[it[0]] = it[1];
+			}
+			return object;
+		}
+		// expand the url and append a timestamp onto it
+		expandUrl.timestamp = function timestamp(url) {
+			if ((""+url).indexOf("_ts=") > -1) return url;
+			
+			var match = matchUrl(url);
+			if (!match) return "";
+			var prefix = (match[2] || "") + (match[7] || "") + (match[8] || "");
+			var search = (match[11] || "");
+			search += (search ? "&" : "?") + "_ts=" + hope.timestamp();
+			return prefix + search + (match[12] || "");
+		}
+		return expandUrl;
+	}
+)(hope);
+
+hope.extend(hope, {
+	//
+	//	simple cookie management
+	//
+	//		hope.cookie("key")				<-- returns value for cookie at key
+	//		hope.cookie("key","value")		<-- sets cookie value at key
+	//		hope.cookie("key", hope.CLEAR)	<-- clears a cookie
+	//
+	//	escapes() cookie values as they go into and out of the cookie.
+	//  If passed an object, will JSON.stringify/JSON.parse the object.
+	//
+	// NOTE: installed as hope.cookie below
+	cookie : function cookie(name, value) {
+		// get
+		if (value === undefined) {
+			value = (document.cookie || "").match(new RegExp(name+"=([^;]*)"));
+			if (!value) return;
+			value = unescape(value[1]);
+			if (value.charAt(0) === "{" && value.charAt(value.length-1) === "}") {
+				value = JSON.parse(value);
+			}
+			return value;
+		} 
+		// clear
+		else if (value === hope.CLEAR) {
+			document.cookie = name+"=;expires="+(new Date(0)).toGMTString();
+		} 
+		// set
+		else {
+			if (typeof value === "object") value = JSON.stringify(value);
+			// don't set unless there's actually a change
+			var oldValue = hope.cookie(name);
+			if (value != oldValue) document.cookie = name+"="+escape(value);
+			return value;
+		}
+	},
+
+	/** Named paths we can load.  Specify in a url as   "{{namedPath}}file.html" 
+		Pre-configured named paths:
+			document 	: Path to the document.
+			app			: Path to this 'app' -- assumed to be the same as the document.
+			hopejs		: Path where the hope javascript files come from.
+			hope		: The master 'hope' directory (holds js, css, images, etc).
+			lib			: Where external libraries come from, peer of "hope".
+			docs		: undefined		/** Hope docs directory, peer of 'hope'
+	*/
+	Paths : (function() {
+		var docLocation = hope.url.path(window.location.href);
+		// the last script we can find in the document is OUR script
+		var scripts = document.querySelectorAll("script");
+		hope.hopeScript = scripts[scripts.length-1];
+// TODO: I think this will break if hope does not come from this web server...
+		var	hopeScriptUrl = hope.url.path(docLocation + hope.hopeScript.getAttribute("src"));
+		var paths = {
+			document	: docLocation,
+			app			: docLocation,
+			hope		: hopeScriptUrl,
+			hopejs		: hopeScriptUrl+"js/",
+			lib			: hope.url(hopeScriptUrl + "../lib/"),
+			docs		: hope.url(hopeScriptUrl + "../docs/")
+		}
+		return paths;
+	})(),
+	
+	addNamedPath : function addNamedPath(name, path) {
+		hope.Paths[name] = path;
+	},
+
+	
+	// for making one-line ajax calls:
+	//	hope.ajax({url, onload, onerror=hope.error, method=GET, cache=false, async=true})	=> request
+	ajax : function ajax(url, onload, options) {
+		if (!options) options = {};
+
+		// transform with hope.url, applying timestamp if told to
+		url = hope.url(url, (options.cache != true));
+		var method = options.method || "GET";
+		var async = (options.async === undefined ? true : options.async != false);
+
+		// make the actual request
+		var request = new XMLHttpRequest();
+		request.open(method, url, async);
+		request.onload = onload;
+		request.onerror = options.onerror || function(){hope.error("Couldn't load "+url)};
+		request.send();
+		
+		return request;
+	},
+	
+	// generate timestamp
+	//	- if you pass URL, automatically appends to the url as parameter "_=123445123"
+	//	- if you don't pass URL, just returns the timestamp itself
+	timestamp : function timestamp(url) {
+		return (new Date()).getTime() - 1262322000000;
+	}
+});
 
 
 	

@@ -1,18 +1,18 @@
 
-/** A Package is a collection of grouped files. 
-	All files with group='preload' are loaded automatically.
-	Package can have 'onLoaded' handler.
+/** A Package is a collection of files, grouped by 'tag'. 
+	All files with tag='preload' are loaded automatically.
+	Package can have 'onload' handler.
 */
 new hope.File.subclass({
 	name 	: "Package",
 	prototype : {
 
-		// list of Script, Template, Stylesheet, etc objects, segmented by group
-		_fileGroup : undefined,
+		// list of Script, Template, Stylesheet, etc objects, segmented by tag
+		_fileTags : undefined,
 		_files : undefined,
 
 		onCreate : function() {
-			this._fileGroup = {};
+			this._fileTags = {};
 			this._files = [];
 		},
 		
@@ -26,15 +26,16 @@ new hope.File.subclass({
 		},
 
 		/* Called as we absorb each file in turn.  
-		   Puts the file in the appropriate group(s).
+		   Puts the file in the appropriate tag(s).
 		*/
 		setFile : function(file) {
 			this._files.push(file);
-			if (file.group) {
-				var groups = file.group.split(hope.Patterns.splitOnCommas), group, i = 0;
-				while (group = groups[i++]) {
-					var group = (this._fileGroup[group] || (this._fileGroup[group] = {}));
-					var list = (group[file.classType] || (group[file.classType] = []));
+			if (file.tag) {
+				var tags = file.tag.split(hope.Patterns.splitOnSpaces), tag, i = 0;
+				while (tag = tags[i++]) {
+					var tag = (this._fileTags[tag] || (this._fileTags[tag] = {}));
+					var type = file.classType.toLowerCase();
+					var list = (tag[type] || (tag[type] = []));
 					list.push(file);
 				}
 			}
@@ -44,35 +45,37 @@ new hope.File.subclass({
 		setStylesheet : function(file) {this.setFile(file)	},		
 
 		/** The packge itself was loaded, either as XML or JS. */
-		onLoaded : function(data) {
+		onload : function(data) {
 			if (hope.isAnElement(data)) {
 				hope.xml.toJs(data, null, this);
 			} else {
 				this.set(data);
 			}
 			// load all preload files.
-			this.loadGroup("preload");
+			this.loadTag("preload");
 		},
 		
 		
-		// event handlers for a group of files being loaded
+		// event handlers for a tag of files being loaded
 		onFilesLoaded : undefined,
 		onFilesLoadError : undefined,
 
-		/** Load all files of a particular group which have not been loaded. */
-		loadGroup : function(groupName, onLoaded) {
-			var files = this._fileGroup[groupName];
-			console.warn("loading ",groupName," :",files);
+		/** Load all files of a particular tag which have not been loaded. */
+		loadTag : function(tagName, onload) {
+			var files = this._fileTags[tagName].script, i=-1, results = [];
+			while (file = files[++i]) {
+				var url = file.src;
+				if (url.indexOf("{{") == -1) url = this.base + url;
+				results[i] = url;
+			}
+			// TODO: weed out the loaded ones
+			hope.loadScripts(results, onload);
 			return this;
 		},
 		
-		loadPreloads : function() {
-		
-		},
-	
-		/** Mark all files in a group as already being loaded. */
-		markAsLoaded : function(groupName, classType) {
-			var files = this._fileGroup[groupName], i = 0, file;
+		/** Mark all files in a tag as already being loaded. */
+		markAsLoaded : function(tagName, classType) {
+			var files = this._fileTags[tagName], i = 0, file;
 			if (!files) return;
 			while (file = files[i++]) {
 				if (classType && file.classType != classType) continue;
@@ -90,24 +93,6 @@ new hope.File.subclass({
 				outputType : "js/xml"
 			}
 		})
-/*		
-		,
-		
-		parseXML : function(element, namespace) {
-			var options = hope.xml.attributes(element);
-			var scripts = hope.xml.childrenToObjects(element, namespace, "script"),
-				stylesheets = hope.xml.childrenToObjects(element, namespace, "stylesheet"),
-				templates = hope.xml.childrenToObjects(element, namespace, "templates")
-			;
-			options.files = [].concat(scripts, stylesheets, templates);
-			return options;
-		},
-		
-		fromXML : function(element, namespace) {
-			var options = this.parseXML(element, namespace);
-			return new hope.Package(options);
-		}
-*/
 	}
 });
 hope.xml.register("package", hope.Package);

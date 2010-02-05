@@ -1,4 +1,3 @@
-
 Course of action
 	Events/Notify
 		- ALL "onX" things go through the notify mechanism
@@ -24,7 +23,7 @@ Course of action
 				<on event='blah' [part='blah']/>
 
 		- js syntax
-		
+			
 		
 			- observe(event, {part, callback, target})
 				- callback is function or method name (great for loose coupling)
@@ -157,6 +156,7 @@ AFTER THAT
 	- CanvasDrawable
 
 
+	
 Class/etc
 	- put xml tag name into class definition
 	- classes should remember their (and their super's) mixins
@@ -228,8 +228,12 @@ Layout
 		- http://www.css3.info/introducing-the-flexible-box-layout-module/
 		- http://alex.dojotoolkit.org/2009/08/css-3-progress/
 		- http://a.deveria.com/csstpl/
+	- not yet supported in either webkit or moz
+	- jquery plugin
+		http://code.google.com/p/css-template-layout/
+	- we'll be parsing CSS anyway...?
 
-	- how will we vary layouts dynamically with this?  event possible?
+	- how will we vary layouts dynamically with this?  even possible?
 
 Animation/Transform
 	- we're good on transforms in FF/Safari
@@ -242,12 +246,6 @@ Animation/Transform
 	- what animations do we want to support?
 	
 
-hope = humans open-source programming english
-
-hiki = hoki = hope wiki
-
-
-
-defining an alias means that two or more things are completely interchangeable, everywhere, 100%
-	- for a thing, it's like a subclass, but is not prototype based
-
+Taggable
+	- automatically segments a group of things by tag='a,b,c'
+	- TaggedSet ?

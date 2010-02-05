@@ -50,9 +50,7 @@ new hope.Class({
 			this.state = hope.LOADING;
 			var request = this.request = new XMLHttpRequest(), operation = this;
 			url = hope.url(this.url).href;
-			if (this.cacheResults != true) {
-				url += (url.indexOf("?") > -1 ? "&" : "?") + "_" + (new Date()).getTime();
-			}
+			if (this.cacheResults != true) url = hope.timestamp(url);
 			this.lastUrl = url;
 			request.open(this.method, url, hope.ASYNC);
 			

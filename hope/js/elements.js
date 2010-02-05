@@ -1,3 +1,7 @@
+(function(hope) {	/* Begin hidden from global scope */
+
+var slice = Array.prototype.slice;
+
 /** 
 	HTML helpers
 */
@@ -30,6 +34,25 @@ hope.extend(hope, {
 		return element;
 	},
 
+	// Return the html passed in transformed to a list of elements.
+	//	Note: Ignores top-level children which are not elements (comments, text/whitespace, etc)
+	//	TODO: check for <tr> which needs to go into a table, etc? 
+	//		how does jQuery do it?  look for "wrapMap"
+	toElements : function(html) {
+		var parent = hope.create("div", {html:html});
+		var results = [], i=0, child;
+		// return only children which are elements
+		while (child = parent.childNodes[i++]) {
+			if (child.nodeType == Node.ELEMENT_NODE) results[results.length] = child;
+		}
+		return results;
+	},
+
+	// return the first element after converting the html passed into elements
+	toElement : function(html) {
+		return hope.toElements(html)[0];
+	},
+
 	
 	// set attrributes of an object based on values passed in
 	//		attributes.classname
@@ -49,7 +72,7 @@ hope.extend(hope, {
 				case "html":		element.innerHTML = value; break;
 				case "value":		element.value = value; break;
 				case "style":		hope.setStyles(element, value); break;
-				case "parent":		if (typeof parent == string) parent = hope.select(parent);
+				case "parent":		if (typeof value === "string") parent = hope.select(value);
 									if (parent) parent.appendChild(element);
 									break;
 				default:			element.setAttribute(name, value);
@@ -99,3 +122,7 @@ hope.extend(hope, {
 		hope.addClass(element, "Hidden");
 	}
 });
+
+
+/* End hidden from global scope */ })(hope);
+
