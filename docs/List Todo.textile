@@ -1,4 +1,0 @@
-* Have List class which is 
-* Have ListManager class:
-** Constructor just sets this.list and returns
-** All operations in terms of array predefines

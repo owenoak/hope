@@ -11,7 +11,7 @@
 	<condition syntax='(set) {contains|contain} (thing)'/>
 	<condition syntax='(set) {does not contain|do not contain} (thing)'/>
 	<condition syntax='(set) {starts|begins|start|begin} with (thing)'/>
-	<condition syntax='(set) {ends with} (thing)'/>
+	<condition syntax='(set) {ends with|end with} (thing)'/>
 
 	<!-- length / emptyness -->
 	<expression syntax='length of (list)' returns='number'/>

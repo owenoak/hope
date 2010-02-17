@@ -1,0 +1,88 @@
+h2. Decisions
+* Augment natives to the hilt, we're in FF and WK only anyway
+* Most classes are written in XML w/either english or JS implementation
+* Write an XML->JS translator which outputs a JS class constructor, so we can inspect output
+* Package thinks in Files, Things think in Classes w/urls of their files
+
+
+h2. Short term focus
+#Load/save xml classes
+#Parse english
+#Drawable infrastructure
+#Editor
+  *Goal: Parsing english + editable XML by end of March*
+
+
+h2. Notification/Class Refactor
+* Class refactor
+** write up class syntax in textile
+** @prototype@ to @properties@
+** @statics@ to @Class@  (what is XML for this?)
+** verify that .equals is working
+** verify that oncreate/ondestroy is working
+** simple class tester thing (use shapes)
+** remove 'caches' and 'autoregister' to mixins
+** quickly review everything for consistency w/new syntax
+** some super mechanism hope.as.Class("foo") and get 'this' from arguments.caller?
+** get serious about private properties (eg: _notifying)
+** forget set returning changes, just return this
+
+
+* Notification refactor
+** Get hooking up of onxxx from XML working
+** Get hooking up of onxxx from JS working
+** Get 'onload' working for package
+** Verify all 'onxxx' /notify stuff in existing code works with new scheme
+** Get 'events' and 'eventMap' working
+*** put on constructor rather than instance
+*** special hookup in new hope.Class()
+** get 'notifying' working again, use in proto set (?)
+** get ONCE working
+** ignore() must ignore all events
+** ignore() and not losing prototype events?
+** how to watch expressions?
+** how to cache expressions?
+
+* File refactor
+** Go with simpler, non-operation paradigm
+** rough in save semantics (just saveUrl + saveOptions)
+
+h2.	Load/Save XML Things
+* XML-> JS which writes out class definitions
+* Map Statsproxy to our system
+** review & doc what needs doing
+* Map SproutCore examples to our system
+** review how their .property(), .observes(), .cache() work
+** review 'bindings' stuff
+** review how we'll do their observe() etc equivalents
+* @ThingDef@/@PropertyDef@/etc classes
+* Load @.thing.xml@ files
+* Save @.thing.xml@ files
+* Load Things via package
+* Get base set of Things loading
+* @Things@ -> @Classes@ with JS
+
+h2. Parse English
+* Extract syntax out of @Things@
+* Parse tree
+* Parse tree viewer
+* Parse()
+* Interactive parse example
+
+h2. Drawables
+* Element (augment native)
+* ElementList (quick ListManager class - slice() and 1 set to convert)
+* Base drawable (mainly event semantics)
+** App/Panel semantics (site?)
+*** Auto-load app based on html file name, or based on attribute in hope.js loader.
+** HTML Drawable (template based)
+***Simple templates for now, go to Liquid later
+***Relationship of templates and auto-update via 'parts'?
+** Canvas Drawable (from Canvas)
+* Get a few drawables working
+		
+
+h2. Editor
+* Cannabalize dynapaint
+** Tools
+** Action Menu

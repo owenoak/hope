@@ -15,13 +15,14 @@ hope.extend(hope, {
 		/** Given an html/xml element, return an object with all of the attributes of the element. 
 			Returns null if element has no attributes.
 		*/
-		attributes : function(element) {
-			if (!element || !element.hasAttributes()) return;
-			var output = {}, i = 0, attribute;
+		attributes : function(element, object) {
+			if (!element || !element.hasAttributes()) return object;
+			if (!object) object = {};
+			var i = 0, attribute;
 			while (attribute = element.attributes[i++]) {
-				output[attribute.name] = attribute.value;
+				object[attribute.name] = attribute.value;
 			}
-			return output;		
+			return object;		
 		},
 		
 		/** Given a string of XML, return an XML element (NOT document). */
@@ -75,8 +76,8 @@ hope.extend(hope, {
 		*/
 		toJs : function(node, namespace, object) {
 			if (!node) return;
-//console.warn(1,node);
-			// note: order is based on expected frequency
+
+			// note: order in the switch below is based on expected frequency
 			switch (node.nodeType) {
 				// handle text nodes
 				case Node.TEXT_NODE:
@@ -100,13 +101,25 @@ hope.extend(hope, {
 					}
 */
 					if (namespace != "object") {
-						var tagName = node.tagName.toLowerCase(),
-							constructor =   this.Parsers[namespace||"hope"][tagName]
+						var tagName = node.tagName.toLowerCase();
+						
+						// handle event hookup:  <onloaded  or <onset, etc
+						if (tagName.substr(0,2) == "on") {
+							// create an observation object and give it the attributes of the node
+							var observation = new hope.Observation(tagName.substr(2));
+							this.attributes(node, observation);
+							// if no callback specified, create a function with the node textContent
+							if (!observation.callback) {
+								observation.callback = Function("data,observee,part", node.textContent);
+							}
+							return observation;
+						}
+						
+						
+						var	constructor =   this.Parsers[namespace||"hope"][tagName]
 										 || this.Parsers.hope[tagName]	// default to hope namespace
 						;
-//console.info(2,tagName);
 						if (constructor) {
-//console.warn(3,constructor.classType);
 							if (constructor.parseXML) {
 								return constructor.parseXML(element, namespace, object);
 							} else {
@@ -124,8 +137,10 @@ hope.extend(hope, {
 									while (child = node.childNodes[i++]) {
 										childObject = this.toJs(child);
 										if (childObject == null) continue;
-										if (typeof childObject == "string") {
+										if (typeof childObject === "string") {
 											value += childObject;
+										} else if (childObject.isAnObservation) {
+											object.observe(childObject.event, childObject);
 										} else {
 											var property = childObject.classType || child.tagName;
 											if (object.set) object.set(property, childObject);

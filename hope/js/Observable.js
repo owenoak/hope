@@ -15,6 +15,21 @@ new hope.Mixin ({
 	name :"Observable",
 	all : {
 
+		// eventMap is map of event name -> bubbles
+		eventMap : {
+			create : false,
+			destroy : false,
+			changed : false
+		},
+
+		// extend our eventMap with events in the map passed in
+		setEvents : function(map) {
+			this.eventMap = hope.protoClone(this.eventMap || {});
+			for (var key in map) {
+				this.eventMap[key.toLowerCase()] = map[key];
+			}
+		},
+
 		/** We only do notifying if this is true.
 			Defaults to false for efficiency -- set to true in your class constructor
 			or instance to turn notifying on.
@@ -32,77 +47,99 @@ new hope.Mixin ({
 			
 			Note that you don't need to bind the callback and target together!
 			
+			event:		eg: "done", "mouseup", "loaded"
 			observation is an object with:
-				event		eg: "onDone", "onMouseUp"
-				callback	method to execute		
-				[target]	who to send the notification to (default is global)
+				callback	method to execute, or name of method on target to execute
+				[target]	who to send the notification to (default is this object)
 				[part]		if set, we will only send the notification if 
-								the notify.part == part  (???)
+								the observation.part == part  in the notify call
 				
 			Call signature of callback is:
-				callback.apply(target, [data, part, observed]);
+				callback.apply(target, [data, observed, part]);
 		
 		*/
-		observe : function(observation) {
-			var observations = this.observations || (this.observations = {});
-			// make a unique new array each time 
-			observations[event] = (observations[event] || []).concat(observation);
+		observe : function(event, observation, when) {
+			event = event.toLowerCase();
+			// handle observation passed as a function
+			if (typeof observation == "function") {
+				observation = {callback:observation};
+			}
+			if (when === hope.ONCE) observation.once = true;
+			// make our observations object a clone of our prototype's
+			var observations = (this.hasOwnProperty("observations") 
+									? this.observations 
+									: this.observations = hope.protoClone(this.constructor.prototype.observations || {})
+							   );
+			var newList = (when == hope.BEFORE 
+							? [observation].concat(observations[event] || [])
+							: (observations[event] || []).concat(observation)
+						  );
+			// make a unique new array each time, so we pick up prototype observations
+			observations[event] = newList;
+			return this;
 		},
 		
-		/** Ignore events under a certain name for this target.
-			If target is null, ignores all events under that name.
+		observeOnce : function(event, observation) {
+			return this.observe(event, observation, hope.ONCE);
+		},
+		
+		/** Ignore certain events for the target.
+			If target is null, ignores all events under that name registered directly on this object.
 		*/
 		ignore : function(event, target) {
-			var observations = (this.observations ? this.observations[event] : null);
-			if (observations) return;
+			event = event.toLowerCase();
 
-			var newList = [];
-			if (target != null) {
-				var index = 0, observation;
+			var observations = (this.observations ? this.observations[event] : null);
+			if (!observations) return this;
+
+			if (target == null) {
+				this.observations[event] = this.constructor.prototype.observations[event];
+			} else {
+				var newList = [], index = 0, observation;
 				while (observation = observations[index++]) {
-					if (observation.target != target) newList.push(observation);
+					if (observation.target !== target) newList.push(observation);
+				}
+				if (newList.length) {
+					this.observations[event] = newList;
+				} else {
+					delete this.observations[event];
 				}
 			}
-			if (newList.length) {
-				this.observations[event] = newList;
-			} else {
-				delete this.observations[event];
-			}
+			return this;
 		},
 
 		/** Notify observers that something has happened. 
 
-			If this object has a method with the same name as the event, 
-			that will ALWAYS be called.
-			
-			If this object has notifying == true,
-				- we will execute any notifications on this object for that event
-				- if we don't have any notifications for the event and we have a controller
-					we will call notify() recursively on our controller
-
-			event = "onDone", "onMouseUp", etc --- case sensitive
+			event = "done", "mouseup", etc --- case IN sensitive
 			Note that you can pass up to 3 data parameters to notify,
 			which will be passed to the notification.
 		*/
 		notify : function(event, data, part) {
-			var args = hope.args(1);
-			
-			// if we have a method with the event name, call that now
-			if (typeof this[event] == "function") this[event].apply(this, args);
-			
-			// if notifying is off, bail.
-			if (this.notifying) {
-				// Get the list of observations as it stands right now.
-				//	We're guaranteed that whenever the observations change, we'll get a different list.
-				var observations = (this.observations ? this.observations[event] : null);
-				if (observations) {
-					hope.ObservationQueue.enqueue(observations, args);
-					return;
-				}
+			event = event.toLowerCase();
+			var observations = (this.observations ? this.observations[event] : null);
+			if (!observations) {
+				// figure out if we should bubble the event (default is NO)
+				var bubble = (this.controller && this.eventMap[event] == true);
+				if (bubble) this.passEvent(event, data, part);
+				return this;
 			}
 			
-			// if we did not intercept the notification, pass it to our controller
-			this.passEvent(event, data, part);
+			// fire the observers for the event
+			var i = 0, observation;
+			while (observation = observations[i++]) {
+				// skip observations that do not specify the correct part
+				if (observation.part != part) continue;
+// TODO: remove the event if once is true				
+				var target = observation.target || this;
+				var callback = observation.callback;
+				if (typeof callback == "string") callback = target[callback];
+				if (typeof callback == "function") {
+					callback.call(target, data, this, part);
+				} else {
+					hope.warn(this,"notify(",event,"): couldn't find callback for observation :", observation);
+				}
+			}
+			return this;
 		},
 		
 		/** Tell our controller, if we have one, to process the event. 
@@ -112,76 +149,23 @@ new hope.Mixin ({
 			if (this.controller && this.controller.notify) {
 				this.controller.notify(event, data, part);
 			}
-		},
-
-		// TODO: this is the same as observe?
-		setEvent : function(event) {
-console.warn("setEvent",event,this);
+			return this;
 		}
-
 	}
 });
-
-/** Set up the Observable's MasterQueue, which will actually proces events. */
-hope.ObservationQueue = new hope.TimedQueue({
-	delay : .1,
-	stopAfter : 20,
-	execute : function() {
-		var queue = this.queue, 
-			queueIndex = 0, 
-			observations,
-			observationsIndex,
-			args,
-			completed = 0,
-			stopAfter = this.stopAfter,
-			result
-		;
-		try {
-			while (observations = queue[queueIndex++]) {
-				args = queue[queueIndex++];
-				observationsIndex = 0;
-				while (observation = observations[observationsIndex++]) {
-					// if the observation specifies a part, and the args's part is not the same, skip it
-					if (observation.part != null && observation.part != args[1]) continue;
-
-					// actually make the callback			
-					result = observation.callback.apply(observation.target, args);
-
-					// if we get a STOP signal, skip the rest
-					if (result == hope.STOP) break;
-				}
-				if (++completed > this.stopAfter) break;
-			}
-		} catch (error) {
-			// if we get an error, just stop for now
-			// Note that any observations in the observations list after the error will get dropped!
-			hope.error("Error executing Observable queue:",error," observation:", observation);
-		}
-		// chop off anything we've already processed
-		this.queue = queue.slice(queueIndex);
-	}
-});
-
-
 
 // make all classes and class instances observable
 hope.Observable.mixinTo(hope.Class);
 
 
-
-
-/** Simple event class */
-new hope.Class({
-	name : "Event",
-	prototype : {
-		event : undefined,		// name of the event
-		part : undefined,		// part of the target
-		target : undefined,		// target for the event
-		data : undefined,		// data for the event
-		
-		language : undefined,	// language for the event
-		value : undefined		// script of the event, as text
+// Simple observation constructor for XML parsing
+hope.Observation = function Observation(name, props) {
+	this.event = name;
+	if (props) {
+		for (var key in props) this[key] = props[key];
 	}
-});
-hope.xml.register("on", hope.Event);
+}
+hope.Observation.prototype = {
+	isAnObservation : true
+}
 

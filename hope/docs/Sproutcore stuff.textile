@@ -1,0 +1,63 @@
+Sproutcore stuff:
+
+- NOTE: 'bindings' are a separate kettle of fish entirely
+
+	- create an expression dependent on other properties and cacheable during setup
+		- <name> : function(){...}.property('otherProperty','otherProperty').cacheable()
+
+	- observe change for a simple property
+		- object.addObserver('key', function(){})
+		-> observes changes on key
+		-> very cheap
+		
+	- observe change in a property chain
+		- object.addObserver('path.to.key', function(){})
+		- > observes changes on path + to + key
+		- expensive to do chained 'cause calls on every step of the chain
+		
+	- observe change in some property during setup
+		- <name> : function(){...}.observes('property')
+		-> object.addObserver('key', [target], function(){...});
+	
+		- <name> : function(){...}.observes('path.to.key', function(){...})
+		-> DOES NOT CHAIN, just sets up observation on that key
+		-> 'path' above is a global object
+		
+		- <name> : function(){...}.observes('.path.to.key', function(){...})
+		-> DOES NOT CHAIN
+		-> "." makes it local to the object setting up on
+		-> force you to set observee value before class init
+
+		- <name> : function(){...}.observes('path*to.key', function(){...})
+		-> Does chain observation from path on.
+
+		- <name> : function(){...}.observes('*path.to.key', function(){...})
+		-> Does chain observation from this on.
+	
+	- manual notification of property change (and invalidate cache)
+		- object.notifyPropertyChange('prop')
+	
+	- manual notification that everything changed:
+		- object.allPropertiesDidChange()
+		-- this is the way their DataStore works when new data is loaded from the server
+		-- your code must check to see if values actually changed
+	
+	- to check to see if a value has actually changed before firing change code:
+		-	if (!this.didChangeFor('methodName', 'propName')) return this;
+			this.set(...)
+			
+	- manually batching/deferring
+		- 	object.beginPropertyChanges()
+			object.set(x,y);
+			object.set(z,a);
+			object.endPropertyChanges()
+		-> observers for x and z both fire after end
+
+	- check for observers
+		- oject.hasObserversFor('prop')
+	
+	- 'array controller', observe "[]" property
+		- object.addObserver("MyApp.selectedItemsController.[]", function(){})
+		
+	- getPath('a.b.c')
+	- setPath('a.b.c')

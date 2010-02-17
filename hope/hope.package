@@ -4,9 +4,10 @@
 	<script src='js/elements.js' tag='preload'/>
 	<script src='js/Class.js' tag='preload'/>
 	<script src='js/Mixin.js' tag='preload'/>
-	<script src='js/TimedQueue.js' tag='preload'/>
 	<script src='js/Observable.js' tag='preload'/>
+	<script src='js/Caches.js' tag='preload'/>
 	<script src='js/Operation.js' tag='preload'/>
+	<script src='js/Loadable.js' tag='preload'/>
 	<script src='js/File.js' tag='preload'/>
 	<script src='js/Package.js' tag='preload'/>
 	<script src='js/Notifier.js' tag='preload'/>
@@ -16,11 +17,11 @@
 	<script src='js/format.js'/>
 	
 	<!-- textile processing group -->
-	<script src='{{lib}}textile.js' tag='textile docs'/>
-	<script src='js/textile.js' tag='textile docs'/>
-	<script src='{{docs}}/index.js' tag='docs'/>
+	<script src='{{lib}}textile.js' tag='preload textile docs'/>
+	<script src='js/textile.js' tag='preload  textile docs'/>
+	<script src='{{docs}}/index.js' tag='preload docs'/>
 	
-	<on event='loaded' part='package'>
+	<onload>
 		console.warn("hope package loaded");
-	</on>
+	</onload>
 </package>

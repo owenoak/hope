@@ -1,0 +1,153 @@
+h2. Description
+@Class@ is the base class for most hope classes.  You create a new class, then create instances of the class as desired.
+
+h2. Example
+@new hope.Class({...options...});@
+p. @var myClass = hope.getThing('MyClass');@
+p. @var it = new myClass({...properties...});@
+
+h2. Constructor
+Class takes a single object of options, and returns a pointer to the class.
+
+Options you can pass:
+|_. Option Name|_. Description|
+|.name|Name of the class.  The class will be registered as a 'Thing', so you can get a reference to the class later as @hope.getThing('name')@.|
+|.plural|(optional) Plural name for this class.  Will use @.name+"s"@ if not specified. This is also the name of the collection of registered instances of this class.|
+|.constructor|(optional) Constructor function used to create instances of the class.  One will be created if not supplied.  If you supply a constructor, it *should* call @this.notify('create')@.|
+|.isA or .isAn|(optional) Name or reference to super Class.  "Class" is used if not defined. |
+|.mixin or .mixins|(optional) Names of or pointers to mixins to add to the class.  If a string, separate with commas.|
+|.properties|(optional) Properties, methods and expressions to add to the class prototype, making them available on all instances.|
+|.statics|(optional) Properties, methods and expression to add to the class itself.|
+|.setConstructor|(optional) Name or pointer to constructor to use to create sets of instances.  Defaults to Array.|
+|.primaryKey|(optional) Name of property on each instance to use as the primary key, to uniquely identify the instance (set as @instance.__id__@).  Note that the primary key values @must@ be unique within all instances of the same class, but not necessarily unique within different classes.  If not defined, an id will be automatially generated based on the name of the class.|
+|.equals|(optional) Method to use to compare two objects, to determine if they are semantically equal.  Function signature:  @equals(object1, object2) => boolean@.  If no value is passed:|
+||- If the class has a primary key, two objects will be considered equal if they have the same primary key.|
+||- If the class does not have a primary key, then strict equality (@===@) will be used to determine if the objects are equal.|
+|.onCreate|(optional) Code to execute when class instances are created.|
+|.onDestroy|(optional) Method to execute when class instances are @destroy()@ed |
+
+
+h2. Class Members
+Note that each class 'inherits' (statically) all of the properties and methods of their superclass, or all the properties & methods of Class if no superclass is defined.
+
+
+
+h2. Instance Properties, Expressions and Methods
+Note that each class 'inherits' (dynamically, through the prototype) all of the properties and methods of their superclass' prootype, or all the properties & methods of hope.Class.prototype if no superclass is defined.
+
+Note that you can use the standard Javascript @instanceof@ operator to determine if an instance is a member of a class (including superclasses). eg:
+p.@&gt; new hope.Class({name:'SuperClass'});@
+p.@&gt; new hope.Class({name:'SubClass', isA:'SuperClass'});@
+p.@&gt; var it = new hope.SubClass();@
+p.@&gt; it instanceof hope.SubClass  ==> true@
+p.@&gt; it instanceof hope.SuperClass  ==> true@
+
+
+|_. Name|_.Type / Return Type|_. Description|
+|.constructor|hope.Class|Pointer to the @Class@ for this instance.|
+|.Class|hope.Class|Pointer to the @Class@ for this instance.|
+|.classType|string|Name of the @Class@ for this instance.|
+|.destroy()|instance|Destroy this instance.  Unhooks all notifications, removes from class registry, etc.  Sends *destroy* notification to itself.|
+|.set(key,value) or .set(properties)|value or object|Set properties on this object. See *Setting Instance Properties* below.|
+
+In addition, since all @Class@es implement the "Observable":# mixin, all class instances have the following methods and properties:
+|_. Name|_.Type / Return Type|_. Description|
+|.notifying|boolean (true)|If true, this object will send notifications for events.  Set to false to turn off notifications temporarily.|
+|.observe(event, observation, when)|_instance_|Observe an event on this instance.|
+||-event (string)|The short name of the event, in present tense:  'load', 'mousemove', etc.|
+||-observation (object)|Either a callback function, or an object which provides some of the following:|
+||-observation.callback|Function to execute, or name of a method to call on observation.target.  The callback signature is:   @callback(data, observee, part)@ |
+||-observation.target (optional)| Object to apply the callback to.  Defaults to the observed instance.|
+||-observation.part (optional)|If set, only notifications that specify the same part will trigger the callback.|
+||-when (string, optional)|Flag for where to place the notification.  @hope.AFTER@ (default) = after all current observations for this event.  @hope.BEFORE@ = before all other observations for this event.  @hope.ONCE@ to fire the observation only once, after which time it will be removed from the observation list.|
+|.observeOnce(event, observation)|_instance_|Observe an event exactly once, after which the observation is removed from the list.  Same semantics for @event@ and @observation@ as @.observe()@.|
+|.ignore(event, target)|_instance_|Ignore observations for a specific events on this object.|
+||event (string)|Name of the event, as for @.observe()@.|
+||event (object, optional)|Target to ignore.  If specified, only observations for that target will be ignored.  If not specified, all observations for the event will be ignored. |
+|.notify(event, data, part)|_instance_|Notify observers that an event has occurred.  If this object doesn't have any observers for the event, and the event is designed to bubble, the event will be passed to this object's controller (via @.passEvent()@).|
+||event (string)|Short name for the event, "load" or "mousemove", etc.|
+||data (any, optional)|Data to pass to observer callbacks.|
+||part (any, optional)|'Part' of the object that received the notification.  For example, in a 'changed' notification tht fires for on @object.set("foo",1)@, the 'part' would be the value '1'.|
+|.passEvent(event, data, part)|_instance_|Pass an event on to our @controller@, if defined.  This is called automatically for events that bubble.  See "Observer":# for more details about bubbling.|
+
+
+h2. Setting Instance Properties
+Class instances have four types of members:
+* Properties, values directly set on the object.  Properties are watchable.
+* Expressions, calculated values, perhaps as syntactic sugar for some property.
+* Commands, or methods that can be called, to perform some action on the object.
+* Internal properties, which are NOT watchable, and are generally only used by the class itself.
+
+All properties and expressions are observable, meaning that you can be notified when the value changes.  All internal properties are NOT watchable.
+
+In order to balance efficiency with watchability, classes require that:
+# You always set properties through the universal setter, as in: @object.set('foo','bar')@ or @object.set({'foo':'bar', 'bang':'bonk'})@
+# You always get properties or expressions via direct property access, as in: @object.foo@ or @object.bar@.
+# Expresions (and some properties) therefore are implemented as javascript "getters" (and possibly "setters" as well).
+
+When setting up your class:
+* To define a simple default for a property, just add the default value to the @properties@ object you pass in to @new hope.Class({...})@.
+
+* To define a complex property, for example, an array which should be unique for each instance, add an @onCreate@ method to the @properties@ which sets that value, eg: @new hope.Class({..., onCreate(){this.foo = []}...})@.
+
+* To define a custom setter for a particular property "foo", you will define an instance method named @setFoo(newValue)@ at class creation time.  This should check the newValue against the existing value and, *if they are different*:
+** change the value stored under 'foo' in your object (however that works for you)
+** send a 'change' notification, as:  @this.notify('change', newValue, 'foo')@.  This must happen *after* you store the new value, in case any observers reference the property directly.
+** return the newValue
+	Note that you can massage the value, to coerce it to a different type, etc.  If so, you should return the coerced value.
+
+* To define an expression or calculated value named "foo", add a function "get_foo" at class creation time.
+
+Putting it all together, we might have:
+
+bc.. new hope.Class({
+	name : "MyClass",
+
+	// property 'foo', which should always be a number
+	aNumber : 1,
+
+	// setter for 'aNumber', ensures that we only set foo to a number
+	//	settable as:  object.set("aNumber", 2);
+	set_aNumber : function(value) {	
+		var num = parseInt(value);
+
+		// if we couldn't coerce the value to a number, show a warning and return undefined
+		if (isNaN(num)) {
+			hope.warn(this,".setANumber(",value,"): must be a number");
+			return undefined;
+		}
+		
+		// if value didn't change, just return undefined
+		if (num == this.aNumber) return undefined;
+
+		this.foo = num;
+		this.notify("change", num, "aNumber");
+		return num;
+	},
+	
+	// expression which returns the value plus one, accessible as:  object.aNumberPlusOne
+	get_aNumberPlusOne : function()	{
+		return this.aNumber + 1;
+	},
+	
+	// setter for the expression above, settable as:  object.set("aNumberPlusOne", 2);
+	set_aNumberPlusOne : function(value) {
+		// call the 
+		this.set("aNumber", value - 1);
+	},
+	
+	// set up cross-notification for the expression and the value
+	on : [
+		{	// when the original "aNumber" variable changes, 
+			// notify anyone who is observing the "aNumberPlusOne" variable as well
+			event:"change", 
+			part:"aNumber", 
+		  	callback:function(data,observed,part){
+		  		this.notify("change", this.aNumberPlusOne, "aNumberPlusOne");
+		  	}
+		}
+	]
+
+});
+
+p. following

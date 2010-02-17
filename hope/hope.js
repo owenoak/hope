@@ -29,6 +29,11 @@ if (isSupported == false) {
 	document.close();
 }
 
+// the last script in the file will be OUR script
+//	get a reference to it so we can auto-load from it
+var scripts = document.querySelectorAll("script");
+var hopeScript = scripts[scripts.length-1];
+
 
 var hope = {
 	//! browser name == "Firefox", "WebKit", "Chrome" or "Unknown"
@@ -101,12 +106,21 @@ var hope = {
 	LOADING 	: "LOADING",
 	LOADED 		: "LOADED",
 	LOAD_ERROR	: "ERROR",
+
+
+	/** For observing. */
+	ONCE 		: "ONCE",
+	BEFORE 		: "BEFORE",
+	AFTER 		: "AFTER",
 	
 	
 	/** List of well-known regexp patterns.  
 		Define in hope.pattern once rather than inline in your methods for speed and re-use.
 	 */
 	Patterns : { 
+		// match only a legal identifier
+		legalIdenfifier : /^[_$a-zA-Z][_$a-zA-Z0-9]*$/g,
+		
 		// characters that are not legal in an identifier
 		illegalIdentifierCharacters : /[^\w$_]/g,
 		runOfSpaces : /\s+/g,
@@ -118,6 +132,8 @@ var hope = {
 		
 		urlParser : /(((?:(\w*:)\/\/)(([^\/:]*):?([^\/]*))?)?([^?]*\/)?)(([^?#.]*)(\.[^?#]*)|[^?#]*)(\?[^#]*)?(#.*)?/,
 		mustacheMatcher : /\{\{(.*)\}\}/,
+		
+		jsComment : /\/\/.*/
 		
 	},
 
@@ -205,6 +221,25 @@ var hope = {
 					}
 					continue;
 				}
+				
+				// observation hookup
+				if (key == "on" && destination.observe) {
+					for (var i = 0, observation; observation = value[i++];) {
+						var event = observation.event, when = observation.when;
+						destination.observe(event, observation, when);
+					}
+					continue;
+				}
+				
+				// observation hookup via method
+				if (key.substr(0,2) == "on" && destination.observe) {
+					if (value == null) continue;
+					var event = key.substr(2);
+					destination.observe(event, value);
+					continue;
+				}
+				
+				
 				// normal property
 				if (destination[key] !== value && (overwrite || destination[key] === undefined)) {
 					destination[key] = value;
@@ -236,6 +271,8 @@ var hope = {
 	*/
 	get : function get(path, context, stopAtParent) {
 		if (context == null) context = hope.global;
+// TODO: short-circuit if no dots in path?
+
 		path = path.split(".");
 		var step, i = 0, last = (stopAtParent ? path.length - 1 : path.length), index;
 		while (i < last) {
@@ -588,56 +625,9 @@ var hope = {
 	docs : function docs(title) {
 		title = title || hope.cookie("hope.docs.lastTitle") || "The Plan";
 		hope.cookie("hope.docs.lastTitle", title);
-		var url = "{{docs}}#"+title;
-		window.open(hope.url(url).href,"hope-docs");
-	},
-
-	/** Hack in a loader for scripts of the 'hope' package.
-		The hope package will be initialized as a Package when scripts are all loaded.
-	*/
-	bootstrapHopePackage : function bootstrapHopePackage() {
-		console.time("load hope package");
-
-		var pkgUrl = "{{hope}}hope.package",
-			request
-		;
-		
-		// callback when the package file has loaded
-		function packageLoaded() {
-// TODO: check the return value -- if it's JS, just append it to the head
-			hope.pkgXML = (new DOMParser()).parseFromString(request.responseText, "text/xml").firstChild;
-			hope.pkgXML.setAttribute("src",  pkgUrl);
-
-			var scripts = hope.pkgXML.querySelectorAll("script[tag~=preload]"), 
-				script, i = -1, urls = [], hopePath = hope.Paths.hope
-			;
-			while(script = scripts[++i]) {
-				urls[i] = hopePath + script.getAttribute("src");
-			}
-			hope.loadScripts(urls, packageScriptsLoaded);
-		}
-
-		request = hope.ajax(pkgUrl, packageLoaded, {cache:hope.cacheScripts});
-		
-		// Callback when all package scripts have finished loading
-		function packageScriptsLoaded() {
-// TODO: move this into Package.js
-			// 1) create the hope package as a real Package
-			hope.pkgXML.setAttribute("src", pkgUrl);
-			hope.hopePackage = hope.xml.toJs(hope.pkgXML, "hope");
-			
-			// mark the script files as loaded
-			hope.hopePackage.markAsLoaded("preload", "Script");
-			// and load the rest of the preload stuff (templates and css)
-//			hope.hopePackage.loadTag("preload");
-			
-			// 2) grab any code inside the hopeScript and execute it
-			var script = hope.hopeScript.textContent;
-			if (script) hope.execute(script);
-			console.timeEnd("load hope package");
-		}
-	}
-	
+		var url = hope.url("{{docs}}#"+title);
+		window.open(url,"hope-docs");
+	}	
 };
 
 
@@ -731,6 +721,12 @@ hope.url = (
 			search += (search ? "&" : "?") + "_ts=" + hope.timestamp();
 			return prefix + search + (match[12] || "");
 		}
+		// take a base path and a url and merge them (no effect if the url is an absolute url)
+		expandUrl.relativeTo = function relativeTo(url, base) {
+			if (url.charAt(0) == "/" || url.indexOf("{{") > -1 ||
+				url.substr(0,4) == "http" || url.substr(0,4) == "file") return hope.url(url);
+			return hope.url(base + url);
+		}
 		return expandUrl;
 	}
 )(hope);
@@ -783,18 +779,15 @@ hope.extend(hope, {
 	*/
 	Paths : (function() {
 		var docLocation = hope.url.path(window.location.href);
-		// the last script we can find in the document is OUR script
-		var scripts = document.querySelectorAll("script");
-		hope.hopeScript = scripts[scripts.length-1];
-// TODO: I think this will break if hope does not come from this web server...
-		var	hopeScriptUrl = hope.url.path(docLocation + hope.hopeScript.getAttribute("src"));
+		var	hopeScriptUrl = hope.url.relativeTo(hopeScript.getAttribute("src"), docLocation);
+		var hopePath = hope.url.path(hopeScriptUrl);
 		var paths = {
 			document	: docLocation,
 			app			: docLocation,
-			hope		: hopeScriptUrl,
-			hopejs		: hopeScriptUrl+"js/",
-			lib			: hope.url(hopeScriptUrl + "../lib/"),
-			docs		: hope.url(hopeScriptUrl + "../docs/")
+			hope		: hopePath,
+			hopejs		: hopePath+"js/",
+			lib			: hope.url(hopePath + "../lib/"),
+			docs		: hope.url(hopePath + "docs/")
 		}
 		return paths;
 	})(),
@@ -836,7 +829,51 @@ hope.extend(hope, {
 	
 /*** BEGIN BOOTSTRAP LOADER ***/
 
-hope.bootstrapHopePackage();
+/** Hack in a loader for scripts of the 'hope' package.
+	The hope package will be initialized as a Package when scripts are all loaded.
+*/
+function bootstrapHopePackage() {
+	var pkgUrl = "{{hope}}hope.package",
+		request
+	;
+	
+	// callback when the package file has loaded
+	function packageLoaded() {
+// TODO: check the return value -- if it's JS, just append it to the head
+		hope.pkgXML = (new DOMParser()).parseFromString(request.responseText, "text/xml").firstChild;
+		hope.pkgXML.setAttribute("src",  pkgUrl);
+
+		var scripts = hope.pkgXML.querySelectorAll("script[tag~=preload]"), 
+			script, i = -1, urls = [], hopePath = hope.Paths.hope
+		;
+		while(script = scripts[++i]) {
+			urls[i] = hope.url.relativeTo(script.getAttribute("src"), hopePath);
+		}
+		hope.loadScripts(urls, packageScriptsLoaded);
+	}
+
+	request = hope.ajax(pkgUrl, packageLoaded, {cache:hope.cacheScripts});
+	
+	// Callback when all package scripts have finished loading
+	function packageScriptsLoaded() {
+		// create the hope package as a real Package
+		var pkg = hope.xml.toJs(hope.pkgXML, "hope");
+		
+		// mark the preload script files as loaded
+		pkg.markAsLoaded("preload", "script");
+		
+		// create an onload handler to execute the inline content in the hopeScript
+		var script = hopeScript.textContent;
+hope.execute(script);
+//		if (script) pkg.observe("load", function(){hope.execute(script)}, "preload");
+
+		// and load the rest of the preload stuff (templates and css)
+//		pkg.loadTag("preload");
+	}
+}
+
+
+bootstrapHopePackage();
 	
 /*** END BOOTSTRAP LOADER ***/
 

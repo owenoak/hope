@@ -1,0 +1,20 @@
+<html>
+<title>Hope parser test</title>
+<style>* {font-family:Tahoma;}</style>
+<script src='hope/hope.js'>
+	hope.loadScripts([
+		"{{hope}}english/ParseStream.js", 
+		"{{hope}}english/EnglishSyntaxTree.js", 
+		"{{hope}}english/EnglishTokenizer.js", 
+		"{{hope}}english/EnglishParser.js", 
+		"{{hope}}english/english syntax rules.js",
+	], function(){ 
+		tree();
+		console.warn(parser.translate("get me"));
+	});
+</script>
+
+<body>
+
+</body>
+</html>

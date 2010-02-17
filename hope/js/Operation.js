@@ -49,8 +49,7 @@ new hope.Class({
 
 			this.state = hope.LOADING;
 			var request = this.request = new XMLHttpRequest(), operation = this;
-			url = hope.url(this.url).href;
-			if (this.cacheResults != true) url = hope.timestamp(url);
+			var url = hope.url(this.url, this.cacheResults != true);
 			this.lastUrl = url;
 			request.open(this.method, url, hope.ASYNC);
 			
@@ -79,7 +78,7 @@ new hope.Class({
 					this.output = this.processOutput(request, this.outputType);
 					// call the callback on the callbackTarget
 					var target = this.callbackTarget || this;
-					target.notify(this.callbackName, this.output, this.name, target);
+					target.notify(this.callbackName, this.output, this.name);
 					// call our onCompleted handler
 					this.notify("onCompleted", this.output, this.name, this);
 					return;
@@ -158,7 +157,7 @@ new hope.Class({
 });
 
 
-/** OperationQueue -- execute a bunch of self-sufficinet operation instances, one after the other,
+/** OperationQueue -- execute a bunch of self-sufficient operation instances, one after the other,
 	and execute a callback when they are all done.
 	
 	Note that we currently take over the operations' onCompleted callback to go on to the next operation.

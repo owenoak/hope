@@ -1,0 +1,7 @@
+* get/getPath:
+** have hyper-efficient _get() which only does one level
+** get() defers to _get() if no dots
+** getPath calls _get() recursively?
+
+* set/setPath:
+** set() should defer to object.set() if defined?  will break on set("hope...")

@@ -1,0 +1,4 @@
+* have a way of navigating within a page:   #foobar#blammo ?
+* when reloading, scroll to same place as before
+* move event hash stuff to more general mechanism
+* Quick in-place editor  (just textfield for now)

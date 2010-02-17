@@ -1,0 +1,69 @@
+h2. Observation in hope
+* Most objects in hope are observable.  *ALL?*
+* Observables have 'events' which can be observed, either at a class level or at an instance level.
+
+h2. Observation api:
+* @observee.observe(event, observation, [when])@
+** event:
+*** event name, in present tense, no "on" (eg: "load", "mouseup", etc)
+*** case INsensitive
+** observation is an object with properties:
+*** callback: function or name of method to call
+**** If no callback, callback is the same as the name of the event (?)
+*** target:   who to apply callback to:
+**** type == object: arbitrary object
+**** type == string: string name of property on observee to use to get target
+**** null: observee itself
+*** [part]: event part to match
+**** If part is specified, we'll only send notifications for events which match the part
+*** when is when to place observation in the list of observations for this even
+**** hope.BEFORE == beginning of list
+**** hope.AFTER (default) == end of list
+
+* @observee.observeOnce(event, observation)@
+** Observes event once, then pulls itself out of the stack
+
+* @observee.ignore(event, [target])@
+** Stop observing an event.  If target specified, only removes events going to that target.
+
+* @observee.notify(event, [data], [part])@
+** Notify that an event has occurred.
+** event:  name of the event ("load", "mousemove", etc)
+** data:  data to send to observers about the event
+** part:  part the event occurred in
+
+* @observee.passEvent(event, [data], [part])@
+** Passes event to observee's container
+** Called by default for non-bubbling events during notify
+** Can be called manually during a particular observation's callback
+
+
+h2. Setting up events
+* During class definition, events the class responds to are specified as:
+	@events : { name : hope.YES, name2: hope.NO }@
+p. where the YES and NO refer to whether the event bubbles or not.  We keep a map
+of events/bubbling per class, for reference during @notify()@.  This is also good
+for introspection.
+* Events can be registered on *prototypes* by mixins, the class itself, etc.
+* For each event, we maintain an array of observations for that event.
+* When @observe()@ing, we always duplicate any existing array of observations, so events from superclass/prototype/etc will automatically appear in the list.
+
+
+
+new hope.Class({
+	name : "Person",
+	events : {
+		born : false,
+		sleep : false,
+		wake : false,
+		die : false
+	}
+});
+
+new hope.Bob({
+	on : [
+		{event:"sleep", callback:"sayZZZ"},		// target is this
+		{event:"wake", callback:function(){console.warn('Im up, Im up!')}	// target is this
+	]
+});
+

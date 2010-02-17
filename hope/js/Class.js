@@ -54,18 +54,10 @@ TODO:
 	@param [options.prototype]				Simple object of properties and methods to mixin to the prototype.
 	@param [options.setConstructor]			Name of constructor to use to create a set of instances.
 											(Note: it is up to instance methods to use this).
-	@param [options.autoRegister]			If true, we will collect instances.  Default is false.
-	@param [options.registry]				Object which holds instances.  
-											If registry is not defined but is set on Super, we will use that.
-											If not defined at all, one will be created.
 	@param [options.primaryKey]				If supplied, name of a property on each instance that is unique
 											for all instances that can ever be created (like a database primary key).
 											Note -- it is up to you to ensure this uniqueness!
 	@param [options.equals]					function(this, that) -- returns true if both items are semantically equal.
-	@param [options.caches]					If true, we create a unique cache for each object when created.
-											This cache will be based on its prototype's cache.
-											(If you use a custom constructor, you have to do this on your own).
-	@param [options.cache]					Prototype cache for the class.  Will be merged with super proto.
 	@param [options.onCreate]				Method to call to set up the class (after everything else is done).
 	@param [options.properties]				Array of names of instance properties to save (in addition to those of superclass).
 	@param [options.bindings]				Array of instance bindings (in addition to those of superclass).
@@ -91,16 +83,6 @@ hope.registerThing("Class", function Class(options){
 	// convert SuperClass to a class if they passed a string
 	if (Super == null) 					Super = hope.Class;
 	else if (typeof Super == "string") 	Super = hope.getThing(Super);	// will throw if not found
-	var caches = (options.caches !== undefined ? options.caches : Super.caches),
-		cache, 
-		cacheCloner
-	;
-	if (caches) {
-		cachePrototype = options.cache || {};
-		cacheCloner = function(props){};
-		if (Super.caches) cachePrototype = hope.protoClone(Super.prototype.cache, cachePrototype);
-		cacheCloner.prototype = cachePrototype;
-	}
 
 	// if they gave us a constructor, use that
 	if (options.hasOwnProperty("constructor")) {
@@ -112,19 +94,12 @@ hope.registerThing("Class", function Class(options){
 			// if hope.SKIP is passed, we're creating a prototype for a subclass -- bail immediately.
 			if (arguments[0] == hope.SKIP) return;
 	
-			// clone the prototype's cache if we're caching
-			if (cacheCloner) this.cache = new cacheCloner();
-			
 			// extend the instance with properties passed in
 			// after this, properties will be the unique properties actually set on this object
 			if (properties) properties = this.set(properties);
 
-			// auto-register the instance
-			// NOTE: this could present problems if any set() methods are dependent on instance.identity...
-			if (autoRegister) constructor.register(this);
-	
-			// call the onCreate routine with the property deltas
-			this.onCreate(properties);
+			// notify that we've been created
+			this.notify("create");
 		}
 	}
 
@@ -137,11 +112,7 @@ hope.registerThing("Class", function Class(options){
 
 	// set up the subclass -> Super relationship
 	Super.SubClasses.push(constructor);
-	constructor.Super = Super;
-
-	// remember if we cache
-	constructor.caches = caches;
-
+	constructor.superclass = Super;
 
 	// give the constructor a list to hold its subclasses
 	constructor.SubClasses = [];
@@ -158,14 +129,7 @@ hope.registerThing("Class", function Class(options){
 	//
 	// set up the collection of instances
 	//
-	
-	// the actual collection is the same for both paths
-	var registry = options.registry || Super.Registry;
-	if (registry) {
-		constructor.Instances = constructor.Registry = registry;
-	} else {
-		constructor.Instances = {};
-	}
+	constructor.Instances = {};
 	constructor.InstanceCount = 0;
 
 	// register the collection as hope[<plural>]
@@ -203,7 +167,7 @@ hope.registerThing("Class", function Class(options){
 	// create the new instance of the superclass's prototype, skipping the init routine
 	// this will automatically pick up all Super defaults
 	prototype = constructor.prototype = new Super(hope.SKIP);
-	prototype.constructor = constructor;
+	prototype.constructor = prototype.Class = constructor;
 	prototype.classType = type;
 	//
 	//	apply mixins
@@ -266,7 +230,14 @@ hope.extend(hope.Class, {
 		options.isA = hope.Class;
 		return new hope.Class(options);
 	},
-	
+
+	/** Identity function for instances of this class.
+		Override if you have different equality semantics.
+	 */
+	equals : function(a,b) {
+		return (a === b);
+	},
+		
 	/** Return a unique identifier for an instance.  Side effect: sets instance.__id__ to the identifier.
 		If your class defines a 'primaryKey', we'll use that 
 			(and it's up to you to make sure that is really unique within all instances!)
@@ -361,32 +332,6 @@ hope.extend(hope.Class, {
 	//	Prototype:  methods and properties common to all instances
 	//
 	prototype : {
-
-	
-		/** Identity function for instances of this class.
-			Override if you have different equality semantics.
-		 */
-		equals : function(a,b) {
-			return (a === b);
-		},
-		
-	
-		//
-		//	create/destroy/update semantics
-		//
-	
-		/** Do any initialization particular to your subclass. 
-			Default implementation:
-				- adds any properties passed in to the instance,
-				- registers us with our constructor
-				- and notifys 'onCreate'
-		*/
-		onCreate : function(properties) {},
-	
-		/** Do any custom destruction stuff particular to your subclass. */
-		onDestroy : function(properties) {},
-	
-	
 		/** Destroy this instance. 
 			Don't put custom logic here, implement "onDestroy" instead.
 		*/
@@ -430,7 +375,7 @@ hope.extend(hope.Class, {
 				// get the name of the setter to call
 				var setter = SETTERS[key] || getSetter(key);
 				if (typeof this[setter] != "function") {
-					this.set_unknown(key, value);
+					return this.set_unknown(key, value);
 				} else {
 					return this[setter](value);
 				}
@@ -464,7 +409,7 @@ hope.extend(hope.Class, {
 			} else if (this == this.constructor.prototype) {
 				return this.constructor + ".prototype";
 			} else if (this.__id__) {
-				return "["+this.__id__+"]";
+				return "["+this.constructor+" "+this.__id__+"]";
 			} else {
 				return "[a "+this.constructor+"]";
 			}

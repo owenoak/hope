@@ -48,7 +48,6 @@
 	
 	<set name='dynamic parts' type='elements' settable='false'/><!-- showif/enableif -->
 
-
 	<set name='templates' each='template' type='template'/>
 	<command name='expand [(name)] template [of (drawable)]'/>	<!-- default template is thing type -->
 

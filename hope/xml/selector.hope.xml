@@ -1,0 +1,13 @@
+<!-- css selector expressions -->
+<mixin name='selector'>
+	<condition for='element' syntax='(selector) and (selector)'/>
+	<condition for='element' syntax='(selector) or (selector)'/>
+	<condition for='element' syntax='where (css selector)'/>
+	<condition for='element' syntax='with attribute (attribute name)'/>
+	<condition for='element' syntax='where attribute (attribute name) (string condition)'/>
+	<condition for='element' syntax='with id (id)'/>
+	<condition for='element' syntax='where class (class name) (string condition)'/>
+	<condition for='element' syntax='which [has|have] class (class name)'/>
+	<condition for='element' syntax='which [does not have|do not have] class (class name)'/>
+	<condition for='element' syntax='of type (tag name)'/>
+</mixin>

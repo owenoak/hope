@@ -1,0 +1,10 @@
+h2. Todo
+* get pkg.loadTag("preload") working at end of hope bootstrapper
+* in bootstrap packageLoaded(), check for js vs xml return and just append as script
+* load stylesheets 
+* load templates
+
+h2. Think Through
+* cache semantics in <script> elements (how to store?)
+* @hope.getThing("package.hope")@ ?
+* have registry of scripts we've loaded before?

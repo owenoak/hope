@@ -1,0 +1,35 @@
+h2. Canvases in Hope
+* Canvases in hope are used as alternatives to drawing with HTML elements
+** pie menus, graph drawing, etc
+
+h2. Working with canvasi (do we need all of this?)
+* We treat Canvas drawables and HTML drawables interchangeably
+** Canvas drawables can have children (which MUST BE canvases)
+** HTML drawables can have children which can be canvases
+** We do hit detection in children automatically
+p.
+* We add methods to Canvas to make them easier to work with:
+** all element methods apply to canvas (see: "Element-ElementList":# )
+** rotate(), scale(), translate(), zoom()
+** path drawing (w/ SVG paths)
+** 'crisp' lines, offset 1/2 pixel to draw more cleanly
+** center point for rotation/translation
+** fill() / stroke() / erase() / mask() paths
+** placing images in the canvas / pulling images from the canvas
+
+
+h3. Canvas Styles
+* We define 'canvas styles', analagous to css styles:
+* We parse styles (either directly or from CSS) and create an optimized function to draw in that style
+* Styles are cached
+* You will typically pre-define a number of styles, then use them in your objects, for efficiency
+
+p.
+|_. css style|_. canvas meaning|
+|opacity|opacity for fill, border|
+|background-color|fill color, incl. 'transparent'|
+|background-image w/position, etc|background image for canvas|
+|border-color|stroke color|
+|border-width (single)|stroke width|
+|border-style| ??? |
+|gradients?| see: canvas/canvas/CanvasStyle.js |
