@@ -1,0 +1,777 @@
+@import "_macros.less";
+
+
+/*** Generic css for hope project ***/
+	* {
+		.borderBox;
+		.noselect;
+		.noTapHighlight;
+	}
+
+	table {	
+		font-size:inherit;
+		font-style:inherit;
+		font-variant:inherit;
+		font-weight:inherit;
+	}
+
+
+	/* make input boxes selectable */
+	input, textarea {
+		.selectable;
+	}
+	
+	/* add flex to an element by giving it a flex attribute */
+	*[flex]		 	{	.urgentFlex(1);	}
+	*[flex='1'] 	{	.urgentFlex(1);	}
+	*[flex='2'] 	{	.urgentFlex(2);	}
+	*[flex='3'] 	{	.urgentFlex(3);	}
+	*[flex='4'] 	{	.urgentFlex(4);	}
+	*[flex='5'] 	{	.urgentFlex(5);	}
+
+
+	/* center (inline-block) children by adding @center attribute */
+	*[center]		{	text-align:center;	}
+
+	// default-block stuff
+	section,
+	container,
+	header,
+	footer,
+	ui,
+	border,
+	group,
+	notice,
+	panel
+	{
+		position:relative;
+		display:block;
+	}
+
+	// inline-block things
+	inline,
+	output
+	{
+		display:inline-block;
+	}
+
+
+/*** horizontal and vertical stretch boxes ***/
+	vbox {
+		.box(vertical,stretch);
+	}
+
+	vbox * {
+		.boxChild;
+	}
+
+/*** Blocks of inline javascript or xml ***/
+	 js,
+	 properties,
+	 set,
+	 get,
+	 on
+	 {
+		display:none;
+	 }
+
+	dataset {	
+		display:block; 
+	}
+
+
+/*** Generic attribute stuff ***/
+
+
+	/* hide things with [visible=no] */
+	*[visible=no] {
+		display:none !important;
+	}
+
+
+
+	hcenter,
+	center
+	{
+		.hCenterBox;
+	}
+	
+	vcenter {
+		.vCenterBox;
+	}
+
+
+/*** generic mask, centers contents horizontally and vertically.  dark mask.  ***/
+	mask {
+		.vCenterBox;
+		width:100%; height:100%;
+		background-color:rgba(0,0,0,.3);
+	}
+	
+
+/*** ad-hoc tables ***/
+	row {
+		display:table-row !important;
+		width:100%;
+	}
+	
+	row > * {
+		display:table-cell !important;
+		vertical-align:top;
+	}
+
+
+/*** Search-style input ***/
+
+	input[appearance=search] {
+		.fieldShadow;
+		.round(12px);
+		border:0px;
+		background:url(theme/ios/searchFieldIcon.png) white no-repeat 5px center;
+		color:black;
+		min-height:24px !important;
+		padding-left:30px;
+		min-width: 80px;
+		max-width: 120px;
+	}
+
+	input[appearance=smallNumber] {
+		.fieldShadow;		
+		.round(5px);
+		-moz-appearance:none;
+		border:0px;
+		width:3em;
+		text-align:right;
+		vertical-align:top;
+		padding:5px;
+
+		font-size:1.3em;
+		margin-bottom:8px;
+	}
+
+
+
+
+/*** Action elements - basically, buttons ***/
+
+
+	/* default for actions is to look like buttons */
+		action {
+			position:relative;
+			display:inline-block;
+			border:1px outset black;
+			.round(10%);
+			padding:2px 5px;
+			cursor:pointer;
+			white-space:nowrap;
+			line-height:1.3em;
+		}
+	
+		action[icon] {
+			padding-left:40px;
+			background-position:left center;
+			background-repeat:no-repeat;
+		}
+
+		action[appearance=icon] {
+			background-color:none;
+			border:0px;
+			padding:0px;
+			vertical-align:baseline;
+		}
+
+
+		action[appearance=blue] {
+			height:32px !important; max-height:32px;
+			background-color:none;
+			.borderImage(url(theme/ios/blueBtn.png), 9 15 8 15, 9px 15px 8px 15px);
+			color:white;
+		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+		    padding:0px;
+		    margin-right:5px;
+		}
+
+		action[appearance=blue]:last-child {
+//		    margin-right:0px;		
+		}
+
+//		action[appearance=blue]:hover,
+		action[appearance=blue][selected] {
+			.borderImage(url(theme/ios/blueBtn-selected.png), 9 15 8 15, 9px 15px 8px 15px);
+		}
+
+		action[appearance=red] {
+			height:32px !important; max-height:32px;
+			background-color:none;
+			.borderImage(url(theme/ios/redBtn.png), 9 15 8 15, 9px 15px 8px 15px);
+			color:white;
+		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+		    padding:0px;
+		    margin-right:5px;
+		}
+
+
+		action[appearance=blueBar] {
+			height:32px !important; max-height:32px;
+			background-color:none;
+			.borderImage(url(theme/ios/blueBar.png), 6 1 6 1, 6px 1px 6px 1px);
+			color:white;
+		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+		    padding:3px 15px;
+		    line-height:13px;
+		}
+
+		action[appearance=blueBar]:first-child {
+			.borderImage(url(theme/ios/blueBar-start.png), 6 0 6 6, 6px 0px 6px 6px);
+		}
+		
+		action[appearance=blueBar]:last-child {
+			.borderImage(url(theme/ios/blueBar-end.png), 6 6 6 1, 6px 6px 6px 1px);
+		}
+
+		action[appearance=blueBar][selected] {
+			.borderImage(url(theme/ios/blueBar-selected.png), 9 15 8 15, 9px 15px 8px 15px);
+		}
+		action[appearance=blueBar][selected]:first-child {
+			.borderImage(url(theme/ios/blueBar-selected-start.png), 6 0 6 6, 6px 0px 6px 6px);
+		}
+		
+		action[appearance=blueBar][selected]:last-child {
+			.borderImage(url(theme/ios/blueBar-selected-end.png), 6 6 6 1, 6px 6px 6px 1px);
+		}
+
+
+		action[appearance=prev] {
+			overflow:hidden;
+			height:32px !important; max-height:32px;
+			.borderImage(url(theme/ios/bluePrev.png), 9 15 8 20, 9px 15px 8px 20px);
+			color:white;
+		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+		    padding:0px;
+		    margin-right:5px;
+		    width:90px;
+		    text-align:center;
+		}
+
+		action[appearance=prev]:hover {
+			.borderImage(url(theme/ios/bluePrev-selected.png), 9 15 8 20, 9px 15px 8px 20px);
+		}
+		
+		action[appearance=next] {
+			overflow:hidden;
+			height:32px !important; max-height:32px;
+			.borderImage(url(theme/ios/blueNext.png), 9 20 8 15, 9px 20px 8px 15px);
+			color:white;
+		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+		    padding:0px;
+		    margin-right:5px;
+		    width:90px;
+		    text-align:center;
+		}
+
+		action[appearance=next]:hover {
+			.borderImage(url(theme/ios/blueNext-selected.png), 9 20 8 15, 9px 20px 8px 15px);
+		}
+
+		.gecko action[appearance=blue],
+		.gecko action[appearance=prev],
+		.gecko action[appearance=next]
+		{
+		    line-height:13px;
+		}
+		
+		
+/*** very big green buttons ***/
+		action[appearance=bigGreen] {
+			height:50px !important; max-height:50px;
+			background-color:none;
+			.borderImage(url(theme/ios/bigGreen.png), 9 25 20 25, 9px 25px 20px 25px);
+			color:white;
+			font-size:24px;
+			font-weight:bold;
+		    text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0;
+		    padding:0px;
+		    margin-right:5px;
+		}
+
+
+/*** scroller for some content ***/
+
+	scroller {
+		display:block;
+		position:absolute;
+		-webkit-transition:-webkit-transform cubic-bezier(0,0,0.25,1) 0;
+		cursor:col-resize;
+		white-space:nowrap;
+	}
+	
+	.gecko scroller {
+		cursor:-moz-grab;
+	}
+	
+	scroller.scrolling * {
+		cursor:col-resize !important;
+	}
+
+	.gecko scroller.scrolling * {
+		cursor:-moz-grabbing !important;
+	}
+
+	scroll-thumb {
+		position:absolute;
+		top:0;left:0;
+		-webkit-transition-timing-function:cubic-bezier(0,0,0.25,1);
+		pointer-events:none;
+		-webkit-transition-delay:0;
+		-webkit-transition-property:-webkit-transform;
+		-webkit-transform:translate3d(0,0,0);
+		z-index:10;
+		background:rgba(0,0,0,0.5);
+	}
+
+	scroll-thumb.horizontal {
+		-webkit-border-radius:3px 2px;
+		min-width:6px;
+		min-height:5px
+	}
+	
+	scroll-thumb.vertical {
+		-webkit-border-radius:2px 3px;
+		min-width:5px;
+		min-height:6px
+	}
+	
+
+	scroll-thumb-mask {
+		position:absolute;
+		z-index:10;
+		pointer-events:none;
+		overflow:hidden;
+		opacity:0;
+		-webkit-transition-duration:300ms;
+		-webkit-transition-delay:0;
+		-webkit-transition-property:opacity;
+	}
+	
+	scroll-thumb-mask.horizontal {
+		bottom:2px;
+		left:2px;
+		right:7px;
+		height:5px;
+	}
+
+	scroll-thumb-mask.vertical {
+		top:2px;
+		right:2px;
+		bottom:7px;
+		width:5px;
+	}
+	
+	
+	
+/*** Sections: can have header and footers ***/
+	section {
+		.box(vertical,stretch);
+	}
+
+	section > * {
+		.boxChild;
+	}
+
+	// container is the main body of a section, etc.  It sometimes scrolls.
+	section > container {
+		.urgentFlex;
+		width:100%;
+	}
+	
+	section > container > section {
+		display:block;
+		height:100%; 
+	}
+	
+	
+	
+/*** Stack: section which shows one item at a time ***/
+	stack {
+		display:block;
+		width:100%; height:100%;
+	}
+	
+	// container is the main body of a section, etc.  It sometimes scrolls.
+	stack > container {
+		width:100%; height:100%;
+	}
+
+	// container is the main body of a section, etc.  It sometimes scrolls.
+	stack > container > section {
+		width:100%; height:100%;
+	}
+
+	
+
+
+
+
+/*** Menu elements ***/
+// menu outer element
+	contextmenu {
+		left:0;top:0;
+		position:absolute;
+		z-index:10000;
+		background:white;
+		overflow:hidden;
+		display:inline-block;
+		-moz-padding-start:0;
+		-webkit-padding-start:0;
+		list-style-type:none;
+		margin:0;
+		background-color:#999;
+		border:3px solid #999;
+		.round(8px);
+		.shadow();
+	}
+
+	.mobile contextmenu {
+		font-size:150%;	
+	}
+
+// separator between menu items
+	contextmenu separator {
+		display:block;
+		height:2px; overflow:hidden;
+	}
+
+// group of menuitems -- no visual appearance, use to show/hide/etc a bunch at once
+	contextmenu group {
+		display:block;
+	}	
+
+// make actions in popup menus rows with horizontal separators
+	contextmenu action {
+		display:block;
+		width:100%;
+		background-color:white;
+		border-color:transparent;
+		margin:1px 0px;
+		.round();
+		padding:5px 15px; 
+	}
+	
+	contextmenu action:hover {
+		background-color:rgb(255,233,51);
+	}
+
+	contextmenu action:active {
+		background-color:lightblue;
+	}
+
+	contextmenu action[disabled] {
+		opacity:.15;
+		background-color:white !important;
+		cursor:default;
+	}
+
+
+	
+// menus with icons
+	contextmenu action[icon] {
+		background-repeat:no-repeat;
+		background-position:6px center;
+		padding-left:29px;
+	}
+
+// menus with checks
+	contextmenu[showchecks] action {
+		padding-right:10px;
+		border-right-width:20px;
+	}
+
+	contextmenu action[selected] {
+		.borderImage(url(theme/icons/menuChecked.png), 2 20 0 0, 2px 20px 0px 0px,stretch);
+	}
+
+
+
+/*** Toolbar ***/
+
+
+	toolbar {
+		.box(horizontal,center);
+		width:100%;
+		padding:0px 10px;
+	}
+	toolbar > * {
+		.boxChild;
+	}
+
+	toolbar[appearance=black] {
+		.boxAlign(center);
+		border-width:0 6px;
+		.borderImage(url(theme/ios/topToolbar.png), 0 6 0 6, 0 6px);
+		height:43px;
+		width:100%;
+		padding:0px 10px;
+	}
+
+
+/*** Spring is a spacer which uses flex to greedily take up space ***/
+	spring {
+		.urgentFlex(1);
+	}
+
+
+/*** Tabs and TabBar ***/
+
+
+	tabgroup {
+		.box(vertical,stretch);
+		width:100%; height:100%;
+	}
+	tabgroup > * {
+		.boxChild;
+	}
+
+	tabgroup > container {
+		.urgentFlex;
+		width:100%; min-height:100%;
+		overflow:visible;
+	}
+	
+	tabgroup > toolbar {}
+	
+	tabgroup > container > section {}
+
+	tabgroup > container > section > container {}
+
+	/* tabselector holds a bunch of actions which select tabgroup children */
+	toolbar[appearance=black] tabselector {
+		display:inline-block;
+	}
+	
+	tabselector tab {
+		display:inline-block;
+		height:32px;
+		color:white;
+	    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+		.borderImage(url(theme/ios/blueBar.png), 6 1 6 1, 6px 1px 6px 1px);
+		padding:3px 20px;
+		cursor:pointer;
+	}
+	
+	tabselector tab:first-child {
+		padding-left:15px;
+		.borderImage(url(theme/ios/blueBar-start.png), 6 0 6 6, 6px 0px 6px 6px);
+	}
+	
+	tabselector tab:last-child {
+		padding-right:15px;
+		.borderImage(url(theme/ios/blueBar-end.png), 6 6 6 1, 6px 6px 6px 1px);
+	}
+
+
+	// different graphics for selected mode
+	tabselector tab[selected] {
+		.borderImage(url(theme/ios/blueBar-selected.png), 6 1 6 1, 6px 1px 6px 1px);
+	}
+
+	tabselector tab[selected]:first-child {
+		.borderImage(url(theme/ios/blueBar-selected-start.png), 6 0 6 6, 6px 0px 6px 6px);
+	}
+	
+	tabselector tab[selected]:last-child {
+		.borderImage(url(theme/ios/blueBar-selected-end.png), 6 6 6 1, 6px 6px 6px 1px);
+	}
+
+
+
+/*** Overlay ***/
+
+	.horizontal overlay {
+		height:768px;
+	}
+
+	.vertical overlay {
+		height:1024px;
+	}
+
+
+	overlay {
+		position:absolute;		
+		left:0px; top:0px;
+		width:100%; height:100%;
+		z-index:10000;
+	}
+	
+	
+	overlay > mask > border {
+		position:relative;
+		display:block;
+		width:700px;
+		.round(20px);
+		min-height:200px;
+		max-height:740px;
+//		overflow:hidden;
+	}
+
+	overlay > mask > border > close {
+		display:block;
+		position:absolute;
+		width:42px; height:42px;
+		left:-20px; top:-20px;
+		background:url(theme/ios/overlay-close.png) no-repeat;
+		z-index:10;
+		cursor:pointer;
+	}
+	
+	overlay.noclose > mask > border > close {
+		display:none;
+	}
+
+	
+	overlay[appearance=white] > mask > border {
+		.shadow(5px,5px);
+		background-color:white;
+	}
+
+	overlay[appearance=white].hasHeader > mask > border > header {
+		border-bottom:1px solid #999;
+	}
+
+
+	overlay[appearance=blue] > mask > border {
+		.shadow(5px,5px);
+		background-color:#1b1e2b;
+		border:3px solid white;
+	}
+
+	overlay[appearance=blue].hasHeader > mask > border > header {
+		position:relative;
+		top:-4px;
+		.roundTop(20px);
+		background-color:white;
+	}
+
+	overlay[appearance=blue] > mask > border > container {
+		padding:10px;
+	}
+	
+
+
+/*** notice panels ***/
+	notice {
+		display:block;
+		text-align:center;
+		font-weight:bold;
+		font-size:1.5em;
+	}
+
+
+/*** grey panel ***/
+	panel[appearance=grey] {
+		background-color:#40434f;
+		.round(5px);
+	}
+
+	panel[appearance=grey] toolbar {
+		.roundTop(5px);
+		height:44px;
+		background-image:url(theme/ios/greybar.png);
+	}
+
+	panel[appearance=grey] toolbar action {
+		border:0px;
+		margin-left:10px;
+		margin-right:-5px;
+	}
+	
+	
+	panel[appearance=grey] toolbar label {
+		text-shadow: rgba(255, 255, 255, 0.4) 1px 1px 0;
+		font-size:1.6em;
+		color:#717880;
+		font-weight:bold;
+		text-align:center;
+	}
+
+
+
+
+/*** Icons ***/
+
+	/* icon element -- use this inside a button with border-image */
+		icon {
+			display:inline-block;
+			position:relative;
+			width:16px; height:16px;
+			background-position:left center;
+			background-repeat:no-repeat;		
+			.backgroundFullWidth;
+			cursor:pointer;
+		}
+		
+		icon[disabled] {
+			opacity:.1;
+			cursor:default;
+		}
+
+	/* Icon backgrounds -- attach by having a [icon] attribute on some element.
+	   It's up to your calling context to set where/how the icon shows up.			*/
+		
+		*[icon=add]				{	background-image:url(theme/icons/add.png);	}
+		*[icon=down]			{	background-image:url(theme/icons/down.png);	}
+		*[icon=horizontal]		{	background-image:url(theme/icons/horizontal.png);	}
+		*[icon=large] 			{	background-image:url(theme/icons/large.png);	}
+		*[icon=left]			{	background-image:url(theme/icons/left.png);	}
+		*[icon=medium] 			{	background-image:url(theme/icons/medium.png);	}
+		*[icon=moveBackwards]	{	background-image:url(theme/icons/moveBackwards.png);	}
+		*[icon=moveForwards]	{	background-image:url(theme/icons/moveForwards.png);	}
+		*[icon=moveToBack]		{	background-image:url(theme/icons/moveToBack.png);	}
+		*[icon=moveToFront]		{	background-image:url(theme/icons/moveToFront.png);	}
+		*[icon=refresh]			{	background-image:url(theme/icons/refresh.png);	}
+		*[icon=remove] 			{	background-image:url(theme/icons/remove.png);	}
+		*[icon=right]			{	background-image:url(theme/icons/right.png);	}
+		*[icon=small] 			{	background-image:url(theme/icons/small.png);	}
+		*[icon=save] 			{	background-image:url(theme/icons/save.png);	}
+		*[icon=up]				{	background-image:url(theme/icons/up.png);	}
+		*[icon=vertical]		{	background-image:url(theme/icons/vertical.png);	}
+		*[icon=window]			{	background-image:url(theme/icons/window.png);	}
+		*[icon=windowChart]		{	background-image:url(theme/icons/windowChart.png);	}
+		*[icon=windowSwitch]	{	background-image:url(theme/icons/windowSwitch.png);	}
+		*[icon=windowTile]		{	background-image:url(theme/icons/windowTile.png);	}
+
+
+		*[icon=arrowRight]		{	background-image:url(theme/ios/arrowRightBlue.png);	
+									width:29px; height:29px;
+								}
+		*[icon=arrowLeft]		{	background-image:url(theme/ios/arrowLeftBlue.png);	
+									width:29px; height:29px;
+								}
+
+		*[icon=minusRed]		{	background-image:url(theme/ios/minusRed.png);	
+									width:29px; height:29px;
+								}
+		*[icon=minusRed].vertical	{	background-image:url(theme/ios/minusRedVertical.png);	}
+
+		*[icon=minusBlue]		{	background-image:url(theme/ios/minusBlue.png);	
+									width:29px; height:29px;
+								}
+		*[icon=plusBlue]		{	background-image:url(theme/ios/plusBlue.png);	
+									width:29px; height:29px;
+								}
+
+
+		*[icon=greySearch]		{	background-image:url(theme/ios/greySearch.png);	
+									width:43px; height:31px;
+								}
+		*[icon=greyExpand]		{	background-image:url(theme/ios/greyExpand.png);	
+									width:43px; height:31px;
+								}
+		*[icon=greyCollapse]	{	background-image:url(theme/ios/greyCollapse.png);	
+									width:43px; height:31px;
+								}
+		*[icon=greyZoomIn]		{	background-image:url(theme/ios/greyZoomIn.png);	
+									width:43px; height:31px;
+								}
+		*[icon=greyZoomOut]		{	background-image:url(theme/ios/greyZoomOut.png);	
+									width:43px; height:31px;
+								}

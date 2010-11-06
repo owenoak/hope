@@ -1,6 +1,0 @@
-<mixin name='handles'/>
-	<property name='showing handles' type='flag' remember='no'/>
-	<property name='handle style' type='style'/><!-- visible/hidden,width,shape,color,crisp -->
-	<command name='show handles'/>
-	<command name='hide handles'/>
-</mixin>

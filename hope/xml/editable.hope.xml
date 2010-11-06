@@ -1,8 +1,0 @@
-<attribute name='editable'>
-	<property name='editable' type='flag' default='false'/><!-- If true, we'll edit when clicked. -->	
-	<property name='editing' type='flag' default='false' save='no'/><!-- If true, we are currently editing. -->	
-	<event name='editing'/><!-- Called before editing starts.  Sets flag 'Editing' on outer element. -->
-	<event name='edited'/><!-- Called when editing completes. -->
-	
-	<list name='tools' each='tool' type='tool'/><!-- tools which can be used to edit the editable -->
-</attribute>

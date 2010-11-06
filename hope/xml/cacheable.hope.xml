@@ -1,3 +1,0 @@
-<mixin name='cacheable'>
-	<set name='cache' each='cached' settable='false'/>
-</mixin>

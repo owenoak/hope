@@ -1,9 +1,0 @@
-<thing type='path'>
-	<property name='points'/>
-	<property name='auto scale' type='flag' default='true'/>
-	<property name='scale position' type='flag' default='false'/>
-	<expression name='point matrix' cache='true'/>
-	<command name='move (ordinal with "point") to (point)'/>
-	<command name='move (ordinal with "control point") to (point)'/>
-	<format name='string'/>
-</thing>

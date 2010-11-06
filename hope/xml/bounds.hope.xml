@@ -1,9 +1,0 @@
-<!-- bounds are actual numbers, calculated from (possibly) relative values -->
-<type name='bounds'>
-	<property name='left' type='number'/>
-	<property name='top|upper' type='number'/>
-	<property name='right' type='number'/>
-	<property name='bottom|lower' type='number'/>
-	<property name='width' type='number'/>
-	<property name='height' type='number'/>
-</type>

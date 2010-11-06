@@ -1,0 +1,194 @@
+/* including macros */
+	// border-box styling
+	.borderBox() {
+		-moz-box-sizing:border-box;
+		-webkit-box-sizing:border-box;
+		box-sizing:border-box;
+	}
+	
+ 
+ 	// make things non-selectable
+ 	.noselect() {
+		-moz-user-select:-moz-none;
+		-webkit-user-select:none;
+
+ 	}
+ 	
+ 	.noTapHighlight {
+		-webkit-tap-highlight-color: rgba(0,0,0,0); 	
+ 	}
+ 
+ 	// make things explicitly selectable
+ 	.selectable() {
+		-moz-user-select:text;
+		-webkit-user-select:text;
+ 	}
+ 
+ 
+ 	// round corners in a cross-platform way
+	.round(@radius:5px) {
+		-webkit-border-radius: @radius;
+		-moz-border-radius: @radius;
+		border-radius: @radius;	
+	}
+
+	.roundTop(@radius:5px) {
+		-moz-border-radius-topright: @radius;
+		-moz-border-radius-topleft: @radius;
+		-webkit-border-top-right-radius: @radius;
+		-webkit-border-top-left-radius: @radius;
+	}
+
+	.roundBottom(@radius:5px) {
+		-moz-border-radius-bottomright: @radius;
+		-moz-border-radius-bottomleft: @radius;
+		-webkit-border-bottom-right-radius: @radius;
+		-webkit-border-bottom-left-radius: @radius;
+	}
+
+
+	// normal shadow
+	.shadow(@size:3px, @blur:5px, @color:rgba(0, 0, 0, 0.4)) {
+		  box-shadow: @size @size @blur @color;
+		  -moz-box-shadow: @size @size @blur @color;
+		  -webkit-box-shadow: @size @size @blur @color;
+	}
+
+ 	// inset shadow
+ 	.fieldShadow() {
+		-moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
+		-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
+ 	}
+ 	
+	// poster shadow: both inset and outset
+	.posterShadow() {
+		  -moz-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.9), inset 2px 0px 5px rgba(0, 0, 0, 0.6;
+		  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.9), inset 2px 0px 5px rgba(0, 0, 0, 0.6);
+	}
+
+
+	// border image
+	.borderImage(@url, @size, @borderSize, @repeat:round) {
+		border-color:transparent;
+		border-width:@borderSize;
+		border-image:@url @size @repeat;
+		-moz-border-image:@url @size @repeat;
+		-webkit-border-image:@url @size @repeat;
+	}
+	
+	// rotate a certain number of degrees
+	.rotate(@degrees) {
+		-moz-transform:rotate(@degrees);
+		-webkit-transform:rotate(@degrees);
+	}
+
+	// translate a bit
+	.translate(@left:0, @top:0) {
+		-moz-transform:translate(@left, @top);
+		-webkit-transform:translate(@left, @top);
+	}
+	
+	
+	
+	// vertical stretch box
+	.box(@direction:vertical, @align:start) {
+		position:relative;
+
+		display: box !important;
+		display: -webkit-box !important;
+		display: -moz-box !important;
+
+		box-orient: @direction;
+		-webkit-box-orient: @direction;
+		-moz-box-orient: @direction;
+
+		box-align: @align;
+		-webkit-box-align: @align;
+		-moz-box-align: @align;		
+	}
+
+
+	.boxDirection(@direction:vertical) {
+		box-orient: @direction;
+		-webkit-box-orient: @direction;
+		-moz-box-orient: @direction;
+	}
+	
+	.boxAlign( @align:start) {
+		box-align: @align;
+		-webkit-box-align: @align;
+		-moz-box-align: @align;		
+	}
+
+	.boxPack(@pack:center) {
+		box-pack: @pack;
+		-webkit-box-pack: @pack;
+		-moz-box-pack: @pack;
+	}
+	
+	.boxChild {
+		display: block;
+		position:relative;
+		box-flex: 0;
+		-webkit-box-flex: 0;
+		-moz-box-flex: 0;
+	}
+	
+	.hCenterBox {
+		.box(horizontal,start);
+		.boxPack(center);
+		.flex(0);
+	}
+
+	.vCenterBox {
+		.box(vertical,center);
+		.boxPack(center);
+		.flex(0);
+	}
+	
+	// box flex
+	.flex(@amount:1) {
+		-webkit-box-flex: @amount;
+		-moz-box-flex: @amount;
+		box-flex: @amount;
+	}
+
+	.urgentFlex(@amount:1) {
+		-webkit-box-flex: @amount !important;
+		-moz-box-flex: @amount !important;
+		box-flex: @amount !important;
+	}
+
+	.noflex {
+		.flex(0);
+	}
+	
+	.spring {
+		.flex(1);
+	}
+
+
+
+	// background adapts to element size
+	.backgroundFullWidth {
+		background-size: 100% 100%;
+		-moz-background-size: 100% 100%;
+		-webkit-background-size: 100% 100%;
+	}
+
+	.backgroundCover {
+		background-repeat:no-repeat;
+		background-size: cover;
+		-moz-background-size: cover;
+		-webkit-background-size: 100% 100%;
+		-webkit-background-size: cover;
+	}
+
+	.backgroundContain {
+		background-repeat:no-repeat;
+		background-size: contain;
+		-moz-background-size: contain;
+		-webkit-background-size: 100% 100%;
+		-webkit-background-size: contain;
+	}
+

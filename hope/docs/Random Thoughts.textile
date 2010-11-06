@@ -1,9 +1,0 @@
-h1. Random Thoughts:
-
-h1. Think through:
-* Augment natives?
-** Anyone who cares is already going to hate us
-** Syntax is so much nicer
-* Define "string", "boolean" etc as top-level things so we can do
-	@if (typeof x === string)...@
-* 

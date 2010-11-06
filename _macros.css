@@ -1,0 +1,76 @@
+/* including macros */
+.noTapHighlight {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.boxChild {
+  display: block;
+  position: relative;
+  box-flex: 0;
+  -webkit-box-flex: 0;
+  -moz-box-flex: 0;
+}
+.hCenterBox {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: horizontal;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-align: start;
+  -webkit-box-align: start;
+  -moz-box-align: start;
+  box-pack: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -webkit-box-flex: 0;
+  -moz-box-flex: 0;
+  box-flex: 0;
+}
+.vCenterBox {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-align: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  box-pack: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -webkit-box-flex: 0;
+  -moz-box-flex: 0;
+  box-flex: 0;
+}
+.noflex {
+  -webkit-box-flex: 0;
+  -moz-box-flex: 0;
+  box-flex: 0;
+}
+.spring {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+}
+.backgroundFullWidth {
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+  -webkit-background-size: 100% 100%;
+}
+.backgroundCover {
+  background-repeat: no-repeat;
+  background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: 100% 100%;
+  -webkit-background-size: cover;
+}
+.backgroundContain {
+  background-repeat: no-repeat;
+  background-size: contain;
+  -moz-background-size: contain;
+  -webkit-background-size: 100% 100%;
+  -webkit-background-size: contain;
+}

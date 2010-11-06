@@ -1,6 +1,0 @@
-<mixin name='showing points'/>
-	<property name='showing points' type='flag' remember='no'/>
-	<property name='point style' type='point style'/>
-	<command name='show points'/>
-	<command name='hide points'/>
-</mixin>

@@ -1,6 +1,0 @@
-<type name='percent'>
-	<expression syntax='(number)'/>
-	<expression syntax='(number)%'/>
-	<format type='number' default='true'/>
-	<format type='number'/>
-</type>
