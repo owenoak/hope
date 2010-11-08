@@ -35,6 +35,10 @@ hope.extend(Date, {
 		} else {
 			var date = Date.parse(string);
 			if (!isNaN(date)) return new Date(date);
+			// hack for Safari which doesn't have YYYY-MM-DD parsing
+			string = string.replace(/-/g,"/");
+			date = Date.parse(string);
+			if (!isNaN(date)) return new Date(date);
 		}
 		return NaN;
 	},
