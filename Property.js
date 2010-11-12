@@ -212,7 +212,7 @@ function Preference(options) {
 
 			// if there's an onChange handler, call it after a short delay 
 			//	in case we have an initial value.
-			if (onChange) setTimeout(function(){onChange.call(it, it[key])},1);
+			if (onChange) setTimeout(function(){onChange.call(it, it[key])}, 1);
 		}
 	});
 }

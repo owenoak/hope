@@ -300,7 +300,7 @@ var listMethods = {
 			return results;
 		} else {
 			while (++index < last) {
-				this[index] = newValue;
+				this[index][prop] = newValue;
 			}
 			return this;
 		}
@@ -309,6 +309,18 @@ var listMethods = {
 	// sort by a particular property
 	sortBy : function(property, direction) { 
 		throw SyntaxError("list.sortBy not implemented")
+	},
+
+
+	// given a 2-dimensional list, flatten into a single list
+	flatten : function() {
+		var results = [];
+		for (var i = 0, last = this.length, list; i < last; i++) {
+			list = this[i];
+			if (! (list instanceof Array)) continue;
+			results.push.apply(results, list);
+		}
+		return results;
 	},
 
 	//
@@ -340,15 +352,20 @@ Array.toRef = function(){return "Array"};
 hope.extendIf(Array.prototype, listMethods);
 
 // make apply methods for each specified instance method
-//	return value if each method is the list, for chaining
+//	overall return value of is the list, for chaining
 List.makeAppliers = function(constructor, methods, firstOnly) {
 	methods = methods.split(",");
 	var proto = constructor.prototype, index = -1, method;
 	while (method = methods[++index]) {
-		proto[method] = (firstOnly ? new Function("if (this[0] != null && typeof this[0]."+method+" === 'function') "
-												 +"return this[0]."+method+".apply(this[0], arguments);")
-								   : new Function("this.apply('"+method+"',arguments);return this")
-						);
+		proto[method] = (firstOnly 
+			? new Function("if (this[0] != null && typeof this[0]."+method+" === 'function') "
+							 +"return this[0]."+method+".apply(this[0], arguments);")
+		    : new Function("this.forEach(function(it){\
+			    				var fn = it['"+method+"'];\
+			    				if (typeof fn === 'function') fn.apply(it,arguments);\
+			    			});\
+		    				return this")
+		);
 	}
 }
 
@@ -356,12 +373,12 @@ List.makeAppliers = function(constructor, methods, firstOnly) {
 List.makeAccessors = function(constructor, properties, firstOnly) {
 	properties = properties.split(",");
 	var proto = constructor.prototype, index = -1, prop;
-	while (method = properties[++index]) {
-		Object.defineProperty(proto, method, new Property({
+	while (prop = properties[++index]) {
+		Object.defineProperty(proto, prop, new Property({
 			get : (firstOnly ? new Function("if (this[0] != null) return this[0]['"+prop+"']")
 							: new Function("return this.property('"+prop+"');")
 				  ),
-			set : new Function("value","return this.setProperty('"+prop+"',value);")
+			set : new Function("value","return this.property('"+prop+"',value);")
 		}));
 	}
 }

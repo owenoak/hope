@@ -24,15 +24,15 @@ hope.setGlobal("Resizable", Resizable);
 
 
 Resizable.resizableEventMap = {
-	"onResizeStart" : "mousedown",
-	"onMouseMove" : "mousemove",
-	"onMouseOut" : "mouseout"
+	"mousedown" : "onResizeStart",
+	"mousemove" : "onMouseMove",
+	"mouseout" : "onMouseOut"
 }
 
 Resizable.bodyEventMap = {
-	"onResizing" : "mousemove",
-	"onResizeEnd" : "mouseup",
-//	"onResizeKey" : "keypress"
+	"mousemove" : "onResizing",
+	"mouseup" : "onResizeEnd",
+//	"keypress" : "onResizeKey"
 }
 
 
@@ -115,7 +115,9 @@ Resizable.properties = {
 		// if moving from the center, we're cloneable and the alt/option key is down
 		//	create a clone and move it instead.
 		if (element.cloneable && edge === "C" && event.altKey) {
-			element = element.clone(true);
+			var clone = element.clone(true);
+			element.parentNode.append(clone);
+			element = clone;
 		}
 
 		var resize = element._resizeInfo = {
@@ -129,6 +131,7 @@ Resizable.properties = {
 			cursor 		: (this._resizeMoveInfo ? this._resizeMoveInfo.cursor 
 												: element.style.cursor)
 		}
+		if (clone) resize.cloned = true;
 
 		// set resize.N true if we should resize the north side, etc
 		for (var i = 0; i < edge.length; i++) {
@@ -296,11 +299,14 @@ Resizable.properties = {
 		if (!resize) return;
 		
 		// clear the body events
-		document.body.unhook(Resizable.bodyEventMap);
+		document.body.unhook(Resizable.bodyEventMap, this);
 		
 		// reset the cursor
 		this.style.cursor = resize.cursor;
 		document.body.style.cursor = "";
+
+//HACK
+		if (resize.cloned) this.prompt();
 
 		// clear the resize data
 		delete this._resizeInfo;

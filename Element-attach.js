@@ -123,6 +123,7 @@ Element.prototype.extend({
 	
 	// this element is being destroyed, clean up any circular references
 	destroy : function() {
+		this.parentNode.removeChild(this);
 		if (this.dataId) delete ELEMENT_INSTANCE_DATA[this.dataId];
 		this.constructor = this._adapter = null;
 	},

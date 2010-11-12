@@ -7,9 +7,10 @@ Script.require("{{hope}}Element.js,{{hope}}List.js", function(){
 	new List.Subclass("ElementList");
 
 	// give ElementList the same api as Element
-	List.makeAppliers(ElementList, "on");
+	List.makeAppliers(ElementList, "on,attr,destroy");
 	List.makeAppliers(ElementList, "select,selectAll,matches",true);
-	List.makeAccessors(ElementList, "innerHTML,classList,className,style,bg,radius", true);
+	List.makeAccessors(ElementList, "width,height,left,top,opacity");
+	List.makeAccessors(ElementList, "innerHTML,className,style,bg,radius", true);
 	
 	// give the native NodeList and HTMLElement array-like-things the ElementList functionality
 	// NOTE: some of it (eg: remove) doesn't work...

@@ -40,6 +40,11 @@ hope.onReady = function onReady(things, onready, onerror, options) {
 		onready = hope.bind(onready, options.scope, options.args);
 	if (onerror && options.scope) 		onerror = hope.bind(onerror, options.scope);
 
+	// check to make sure all things haven't already finished
+	//	if they have, just call the handler already
+//	if (hope.isReady(things)) return onready();
+//	if (hope.isReadyError(things)) return onerror();
+
 	var target = { 	things:things, 
 					onready:onready, 
 					onerror:onerror 
@@ -72,7 +77,7 @@ hope.isReady = function(things) {
 
 hope.isReadyError = function(things) {
 	if (typeof things === "string" && things.indexOf(",") > -1) things = things.split(",");
-	return _checkReady(things, error);
+	return _checkReady(things, "error");
 }
 
 function _checkReady(things, value) {

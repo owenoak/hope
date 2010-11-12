@@ -74,6 +74,10 @@
   -webkit-background-size: 100% 100%;
   -webkit-background-size: contain;
 }
+.clearAppearance {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
 /*** Generic css for hope project ***/
 * {
   -moz-box-sizing: border-box;
@@ -249,6 +253,8 @@ row > * {
 }
 /*** Search-style input ***/
 input[appearance=search] {
+  -moz-appearance: none;
+  -webkit-appearance: none;
   -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
   -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
   -webkit-border-radius: 12px;
@@ -261,6 +267,10 @@ input[appearance=search] {
   padding-left: 30px;
   min-width: 80px;
   max-width: 120px;
+}
+input[type=search] {
+  font-size: 18px;
+  width: 180px;
 }
 input[appearance=smallNumber] {
   -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -457,7 +467,7 @@ scroller {
   display: block;
   position: absolute;
   -webkit-transition: -webkit-transform cubic-bezier(0, 0, 0.25, 1) 0;
-  cursor: col-resize;
+  cursor: move;
   white-space: nowrap;
 }
 .gecko scroller {
@@ -538,6 +548,7 @@ section > container {
   -moz-box-flex: 1 !important;
   box-flex: 1 !important;
   width: 100%;
+  min-height: 100%;
 }
 section > container > section {
   display: block;

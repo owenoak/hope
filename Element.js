@@ -467,7 +467,7 @@ console.warn("setting element.elements not yet defined");
 		this.innerHTML = "";
 	},
 	
-
+	
 	//
 	//	Clone a node and add to our parent, immediately after us.  
 	//	Use this in preference to the built-in cloneNode.

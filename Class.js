@@ -75,7 +75,7 @@ function Class(id, options) {
 	// NOTE: we do this BEFORE setting protoProps so props will override
 	if (mixins) {
 		mixins = hope.get.each(mixins.split(","));
-		var i = 0, mixin;
+		var i = -1, mixin;
 		while (mixin = mixins[++i]) {
 			if (mixin.mixinTo)						mixin.mixinTo(constructor);
 			else if (typeof mixin === "function") 	mixin(constructor);
