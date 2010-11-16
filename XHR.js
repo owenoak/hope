@@ -79,7 +79,8 @@ var XHR = {
 	_makeReadyStateFn : function(request, url, callback, errback, scope) {
 		request.onreadystatechange = function() {
 			if (request.readyState !== 4) return;
-			if (request.status === 200) {
+			// iOS local XHR returns status "0" for complete
+			if (request.status === 200 || request.status == 0) {
 				var response = request.responseText;
 				if (callback) {
 					callback.call(scope, response, request);
