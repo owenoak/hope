@@ -47,12 +47,21 @@
 	}
 
 
-	// normal shadow
-	.shadow(@size:3px, @blur:5px, @color:rgba(0, 0, 0, 0.4)) {
-		  box-shadow: @size @size @blur @color;
-		  -moz-box-shadow: @size @size @blur @color;
-		  -webkit-box-shadow: @size @size @blur @color;
+	// normal shadow specified in pieces
+	.shadow(@x:3px, @y:3px, @blur:5px, @color:rgba(0, 0, 0, 0.4)) {
+		  box-shadow: @x @y @blur @color;
+		  -moz-box-shadow: @x @y @blur @color;
+		  -webkit-box-shadow: @x @y @blur @color;
 	}
+	
+	// normal shadow, specified all at once
+	.boxShadow(@params) {
+		  box-shadow: @params;
+		  -moz-box-shadow: @params;
+		  -webkit-box-shadow: @params;
+	}
+
+
 
  	// inset shadow
  	.fieldShadow() {

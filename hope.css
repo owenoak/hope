@@ -766,10 +766,10 @@ tabselector tab[selected]:last-child {
   -webkit-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
 }
 /*** Overlay ***/
-.horizontal overlay {
+.horizontal section overlay {
   height: 768px;
 }
-.vertical overlay {
+.vertical section overlay {
   height: 1024px;
 }
 overlay {
@@ -787,7 +787,7 @@ overlay > mask > border {
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;
-  min-height: 200px;
+  min-height: 100px;
   max-height: 740px;
 }
 overlay > mask > border > close {
@@ -838,6 +838,10 @@ notice {
   text-align: center;
   font-weight: bold;
   font-size: 1.5em;
+}
+overlay[appearance=blue] notice {
+  color: white;
+  padding: 50px;
 }
 /*** grey panel ***/
 panel[appearance=grey] {

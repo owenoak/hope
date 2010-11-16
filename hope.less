@@ -593,11 +593,11 @@
 
 /*** Overlay ***/
 
-	.horizontal overlay {
+	.horizontal section overlay {
 		height:768px;
 	}
 
-	.vertical overlay {
+	.vertical section overlay {
 		height:1024px;
 	}
 
@@ -615,7 +615,7 @@
 		display:block;
 		width:700px;
 		.round(20px);
-		min-height:200px;
+		min-height:100px;
 		max-height:740px;
 //		overflow:hidden;
 	}
@@ -671,6 +671,12 @@
 		font-weight:bold;
 		font-size:1.5em;
 	}
+
+	overlay[appearance=blue] notice {
+		color:white;
+		padding:50px;
+	}
+
 
 
 /*** grey panel ***/
