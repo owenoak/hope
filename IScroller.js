@@ -5,7 +5,7 @@
  * http://cubiq.org/dropbox/mit-license.txt
  * Version 3.7.1 - Last updated: 2010.10.08
  *
- * Modifpadoions (c) 2010, Matthew Owen Williams
+ * Modifications for hope framework (c) 2010, Matthew Owen Williams
  * Also released under MIT license
  * 
  */
@@ -83,7 +83,11 @@ new Element.Subclass("$IScroller", {
 		listeners : "reflow",
 		
 		// h[orizontal], v[ertical], or b[oth]
-		direction : new Attribute({name:"direction", inherit:true, value:"both"}),
+		direction : new Attribute({name:"direction", inherit:true, value:"both",
+						onChange : function() {
+							this.onReflow();
+						}
+		}),
 //TODO: rename?
 		scrollHorizontally : new Getter(function(){
 								var dir = this.direction.charAt(0); 
@@ -666,6 +670,8 @@ function _iScrollbar (direction, parent) {
 	parent.appendChild(this.wrapper);
 }
 
+
+//TODO: why is this a canvas???  Should be able to just use a round-cornered div
 _iScrollbar.prototype = {
 	init: function (scroll, size) {
 		var doc = document,
