@@ -451,8 +451,8 @@ hope.bindByReference = function(scope, name, arg1, arg2, etc) {
 //	use this rather than setting directly to manage not stupidly inserting "null"
 //	Maintains a cache of values so we don't hit localStorage so much
 //	since that seems expensive.
-hope.preference = function(key, value) {
-	if (arguments.length === 1) {
+hope.preference = function preference(key, value) {
+	if (arguments.length === 1 || value === undefined) {
 		if (!_prefsCache.hasOwnProperty(key)) {
 			var value = localStorage[key];
 			if (hope.preference.debug) console.info("getting ",key,"from cache",value);
@@ -473,6 +473,31 @@ hope.preference = function(key, value) {
 }
 var _prefsCache = {};
 hope.preference.debug = hope.debug("preference");
+
+// store a number as a preference (retrieved as a number)
+hope.preference.number = function(key, value) {
+	value = hope.preference(key,value);
+	if (value && typeof value == "string") return parseFloat(value);
+	return value;
+}
+
+// store a number as a preference (retrieved as a number)
+hope.preference.boolean = function(key, value) {
+	value = hope.preference(key,value);
+	if (value && typeof value == "string") return (value == "true");
+	return value;
+}
+
+// Get a map of all preferences in localStorage.
+//	NOTE: changing something in the map does NOT change the localStorage value
+hope.preferenceMap = function preferences() {
+	var i = 0, last = localStorage.length, key, map = {};
+	for (var i = 0; i < last; i++) {
+		key = localStorage.key(i);
+		map[key] = localStorage[key];
+	}
+	return map;
+}
 
 
 
