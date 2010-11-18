@@ -125,6 +125,16 @@ try {
 		} else {
 			if (!handler) handler = "on"+(eventType.capitalize());
 
+			// IMMEDIATE events are those that should fire immediately for this browser
+			//	(eg: transitionEnd events when the browser doesn't support transitions)
+			// NOTE: these do NOT go into the event queue, and necessarily only fire once.
+			if (eventType === "IMMEDIATE") {
+				if (!scope) scope = element;
+				if (typeof handler === "string") handler = scope[handler];
+				if (handler) handler.apply(scope, args);
+				return;
+			}
+
 			// short circuit for simple case of installing named method on this object
 			if (!scope && !args && !options) {
 				_addToEventList(element, eventType, handler);

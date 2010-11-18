@@ -107,7 +107,7 @@ Attribute.initializers = {
 			}
 		}
 	},
-	
+/*	
 	"flag" : function(options) {
 		// if default is false, true if attribute is not `true`, empty string, "yes" or "true"
 		if (options.value === false) {
@@ -124,7 +124,35 @@ Attribute.initializers = {
 		// otherwise true if set at all
 		else {
 			options.normalize = function(newValue, oldValue, options) {
-				return (newValue !== null);
+				return (newValue != null);
+			}
+		}	
+	},
+*/
+	
+	"flag" : function(options) {
+		var conditions = options.trueIf || options.falseIf,
+			isTrue = !!options.trueIf
+		;
+		if (conditions) {
+			var operator = (isTrue ? "===" : "!=="),
+				joinOperator = (isTrue ? "||" : "&&")
+			;
+			for (var i = 0; i < conditions.length; i++) {
+				var condition = conditions[i];
+				conditions[i] = ("newValue " + operator + " " +
+						(typeof condition === "string" ? '"'+condition+'"' : condition));
+			}
+			var normalize = options.normalize = 
+				Function("newValue", "return ("+conditions.join(joinOperator)+")"),
+				attr = options.name,
+				property = options.property || attr,
+				inherit = options.inherit,
+				_property = "_"+property
+			;	
+			options.get = function getAttr() {
+				var cache = (options.inherit ? this : this.data);
+				return normalize(cache[_property]);
 			}
 		}
 	},

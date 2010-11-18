@@ -84,6 +84,7 @@ if (!EP._matches) {
 //	
 
 var __CONTAINER = document.createElement("div");
+window.__CONTAINER = __CONTAINER;
 hope.extend(E, {	
 	// Create a new element of specified type with @attributes.
 	//	To set innerHTML, pass attribute @html.
@@ -112,7 +113,10 @@ hope.extend(E, {
 	// NOTE: this does not initialize() the returned elements!
 	inflate : function(html, selector) {
 		__CONTAINER.innerHTML = html;
-		if (selector) return __CONTAINER.removeChild(__CONTAINER.select(selector));
+		if (selector) {
+			var child = __CONTAINER.select(selector);
+			return (child ? __CONTAINER.removeChild(child) : null);
+		}
 		return new ElementList(__CONTAINER.childNodes);
 	}
 });
@@ -744,7 +748,10 @@ new Class("$Element", {
 				var it = this.select(props);
 				if (!it) {
 					it = new this(props);
-					if (this.itemContainer) this.itemContainer.append(it);
+					if (this.itemContainer) {
+						this.itemContainer.append(it);
+						this.itemContainer.append("\n\n");
+					}
 				}
 				return it;
 			}

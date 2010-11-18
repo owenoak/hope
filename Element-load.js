@@ -26,16 +26,17 @@ Element.prototype.extend({
 		}
 
 		if (this.global) hope.clearReady(this.global);
-		this.attr("loadFrom", url);
+		this.attr("url", url);
 		XHR.get(url, onLoaded, onError, this, false);
 
 		this._loaded = false;
 		return this;
 	},
 
-	loadFrom : new Attribute({name:"loadFrom"}),
-	defer : new Attribute({name:"defer", type:"flag", value:false}),
-	replaceOnLoad : new Attribute({name:"replaceOnLoad", type:"flag", value:false}),
+	// url to load from
+	url : new Attribute({name:"url"}),
+	autoLoad : new Attribute({name:"autoLoad", type:"flag", trueIf:["",true,"true","yes"]}),
+
 	onLoaded : new Attribute({name:"onLoaded", type:"event"}),
 	onLoadError : new Attribute({name:"onLoadError", type:"event"}),
 

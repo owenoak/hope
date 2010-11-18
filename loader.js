@@ -43,7 +43,10 @@ var scripts = [
 		"Stack.js",
 		"Tab.js",
 		"Overlay.js",
-		"Resizable.js"
+		"Resizable.js",
+		"Valued.js",
+		"CheckSwitch.js",
+		"ListSelector.js"
 	]
 ;
 

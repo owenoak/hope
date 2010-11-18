@@ -72,8 +72,8 @@ Browser.EVENT = {
 	move			: (Browser.touchable ? "touchmove"	 : "mousemove"),
 	up				: (Browser.touchable ? "touchend"	 : "mouseup"),
 	resize			: (Browser.ios 		 ? "orientationchange" : "resize"),
-	animationEnd	: (Browser.CSS_PREFIX + "AnimationEnd"),
-	transitionEnd	: (Browser.CSS_PREFIX + "TransitionEnd")
+	animationEnd	: (Browser.cssAnimation ? Browser.CSS_PREFIX + "AnimationEnd" : "IMMEDIATE"),
+	transitionEnd	: (Browser.cssTransitions ? Browser.CSS_PREFIX + "TransitionEnd" : "IMMEDIATE")
 }
 
 // add helpful class names to the <html> element

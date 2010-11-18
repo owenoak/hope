@@ -21,8 +21,9 @@ new $Section.Subclass("$Stack", {
 
 		// figure out if we have an itemSelector before processing children
 		initialize : function() {
-			if (typeof this.itemSelector === "string") {
-				this.itemSelector = this.select(this.itemSelector);
+			var selector = this.attr("itemSelector") || this.itemSelector;
+			if (typeof selector === "string") {
+				this.itemSelector = this.select(selector) || select(selector);
 			}
 			this.as($Section);
 			

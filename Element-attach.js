@@ -106,13 +106,13 @@ Element.prototype.extend({
 //debug so we can make sure everything's attached
 //		this.setAttribute("_ready",true);
 		
-		// if we have a 'loadFrom' attribute, load now
-		if (this.loadFrom && !this.defer) {
-			this.loadHTML(this.loadFrom);
+		// if we have a 'url' attribute & are set to autoLoad, load now
+		if (this.url && this.autoLoad) {
+			this.loadHTML(this.url);
 		} 
 		// otherwise tell the system we're ready
 		else {
-			if (this.global && !this.loadFrom) hope.setReady(this.global);
+			if (this.global && !this.url) hope.setReady(this.global);
 			this.fire("ready");
 		}
 

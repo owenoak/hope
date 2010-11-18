@@ -99,13 +99,14 @@ new Element.Subclass("$IScroller", {
 							}),
 
 		// show scrollbars ?
-		showScrollbars : new Attribute({name:"showScrollbars", type:"flag", value:true, inherit:true}),
+		showScrollbars : new Attribute({name:"showScrollbars", type:"flag", 
+											falseIf:[false,"false","no"] }),
 
 		// snap to pages?
-		snap : new Attribute({name:"snap", type:"flag", value:false, inherit:true}),
+		snap : new Attribute({name:"snap", type:"flag", trueIf:["",true,"yes","true"] }),
 		
 		// go to top whenever dom changes?
-		autoReset : new Attribute({name:"autoReset", type:"flag", value:false, inherit:true}),
+		autoReset : new Attribute({name:"autoReset", type:"flag", trueIf:["",true,"yes","true"] }),
 		
 		onReady : function() {
 //TODO: genericise style name

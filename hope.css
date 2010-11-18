@@ -252,7 +252,7 @@ row > * {
   vertical-align: top;
 }
 /*** Search-style input ***/
-input[appearance=search] {
+.gecko input[type=search] {
   -moz-appearance: none;
   -webkit-appearance: none;
   -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -266,11 +266,11 @@ input[appearance=search] {
   min-height: 24px !important;
   padding-left: 30px;
   min-width: 80px;
-  max-width: 120px;
 }
 input[type=search] {
   font-size: 18px;
   width: 180px;
+  max-width: 180px;
 }
 input[appearance=smallNumber] {
   -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -524,29 +524,7 @@ scroll-thumb-mask.vertical {
   width: 5px;
 }
 /*** Sections: can have header and footers ***/
-section {
-  position: relative;
-  display: box !important;
-  display: -webkit-box !important;
-  display: -moz-box !important;
-  box-orient: vertical;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-align: stretch;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-}
-section > * {
-  display: block;
-  position: relative;
-  box-flex: 0;
-  -webkit-box-flex: 0;
-  -moz-box-flex: 0;
-}
 section > container {
-  -webkit-box-flex: 1 !important;
-  -moz-box-flex: 1 !important;
-  box-flex: 1 !important;
   width: 100%;
   min-height: 100%;
 }
@@ -765,6 +743,17 @@ tabselector tab[selected]:last-child {
   -moz-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
   -webkit-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
 }
+/*** notice panels ***/
+notice {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+overlay[appearance=blue] notice {
+  color: white;
+  padding: 50px;
+}
 /*** Overlay ***/
 .horizontal section overlay {
   height: 768px;
@@ -813,6 +802,7 @@ overlay[appearance=white] > mask > border {
 overlay[appearance=white].hasHeader > mask > border > header {
   border-bottom: 1px solid #999;
 }
+/*** blue overlay ***/
 overlay[appearance=blue] > mask > border {
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
@@ -832,16 +822,48 @@ overlay[appearance=blue].hasHeader > mask > border > header {
 overlay[appearance=blue] > mask > border > container {
   padding: 10px;
 }
-/*** notice panels ***/
-notice {
-  display: block;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.5em;
-}
-overlay[appearance=blue] notice {
+overlay[appearance=blue] label.head {
   color: white;
-  padding: 50px;
+  text-align: left;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 1em;
+}
+/*** white panel/container ***/
+panel[appearance=white], container[appearance=white] {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.5);
+  background: white;
+  border: 1px solid #ccc;
+  font-size: 1.3em;
+}
+panel[appearance=white] > container > row, container[appearance=white] > row {
+  width: 100%;
+}
+panel[appearance=white] > container > row > *, container[appearance=white] > row > * {
+  border-bottom: 1px solid #ccc;
+  vertical-align: middle;
+}
+panel[appearance=white] > container > row:last-child > *, container[appearance=white] > row:last-child > * {
+  border-bottom-width: 0;
+}
+panel[appearance=white] > container > row > label, container[appearance=white] > row > label {
+  width: 100%;
+  font-weight: bold;
+}
+panel[appearance=white] {
+  margin: 1em 10% 1.5em 10%;
+  width: 80%;
+}
+panel[appearance=white] > container > row > label {
+  width: 100%;
+  font-weight: bold;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 /*** grey panel ***/
 panel[appearance=grey] {
@@ -869,6 +891,73 @@ panel[appearance=grey] toolbar label {
   color: #717880;
   font-weight: bold;
   text-align: center;
+}
+/*** popup panel (kinda a hybrid -- UI guidelines? ***/
+listSelector {
+  position: absolute;
+  display: block;
+  border-color: transparent;
+  border-width: 50px 15px 15px 15px;
+  border-image: url(theme/ios/blackPopup.png) 50 15 15 15 round;
+  -moz-border-image: url(theme/ios/blackPopup.png) 50 15 15 15 round;
+  -webkit-border-image: url(theme/ios/blackPopup.png) 50 15 15 15 round;
+  z-index: 10000;
+}
+listSelector > container {
+  margin: -20px -5px -5px;
+}
+listSelector > .arrow {
+  position: absolute;
+  left: 0;
+  top: -48px;
+  width: 100%;
+  height: 20px;
+  background: url(theme/ios/blackPopup-arrow.png) no-repeat top center;
+}
+listSelector label {
+  white-space: nowrap;
+  padding: 8px 60px 8px 12px;
+}
+listSelector row[selected] label {
+  color: #1a4c8b;
+  background: url(theme/ios/check.png) no-repeat right center;
+}
+listSelectorButton {
+  padding: 10px 40px 10px 10px;
+  color: #1a4c8b;
+  background: url(theme/ios/moreArrow.png) no-repeat right center;
+  white-space: nowrap;
+}
+/*** CheckSwitch - iOS style checkbox ***/
+checkswitch {
+  height: 27px;
+}
+checkswitch > span {
+  position: relative;
+  display: inline-block;
+  width: 94px;
+  height: 27px;
+  overflow: hidden;
+  vertical-align: middle;
+  cursor: pointer;
+  margin: 10px;
+}
+checkswitch div {
+  display: inline-block;
+  position: absolute;
+  height: 27px;
+  width: 149px;
+  background: url(theme/ios/checkswitch-on.png), url(theme/ios/checkswitch-off.png);
+  background-repeat: no-repeat;
+  -webkit-transition: left ease-in 200ms;
+}
+checkswitch div.off {
+  left: -55px;
+  background: url(theme/ios/checkswitch-off.png) no-repeat;
+}
+checkswitch div.on {
+  left: 0px;
+  background: url(theme/ios/checkswitch-on.png) no-repeat;
 }
 /*** Icons ***/
 /* icon element -- use this inside a button with border-image */

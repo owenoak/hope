@@ -18,7 +18,7 @@ new Element.Subclass("$Menu", {
 	tag : "contextmenu",
 	properties : {
 		visible : false,
-		autoHide : new Attribute({name:"autoHide", type:"boolean", value:true, inherit:true}),
+		autoHide : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"]}),
 		
 		// attach this menu to some element
 		// TODO: set "context" on all (direct?) children of the menu, for easy callback semantics?
@@ -61,6 +61,7 @@ new Element.Subclass("$Menu", {
 		}
 	}
 });
+
 
 
 // Watch for the "contextmenu" event of any child with a "menu" attribute.

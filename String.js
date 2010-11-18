@@ -86,7 +86,7 @@ hope.extendIf(String.prototype, {
 	// append HTML parameters to a url
 	appendParameters : function(params) {
 		if (typeof params !== "string") params = String.encodeUrlParameters(params);
-		if (params == "") return this;
+		if (!params) return this;
 		return this + (this.indexOf("?") > -1 ? "&" : "?") + params;
 	},
 	
@@ -162,8 +162,8 @@ hope.extend(String.prototype, {
 	},
 	
 	// Expand us as HTML and return an ElementList of elements.
-	inflate : function(scope) {
-		return Element.inflate(this.expand(scope));
+	inflate : function(scope, selector) {
+		return Element.inflate(this.expand(scope), selector);
 	},
 	
 	inflate1 : function(scope) {

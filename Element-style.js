@@ -32,44 +32,45 @@ EP.extendIf({
 			else 								visible = !!visible;
 
 			// don't run the animation if our visible has never been set before
-			//	this stops the flash on initial 
+			//	this stops the flash on initial setup
 			var initialized = this.hasOwnProperty("_visible"),
 				oldValue = this._visible,
-				callback  = (visible ? "_onShown" : "_onHidden")
+				
+				// callback sets our @visible and recurses to visibile children
+				callback  = function() {
+					this.attr("visible", visible ? null : "no");
+					if (initialized) this._visibilityChanged(visible, this);
+				}.bind(this)
 			;
 
 			this._visible = visible;
 
 			if (initialized && visible !== oldValue) {
-				var animation = $Animation.getShowHideOperation(visible, this, this[callback], this.animationSpeed);
+				var animation = $Animation.getShowHideOperation(visible, this, callback);
 				if (animation) return animation.go();
 			}
-			this[callback]();//!initialized || visible !== oldValue);
+			callback();
 		}
 	}),
-	// callbacks for showing/hiding which fire events
-	_onShown : function(skipChanged) {
-		this.attr("visible", null);
-		if (skipChanged !== true) {
-			this.fire("shown");
-			this.fireDown("parentShown");
-		}
-	},
-	_onHidden : function(skipChanged) {
-		this.attr("visible", "no");
-		if (skipChanged !== true) {
-			this.fire("hidden");
-			this.fireDown("parentHidden");
-		}
-	},
 
 	showIf : new Attribute({
 		name		: "showIf", 
 		type		: "condition", 
 		onChange 	: function(newValue) { 
-			this.on("parentShown", function(){this.visible});
+			this.visible = this.visible;
 		}
 	}),
+	
+	// spread the "shown" or "hidden" element to our children who are not already shown/hidden
+	_visibilityChanged : function(visible, who) {
+		this.fire(visible ? "shown" : "hidden", who);
+		var children = this.children;
+		if (children.length === 0) return;
+		var i = -1, child;
+		while (child = children[++i]) {
+			if (child.visible) child._visibilityChanged(visible, who);
+		}
+	},
 
 
 	//
@@ -97,7 +98,7 @@ EP.extendIf({
 		name:"enableIf", 
 		type:"condition",
 		onChange 	: function(newValue) { 
-			this.on("parentShown", function(){this.enabled});
+			this.enabled = this.enabled;
 		}
 	}),
 

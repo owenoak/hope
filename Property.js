@@ -126,6 +126,31 @@ function InstanceMap(options) {
 hope.setGlobal("InstanceMap", InstanceMap);
 
 
+// use a NestedProperty to safely get/set a sub-property of one of our children
+//	path is a simple dotted path, relative to this (eg:  someChild.someGrandChild.someProperty)
+window.NestedProperty = function NestedProperty(path, options) {
+	if (!options) options = {};
+	
+	path = path.split(".");
+	var expressionMatrix = [];
+	for (var i = 1; i < path.length; i++) {
+		expressionMatrix.push("this."+path.slice(0,i).join("."));
+	}
+	var expression = expressionMatrix.join(" && ");
+	path = path.join(".");
+
+	if (!options.get) {
+		options.get = Function("if ("+expression+") return this."+path);
+	}
+	if (!options.set) {
+		options.set = Function("value","if ("+expression+") return (this."+path+" = value)");
+	}
+	return new Property(options);
+}
+
+
+
+
 /* NOT USING THESE... THEY ARE OUT OF DATE AND PROBABLY WON'T WORK
 window.InheritedProperty = function InheritedProperty(options) {
 	if (typeof options === "string") options = {name:options};

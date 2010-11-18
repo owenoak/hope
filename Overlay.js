@@ -13,7 +13,7 @@ new $Section.Subclass("$Overlay", {
 							<container></container>\
 						</border>\
 					</mask>",
-		autoHide : new Attribute({name:"autoHide", type:"flag", inherit:true, value:true}),
+		autoHide : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"] }),
 		listeners : "click:onClick",
 		
 		onReady : function() {

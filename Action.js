@@ -22,7 +22,7 @@ new Element.Subclass("$Action", {
 		
 		// When our parent is shown, check our visible, enabled and checked attributes.
 		//	If we have a showif, enableif or checkif property, that will update it.
-		onParentShown : function() {
+		onShown : function() {
 			this.visible;
 			this.enabled;
 			this.selected;
