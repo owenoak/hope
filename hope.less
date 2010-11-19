@@ -255,7 +255,7 @@
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 		    padding:0px;
 		    margin-right:5px;
-		    width:90px;
+//		    width:90px;
 		    text-align:center;
 		}
 
@@ -271,7 +271,7 @@
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 		    padding:0px;
 		    margin-right:5px;
-		    width:90px;
+//		    width:90px;
 		    text-align:center;
 		}
 
@@ -830,6 +830,30 @@
 		background:url(theme/ios/checkswitch-on.png) no-repeat;
 	}
 
+
+
+/*** WebView -- full screen embedded web browser ***/
+	webview {
+		position:absolute;
+		left:0px; top:0px;
+	}
+
+	webview > iframe {
+		position:absolute;
+		top:43px;
+		border:0px;	
+		background:white;
+	}
+
+	body.horizontal webview > iframe {
+		width:1024px; height:725px;
+	}
+
+	body.vertical webview > iframe {
+		width:768px; height:981px;
+	}
+
+	
 
 
 

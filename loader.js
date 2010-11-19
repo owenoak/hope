@@ -40,6 +40,7 @@ var scripts = [
 //		"Scroller.js",
 		"Section.js",
 		"Panel.js",
+		"WebView.js",
 		"Stack.js",
 		"Tab.js",
 		"Overlay.js",
