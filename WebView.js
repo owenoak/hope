@@ -10,7 +10,7 @@ new Element.Subclass("$WebView", {
 		childContainerSelector : "iframe",
 		childProcessors : "header:initHeader,footer:initFooter",
 
-		listeners : "hidden",
+		listeners : "shown,hidden",
 		
 		// show automatically when url is set?
 		autoShow : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"] }),
