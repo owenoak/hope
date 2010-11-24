@@ -626,11 +626,11 @@
 	overlay > mask > border {
 		position:relative;
 		display:block;
-		width:700px;
+		width:720px;
 		.round(20px);
 		min-height:100px;
 		max-height:740px;
-//		overflow:hidden;
+		margin-top:10px;
 	}
 
 	overlay > mask > border > close {
@@ -643,6 +643,10 @@
 		cursor:pointer;
 	}
 	
+	overlay.noclose > mask > border {
+		margin-top:0px;
+	}
+
 	overlay.noclose > mask > border > close {
 		display:none;
 	}
@@ -842,7 +846,7 @@
 		position:absolute;
 		top:43px;
 		border:0px;	
-		background:white;
+		background:black;
 	}
 
 	body.horizontal webview > iframe {

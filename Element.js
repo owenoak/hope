@@ -460,8 +460,14 @@ EP.extendIf({
 			return new ElementList(this.children);
 		},
 	
-		set : function() {
-console.warn("setting element.elements not yet defined");		
+		set : function(elements) {
+			this.html = "";
+			if (elements && elements.length) {
+				var i = -1, element;
+				while (element = elements[++i]) {
+					this.append(element);
+				}
+			}
 		}
 	}),
 	

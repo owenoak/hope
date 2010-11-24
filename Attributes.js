@@ -275,7 +275,8 @@ window.Child = function Child(options) {
 window.ChildHTML = function ChildHTML(options) {
 	if (typeof options === "string") options = {selector:options};
 	return new Getter(function() {
-		return this.select(options.selector).innerHTML;
+		var it = this.select(options.selector);
+		return (it ? it.innerHTML : "");
 	});
 }
 
@@ -308,6 +309,14 @@ window.ChildrenWhere = function ChildrenWhere(options) {
 		var selector = prefix + value + suffix;
 		return this.selectAll(selector);
 	}
+}
+
+// first ancestor which matches a selector
+window.Ancestor = function Ancestor(options) {
+	if (typeof options === "string") options = {selector:options};
+	return new Getter(function() {
+		return this.selectUp(options.selector);
+	});
 }
 
 

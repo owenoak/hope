@@ -9,7 +9,7 @@ window.HOPE_LOAD_START_TIME = new Date().getTime();
 
 // scripts we always load
 var scripts = [
-		"_debug.js",		//DEBUG
+		"_debug.js",
 		"Browser.js",
 		"hope.js",
 		"hope-ready.js",
@@ -31,13 +31,11 @@ var scripts = [
 		"Element-events.js",
 		"Element-style.js",
 		"Animation.js",
-//		"Element-animation.js",
 		"ElementList.js",
 		"Dataset.js",
 		"Action.js",
 		"Menu.js",
 		"IScroller.js",
-//		"Scroller.js",
 		"Section.js",
 		"Panel.js",
 		"WebView.js",

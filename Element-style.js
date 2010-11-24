@@ -408,6 +408,19 @@ EP.extendIf({
 	}),
 
 
+	// background image
+	image : new Property({
+		get : function() {
+			return this.styles["backgroundImage"];
+		},
+
+		set : function(url) {
+			if (url && !url.contains("url")) url = "url('"+url+"')";
+			this.style.backgroundImage = url;
+		}
+	}),
+
+
 	// css opacity
 	opacity : new Property({
 		get : function() {

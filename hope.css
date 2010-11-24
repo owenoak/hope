@@ -770,12 +770,13 @@ overlay {
 overlay > mask > border {
   position: relative;
   display: block;
-  width: 700px;
+  width: 720px;
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;
   min-height: 100px;
   max-height: 740px;
+  margin-top: 10px;
 }
 overlay > mask > border > close {
   display: block;
@@ -787,6 +788,9 @@ overlay > mask > border > close {
   background: url(theme/ios/overlay-close.png) no-repeat;
   z-index: 10;
   cursor: pointer;
+}
+overlay.noclose > mask > border {
+  margin-top: 0px;
 }
 overlay.noclose > mask > border > close {
   display: none;
@@ -967,7 +971,7 @@ webview > iframe {
   position: absolute;
   top: 43px;
   border: 0px;
-  background: white;
+  background: black;
 }
 body.horizontal webview > iframe {
   width: 1024px;

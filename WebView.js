@@ -7,20 +7,36 @@ new Element.Subclass("$WebView", {
 	tag : "webview",
 	properties : {
 		template : "<iframe part='webview:$frame'></iframe>",
-
 		childContainerSelector : "iframe",
 		childProcessors : "header:initHeader,footer:initFooter",
+
+		listeners : "hidden",
 		
-		src : Attribute({
-			name : "src",
+		// show automatically when url is set?
+		autoShow : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"] }),
+		
+		// clear automatically on hide?
+		autoClear : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"] }),
+
+		url : Attribute({
+			name : "url",
+//NOTE: this is not reliable if the URL changes
 			get : function() {
 				return this.$frame.src;
 			},
 			
 			set : function(url) {
-				setTimeout(function(){this.$frame.src = url}.bind(this),0);
+				setTimeout(function(){
+					this.$frame.src = url;
+					if (this.autoShow && url && url != "about:blank") this.visible = true;
+				}.bind(this),0);
 			}
 		}),
+		
+		// clear on hide if necessary
+		onHidden : function() {
+			if (this.autoClear) this.url = "about:blank";
+		},
 
 //TODO: make this a pattern
 		initHeader : function(header) {

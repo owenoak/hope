@@ -9,9 +9,12 @@ Element.prototype.extend({
 	//		(element, html, XHRequest) AFTER the html has been set.
 	//		and should return (possibly massaged) html to insert.
 	loadHTML : function loadHTML(url, callback, errback, scope) {
+		if (!url) url = this.url;
+
 		if (!scope) scope = this;
 		var onLoaded = function(html, request) {
 			this.html = html;
+			delete this._loading;
 			this._loaded = true;
 
 			if (callback) callback.call(scope, this, html, request);
@@ -20,16 +23,20 @@ Element.prototype.extend({
 			this.fire("ready");
 		};
 		var onError = function(status, request) {
+			delete this._loading;
+			this._loaded = false;
 			if (this.global) hope.readyError(this.global, status);
 			if (errback) errback.call(scope, this, status, request);
 			this.fire("loadError", status, request);
 		}
 
 		if (this.global) hope.clearReady(this.global);
+
 		this.attr("url", url);
 		XHR.get(url, onLoaded, onError, this, false);
 
 		this._loaded = false;
+		this._loading = true;
 		return this;
 	},
 

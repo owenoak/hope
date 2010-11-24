@@ -9,7 +9,7 @@ Script.require("{{hope}}Element.js,{{hope}}List.js", function(){
 	// give ElementList the same api as Element
 	List.makeAppliers(ElementList, "on,attr,destroy");
 	List.makeAppliers(ElementList, "select,selectAll,matches",true);
-	List.makeAccessors(ElementList, "width,height,left,top,opacity");
+	List.makeAccessors(ElementList, "width,height,left,top,opacity,selected");
 	List.makeAccessors(ElementList, "innerHTML,className,style,bg,radius", true);
 	
 	// give the native NodeList and HTMLElement array-like-things the ElementList functionality

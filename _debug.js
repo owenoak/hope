@@ -2,9 +2,9 @@
 
 
 setTimeout(function(){
-	window.it = window.$brandO;
-//	it.on("shown", function(){console.warn("$brandO SHOWN")});
-//	it.on("hidden", function(){console.warn("$brandO HIDDEN")});
+	window.it = window.$brandOverlay;
+//	it.on("shown", function(){console.warn("$brandOverlay SHOWN")});
+//	it.on("hidden", function(){console.warn("$brandOverlay HIDDEN")});
 },1000);
 
 // DEBUG
