@@ -312,15 +312,10 @@ action[appearance=icon] {
   padding: 0px;
   vertical-align: baseline;
 }
-action[appearance=blue] {
+action[appearance=blue], action[appearance=red], action[appearance=green] {
   height: 32px !important;
   max-height: 32px;
   background-color: none;
-  border-color: transparent;
-  border-width: 9px 15px 8px 15px;
-  border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
-  -moz-border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
-  -webkit-border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
   color: white;
   text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
   padding: 0px;
@@ -333,19 +328,26 @@ action[appearance=blue][selected] {
   -moz-border-image: url(theme/ios/blueBtn-selected.png) 9 15 8 15 round;
   -webkit-border-image: url(theme/ios/blueBtn-selected.png) 9 15 8 15 round;
 }
+action[appearance=blue] {
+  border-color: transparent;
+  border-width: 9px 15px 8px 15px;
+  border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
+  -moz-border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
+  -webkit-border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
+}
 action[appearance=red] {
-  height: 32px !important;
-  max-height: 32px;
-  background-color: none;
   border-color: transparent;
   border-width: 9px 15px 8px 15px;
   border-image: url(theme/ios/redBtn.png) 9 15 8 15 round;
   -moz-border-image: url(theme/ios/redBtn.png) 9 15 8 15 round;
   -webkit-border-image: url(theme/ios/redBtn.png) 9 15 8 15 round;
-  color: white;
-  text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-  padding: 0px;
-  margin-right: 5px;
+}
+action[appearance=green] {
+  border-color: transparent;
+  border-width: 9px 15px 8px 15px;
+  border-image: url(theme/ios/greenBtn.png) 9 15 8 15 round;
+  -moz-border-image: url(theme/ios/greenBtn.png) 9 15 8 15 round;
+  -webkit-border-image: url(theme/ios/greenBtn.png) 9 15 8 15 round;
 }
 action[appearance=blueBar] {
   height: 32px !important;
@@ -440,7 +442,11 @@ action[appearance=next]:hover {
   -moz-border-image: url(theme/ios/blueNext-selected.png) 9 20 8 15 round;
   -webkit-border-image: url(theme/ios/blueNext-selected.png) 9 20 8 15 round;
 }
-.gecko action[appearance=blue], .gecko action[appearance=prev], .gecko action[appearance=next] {
+.gecko action[appearance=blue],
+.gecko action[appearance=red],
+.gecko action[appearance=green],
+.gecko action[appearance=prev],
+.gecko action[appearance=next] {
   line-height: 13px;
 }
 /*** very big green buttons ***/

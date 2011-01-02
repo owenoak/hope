@@ -187,10 +187,11 @@
 		}
 
 
-		action[appearance=blue] {
+		action[appearance=blue],
+		action[appearance=red],
+		action[appearance=green] {
 			height:32px !important; max-height:32px;
 			background-color:none;
-			.borderImage(url(theme/ios/blueBtn.png), 9 15 8 15, 9px 15px 8px 15px);
 			color:white;
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 		    padding:0px;
@@ -206,14 +207,17 @@
 			.borderImage(url(theme/ios/blueBtn-selected.png), 9 15 8 15, 9px 15px 8px 15px);
 		}
 
+
+		action[appearance=blue] {
+			.borderImage(url(theme/ios/blueBtn.png), 9 15 8 15, 9px 15px 8px 15px);
+		}
+
 		action[appearance=red] {
-			height:32px !important; max-height:32px;
-			background-color:none;
 			.borderImage(url(theme/ios/redBtn.png), 9 15 8 15, 9px 15px 8px 15px);
-			color:white;
-		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-		    padding:0px;
-		    margin-right:5px;
+		}
+
+		action[appearance=green] {
+			.borderImage(url(theme/ios/greenBtn.png), 9 15 8 15, 9px 15px 8px 15px);
 		}
 
 
@@ -280,6 +284,8 @@
 		}
 
 		.gecko action[appearance=blue],
+		.gecko action[appearance=red],
+		.gecko action[appearance=green],
 		.gecko action[appearance=prev],
 		.gecko action[appearance=next]
 		{
