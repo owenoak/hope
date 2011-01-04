@@ -42,6 +42,7 @@ var scripts = [
 		"Stack.js",
 		"Tab.js",
 		"Overlay.js",
+		"Palette.js",
 		"Resizable.js",
 		"Valued.js",
 		"CheckSwitch.js",

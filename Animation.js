@@ -52,6 +52,7 @@ Script.require("{{hope}}Element.js", function(){
 		
 		speeds : {
 			normal 	: ".2s",
+			instant : "0",
 			fast 	: ".1s",
 			medium 	: ".3s",
 			slow	: ".4s"
@@ -63,8 +64,10 @@ Script.require("{{hope}}Element.js", function(){
 		callback : function(){},
 		
 		go : function() {
-			var element = this.element, animation = this;
-			if (Browser.cssTransitions) {
+			var element = this.element, 
+				animation = this
+			;
+			if (Browser.cssTransitions && this.speed != "instant") {
 				if (element._animating) element._animating.stop();
 			
 				function onDone() {
@@ -77,8 +80,8 @@ Script.require("{{hope}}Element.js", function(){
 				}
 
 				var _onDone = animation._onDone = element.once(Browser.EVENT.transitionEnd, onDone);
-				element.attr("animating", this.name + (this.speed ? "-"+this.speed : ""));
-				
+				element.attr("animating", this.name + "-"+this.speed);
+
 				element._animating = animation;
 				animation._startAnimation(element);
 			} else {
@@ -162,7 +165,7 @@ Script.require("{{hope}}Element.js", function(){
 			var pair = this.showHidePairs[animation];
 			if (!pair) return;
 			var name = (show ? pair.show : pair.hide).toLowerCase();
-			return new this.constructors[name](element, callback, element.animationSpeed);
+			return new this.constructors[name](element, {callback:callback, speed:element.animationSpeed});
 		},
 		
 		// create a new animation for a particular element
@@ -170,13 +173,15 @@ Script.require("{{hope}}Element.js", function(){
 			if (!element) return;
 
 			if (!name) name = element.animation;
-			if (name === "none") return;
+			if (!speed) speed = element.animationSpeed;
+
+			if (name === "none" || speed == "instant") return;
 			
 			var constructor = $Animation.constructors[name.toLowerCase()];
 			if (!constructor) return;
 			
 			return new constructor(element, 
-						{callback:callback, speed: (speed || element.animationSpeed)}
+						{callback:callback, speed: speed}
 					);
 		},
 		
@@ -246,8 +251,7 @@ Script.require("{{hope}}Element.js", function(){
 			element.removeAttribute("visible");
 			
 			// get our height before we were animated
-			animation._startHeight = element.style.height;
-			
+			animation._startHeight = element.offsetHeight;
 			// reset height to auto, to figure out how big we should be
 			if (!animation._startHeight) element.style.height = "auto";
 			var endHeight = element.offsetHeight;
@@ -270,7 +274,7 @@ Script.require("{{hope}}Element.js", function(){
 			element.removeAttribute("visible");
 			if (animation) {
 				// get our height before we were animated
-				animation._startHeight = element.style.height;
+				animation._startHeight = element.offsetHeight;
 				element.height = element.offsetHeight;
 			}
 		},
@@ -282,7 +286,7 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 
-	$Animation.showHidePairs.fromTop = {"show" : "wipeDown", "hide" : "wipeUp"};
+	$Animation.showHidePairs.wipeDown = {"show" : "wipeDown", "hide" : "wipeUp"};
 	
 	new $Animation.Subclass({
 		name : "wipeRight",

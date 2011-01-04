@@ -85,6 +85,15 @@ hope.extendIf(Number.prototype, {
 		var matches = str.substr(firstSplit).match(/\d\d\d/g) || [];
 		if (prefix) matches.splice(0,0,prefix);
 		return negative + matches.join(",") + suffix;
+	},
+	
+	// is this number an even or odd integer?
+	isEven : function() {
+		return (this % 2 === 0);
+	},
+	
+	isOdd : function() {
+		return (this % 2 === 1);	
 	}
 }); 
 
