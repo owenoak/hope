@@ -124,6 +124,25 @@ hope.extendIf(String.prototype, {
 			output[output.length] = this;
 		}
 		return output.join("");
+	},
+	
+	
+	// given a string of one or more words
+	//	return a set of regular expressions which will match that text at the START of a word
+	getWordMatchers : function() {
+		var list = [];
+		this.split(" ").forEach(function(word) {
+			if (word) list.push(new RegExp("\\b"+word, "i"));
+		});
+		return list;
+	},
+	
+	// return true if this string matches ALL expressions passed in
+	matchesExpressions : function(expressions) {
+		for (var i = 0; i < expressions.length; i++) {
+			if (!expressions[i].test(this)) return false;
+		}
+		return true;
 	}
 });
 
