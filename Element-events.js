@@ -49,6 +49,16 @@ Script.require("{{hope}}Element.js", function(){
 
 
 
+	// quick and dirty keymap
+	//	NOTE: to catch special keys (like escape, backspace, return, etc) trap onkeyDOWN
+	//		TODO: are these correct cross-browser?s
+	Event.KEYS = {
+		"return"	: 13,
+		"escape"	: 27,
+		"space"		: 32
+	};
+
+
 
 	//
 	//	observation and event handling

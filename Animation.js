@@ -249,16 +249,17 @@ Script.require("{{hope}}Element.js", function(){
 		},
 		init : function(element, animation) {
 			element.removeAttribute("visible");
-			
-			// get our height before we were animated
-			animation._startHeight = element.offsetHeight;
-			// reset height to auto, to figure out how big we should be
-			if (!animation._startHeight) element.style.height = "auto";
-			var endHeight = element.offsetHeight;
-			animation.endProperties.height = endHeight;
+			if (animation) {
+				// get our height before we were animated
+				animation._startHeight = element.offsetHeight;
+				// reset height to auto, to figure out how big we should be
+				if (!animation._startHeight) element.style.height = "auto";
+				var endHeight = element.offsetHeight;
+				animation.endProperties.height = endHeight;
+			}
 		},
 		cleanup : function(element, animation) {
-			element.height = animation._startHeight;
+			if (animation) element.height = animation._startHeight;
 		}
 	});
 	
