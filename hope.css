@@ -977,7 +977,7 @@ webview > iframe {
   position: absolute;
   top: 43px;
   border: 0px;
-  background: black;
+  background: white;
 }
 body.horizontal webview > iframe {
   width: 1024px;
