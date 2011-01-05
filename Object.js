@@ -95,5 +95,17 @@ if (!Object.clone) {
 }
 
 
+// given an object, convert it to an array
+Object.toArray = function(object) {
+	var list = [];
+	if (object) {
+		for (var key in object) {
+			list[list.length] = object[key];	
+		}
+	}
+	return list;
+}
+
+
 Script.loaded("{{hope}}Object.js");
 });// end Script.require()

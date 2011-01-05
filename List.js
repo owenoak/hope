@@ -13,7 +13,7 @@ var unshift = AP.unshift;
 //		- new Class(id,{"super":List}) needs to use List's make constructor function
 
 
-AP.isListLIke = true;
+AP.isListLike = true;
 
 
 // Just like an array but:
