@@ -249,6 +249,14 @@ var listMethods = {
 		return this.remove(null);
 	},
 	
+	// call a named method for each item in the list which implements it
+	call : function(method, args) {
+		for (var i = 0, last = this.length; i < last; i++) {
+			var it = this[i];
+			if (it && typeof it[method] === "function") it[method].apply(it, args);
+		}
+	},
+	
 
 	// apply a function or named @method on each non-null item in list
 	//	scope is each item in the list in turn (eg: 'this' is the item)
