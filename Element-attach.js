@@ -25,7 +25,10 @@ hope.extend(Element, {
 	},
 	
 	// initialize a single element, no type checking
-	initializeElement : function(element) {
+	//	pass in a set of properties to extend the element.
+	//	NOTE: this is done BEFORE the element is initialized(), 
+	//			so you can use these values in templates, etc.
+	initializeElement : function(element, properties) {
 		if (element.hasOwnProperty("initialized")) return;
 		
 		// if we have an adapter for this type of element, reassign the element's prototype
@@ -39,8 +42,11 @@ hope.extend(Element, {
 			//YUCK! Safari doesn't let you change element.constructor!
 			//		Add an "adapter" property instead.
 			element._adapter = adapter;
-			element._setUpData();
+			element._setUpData(properties);
 		}
+		// extend with any properties passed in
+		if (properties) element.extend(properties);
+		
 		// and then initialize it whether it has an adapter or not
 		element.initialize();
 		

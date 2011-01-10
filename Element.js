@@ -353,6 +353,17 @@ EP.extendIf({
 		}
 	}),
 	
+	// copy all attributes of this element into another element
+	cloneAttrsInto : function(that) {
+		var attrs = this.attrs;
+		for (var key in attrs) {
+			try {
+				that[key] = attrs[key];
+				ref.attr(key, attrs[key]);
+			} catch (e) {}
+		}
+	},
+	
 	
 	// Set/get our innerHTML, either to an HTML string, an individual element or a set of elements
 	//	Use this in preference to setting innerHTML directly to set up Tags in the contents automatically.
@@ -682,8 +693,7 @@ new Class("$Element", {
 		eval("constructor = function "+id.toIdentifier()+"(properties) {\n\
 				var element = document.createElement('"+tag+"');\n\
 				if (properties !== false) {\n\
-					Element.initializeElement(element);\n\
-					if (properties) element.extend(properties);\n\
+					Element.initializeElement(element, properties);\n\
 				}\n\
 				return element;\n\
 			 }");
@@ -745,6 +755,26 @@ new Class("$Element", {
 				}
 				return container.select(selector);
 			}
+
+			// return all instances we find that match the global itemSelector, 
+			//		expanded through properties passed in
+			// pass null props to select all on the page/in the itemContainer
+			constructor.selectAll = function(props) {
+				var container = this.itemContainer || document;
+				if (props == null) {
+					return container.selectAll(this.tag);
+				}
+				var	selector = itemSelector;
+				if (typeof props === "string") {
+					var last = Math.min(arguments.length, subMatches.length);
+					for (var i = 0; i < last; i++) {
+						selector = selector.replace(subMatches[i] || "{{xxx}}", arguments[i]);
+					}
+				} else {
+					selector = selector.expand(props);
+				}
+				return container.selectAll(selector);
+			}
 			
 			// either:
 			//	- return the first instance of which matches {props}, or
@@ -795,12 +825,6 @@ new Class("$Element", {
 			this.prototype._listeners = null;				// probably not necessary
 			this.prototype._adapter = null;
 			Class.onUnload.call(this);
-		},
-		
-		// select all instances of this class
-		selectAll : function() {
-			var container = this.itemContainer || document;
-			return container.selectAll(this.tag);
 		}
 	}
 });// end new Class("$Element")
