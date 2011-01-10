@@ -1,4 +1,6 @@
-/* Datasets */
+/* Datasets 
+	- use .loadHTML()  (from Element-load.js) to load contents into the dataset
+*/
 
 Script.require("{{hope}}Element-attach.js", function(){
 

@@ -866,6 +866,7 @@ panel[appearance=white] > container > row > label, container[appearance=white] >
 panel[appearance=white] {
   margin: 1em 10% 1.5em 10%;
   width: 80%;
+  color: black;
 }
 panel[appearance=white] > container > row > label {
   width: 100%;

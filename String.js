@@ -182,11 +182,12 @@ hope.extend(String.prototype, {
 	
 	// Expand us as HTML and return an ElementList of elements.
 	inflate : function(scope, selector) {
-		return Element.inflate(this.expand(scope), selector);
+		var html = (scope ? this.expand(scope) : this);
+		return Element.inflate(html, selector);
 	},
 	
 	inflate1 : function(scope) {
-		return Element.inflate(this.expand(scope))[0];
+		return this.inflate(scope)[0];
 	}
 });
 
