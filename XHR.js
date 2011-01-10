@@ -65,7 +65,7 @@ var XHR = {
 	//	http://server.com:80/path/to/
 	path : function(url) {
 		url = XHR.fullPath(url);
-		return url.substr(0, url.lastIndexOf("/"));
+		return url.substr(0, url.lastIndexOf("/")) + "/";
 	},
 	
 	
@@ -141,6 +141,11 @@ var XHR = {
 };
 hope.setGlobal("XHR", XHR);
 
+
+// set XHR.paths.page to the base URL of the page (minus any query stuff)
 XHR.paths.page = XHR.path(""+window.location);
+
+// default XHR.paths.app to the same as XHR.paths.page	(app may change it in user code)
+XHR.paths.app = XHR.paths.page;
 
 })();// end hidden from global scope
