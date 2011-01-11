@@ -13,7 +13,7 @@ new Element.Subclass("$WebView", {
 		listeners : "shown,hidden",
 		
 		// show automatically when url is set?
-		autoShow : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"] }),
+		autoShow : new Attribute({name:"autoShow", type:"flag", falseIf:[false,"false","no"] }),
 		
 		// clear automatically on hide?
 		autoClear : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"] }),
