@@ -71,6 +71,7 @@ var _desktopCompatibility = false,
 	_bounce = true,
 	_bounceLock = false,
 	_momentum = Browser.threed,		// only enable if CSSMatrix stuff is enabled
+	_alwaysShowScrollbar = true,
 	_fadeScrollbar = true,
 	_scrollbarAnimationTime = (_fadeScrollbar ? 300 : 0),
 	_shrinkScrollbar = true,
@@ -85,9 +86,12 @@ new Element.Subclass("$IScroller", {
 		// h[orizontal], v[ertical], or b[oth]
 		direction : new Attribute({name:"direction", inherit:true, value:"both",
 						onChange : function() {
-							this.onReflow();
+							this.soon("reflow");
 						}
 		}),
+		
+		appearance : new Attribute({name:"appearance", inherit:true, value:"dark"}),
+		
 //TODO: rename?
 		scrollHorizontally : new Getter(function(){
 								var dir = this.direction.charAt(0); 
@@ -107,6 +111,8 @@ new Element.Subclass("$IScroller", {
 		
 		// go to top whenever dom changes?
 		autoReset : new Attribute({name:"autoReset", type:"flag", trueIf:["",true,"yes","true"] }),
+		
+		
 		
 		onReady : function() {
 //TODO: genericise style name
@@ -146,8 +152,8 @@ new Element.Subclass("$IScroller", {
 			if (pageY == null) pageY = info.pageY;
 			
 			if (!this.snap) {
-				info.pageX = -Math.round(info.x / info.scrollWidth);
-				info.pageY = -Math.round(info.y / info.scrollHeight);
+				info.pageX = -Math.round(info.x / info.visibleWidth);
+				info.pageY = -Math.round(info.y / info.visibleHeight);
 			}
 	
 			if (pageX == 'next') {
@@ -162,8 +168,8 @@ new Element.Subclass("$IScroller", {
 				pageY = --info.pageY;
 			}
 	
-			pageX = -pageX*info.scrollWidth;
-			pageY = -pageY*info.scrollHeight;
+			pageX = -pageX*info.visibleWidth;
+			pageY = -pageY*info.visibleHeight;
 
 			var snap = this._snapToPage(pageX, pageY);
 			pageX = snap.x;
@@ -173,33 +179,109 @@ new Element.Subclass("$IScroller", {
 			this.scrollTo(pageX, pageY, speed);
 		},
 	
+		// scroll an element into view
+		//	attempts to leave things where they are if possible
 		scrollToElement: function (el, runtime) {
 			el = this.select(el);
 			if (!el) return;
 	
 			var info = this._scrollInfo;
 			if (!info) info = this.onReflow();
-			if (!info) return setTimeout(function(){this.scrollToElement.apply(this,arguments)}.bind(this),100);
-			
-			var	x = info.scrollX ? -el.offsetLeft : 0,
-				y = info.scrollY ? -el.offsetTop : 0
-			;
-	
-			if (x >= 0) {
-				x = 0;
-			} else if (x < info.maxScrollX) {
-				x = info.maxScrollX;
+			if (!info) {
+				return setTimeout(function(){
+									this.scrollToElement.apply(this,arguments)
+								}.bind(this),100);
 			}
+			var x, y;
+
+			if (info.scrollX) {
+				var elementLeft 	= el.offsetLeft,
+					elementRight 	= elementLeft + el.width,
+					visibleLeft 	= -info.x,
+					visibleRight 	= visibleLeft + info.visibleWidth
+				;
+//	console.warn("eL:", elementLeft, "eR: ",elementRight, "vL:",visibleLeft,"vR:",visibleRight);
 	
-			if (y >= 0) {
-				y = 0;
-			} else if (y < info.maxScrollY) {
-				y = info.maxScrollY;
+				if (elementLeft >= visibleLeft && elementRight <= visibleRight) {
+//					console.info("inside:  don't need to scroll");
+					x = null;
+				} else if (elementLeft < visibleLeft) {
+					x = -el.offsetLeft
+//					console.info("need to scroll so LEFT is visible: x is now", x);
+				} else if (elementRight > visibleRight) {
+					x = info.x + (visibleRight - elementRight);
+//					console.info("need to scroll so RIGHT is visible: x is now ",x);
+				} else {
+					console.info("x scroll: dunno");
+				}
+	
+				if (x != null) x = x.between(info.maxScrollX, 0);
 			}
+
+			if (info.scrollY) {
+				var elementTop 		= el.offsetTop,
+					elementBottom 	= elementTop + el.height,
+					visibleTop 		= -info.y,
+					visibleBottom 	= visibleTop + info.visibleHeight
+				;
+//	console.warn("eT:", elementTop, "eB: ",elementBottom, "vT:",visibleTop,"vB:",visibleBottom);
 	
+				if (elementTop >= visibleTop && elementBottom <= visibleBottom) {
+//					console.info("inside:  don't need to scroll");
+					y = null;
+				} else if (elementTop < visibleTop) {
+					y = -el.offsetLeft
+//					console.info("need to scroll so TOP is visible: y is now", y);
+				} else if (elementBottom > visibleBottom) {
+					y = info.y + (visibleBottom - elementBottom);
+//					console.info("need to scroll so BOTTOM is visible: y is now ",y);
+				} else {
+					console.info("y scroll: dunno");
+				}
+	
+				if (y != null) y = y.between(info.maxScrollY, 0);
+			}
+
 			this.scrollTo(x, y, runtime);
 		},
 	
+
+		// center a child element in the view -- this almost always moves
+		centerElement: function (el, runtime) {
+			el = this.select(el);
+			if (!el) return;
+	
+			var info = this._scrollInfo;
+			if (!info) info = this.onReflow();
+			if (!info) {
+				return setTimeout(function(){
+									this.centerElement.apply(this,arguments)
+								}.bind(this),100);
+			}
+			var x, y;
+
+			if (info.scrollX) {
+				var elementLeft 	= el.offsetLeft,
+					elementWidth	= el.width,
+					visibleCenter	= info.visibleWidth / 2
+				;
+				x = visibleCenter - elementLeft - (elementWidth/2);
+				if (x != null) x = x.between(info.maxScrollX, 0);
+			}
+
+			if (info.scrollY) {
+				var elementTop 		= el.offsetTop,
+					elementHeight	= el.height,
+					visibleCenter	= info.visibleHeight / 2
+				;
+				y = visibleCenter - elementTop - (elementHeight/2);
+				if (y != null) y = y.between(info.maxScrollY, 0);
+			}
+
+			this.scrollTo(x, y, runtime);
+		},
+	
+
 
 		onTouchStart: function(event) {
 			// if more than one finger is down, forget it
@@ -351,15 +433,15 @@ new Element.Subclass("$IScroller", {
 				momentumX = info.scrollX === true
 					? this._calculateMomentum(info.x - info.scrollStartX,
 									time,
-									_bounce ? -info.x + info.scrollWidth/5 : -info.x,
-									_bounce ? info.x + info.scrollerWidth - info.scrollWidth + info.scrollWidth/5 : info.x + info.scrollerWidth - info.scrollWidth)
+									_bounce ? -info.x + info.visibleWidth/5 : -info.x,
+									_bounce ? info.x + info.scrollerWidth - info.visibleWidth + info.visibleWidth/5 : info.x + info.scrollerWidth - info.visibleWidth)
 					: { dist: 0, time: 0 };
 	
 				momentumY = info.scrollY === true
 					? this._calculateMomentum(info.y - info.scrollStartY,
 									time,
-									_bounce ? -info.y + info.scrollHeight/5 : -info.y,
-									_bounce ? (info.maxScrollY < 0 ? info.y + info.scrollerHeight - info.scrollHeight : 0) + info.scrollHeight/5 : info.y + info.scrollerHeight - info.scrollHeight)
+									_bounce ? -info.y + info.visibleHeight/5 : -info.y,
+									_bounce ? (info.maxScrollY < 0 ? info.y + info.scrollerHeight - info.visibleHeight : 0) + info.visibleHeight/5 : info.y + info.scrollerHeight - info.visibleHeight)
 					: { dist: 0, time: 0 };
 	
 				newDuration = Math.max(Math.max(momentumX.time, momentumY.time), 1);		// The minimum animation length must be 1ms
@@ -416,10 +498,10 @@ new Element.Subclass("$IScroller", {
 				snap
 			;
 			
-			info.scrollWidth = this.parentNode.clientWidth;
-			info.scrollHeight = this.parentNode.clientHeight;
+			info.visibleWidth = this.parentNode.clientWidth;
+			info.visibleHeight = this.parentNode.clientHeight;
 			
-			if (info.scrollWidth === 0) {
+			if (info.visibleWidth === 0) {
 //console.warn("deferring reflow");
 				this.soon("reflow");
 				return null;
@@ -428,8 +510,8 @@ new Element.Subclass("$IScroller", {
 			info.scrollerWidth = this.offsetWidth;
 			info.scrollerHeight = this.offsetHeight;
 			
-			info.maxScrollX = info.scrollWidth - info.scrollerWidth;
-			info.maxScrollY = info.scrollHeight - info.scrollerHeight;
+			info.maxScrollX = info.visibleWidth - info.scrollerWidth;
+			info.maxScrollY = info.visibleHeight - info.scrollerHeight;
 			
 			info.directionX = 0;
 			info.directionY = 0;
@@ -451,8 +533,8 @@ new Element.Subclass("$IScroller", {
 	
 			// Snap
 			if (this.snap) {
-				info.maxPageX = -Math.floor(info.maxScrollX/info.scrollWidth);
-				info.maxPageY = -Math.floor(info.maxScrollY/info.scrollHeight);
+				info.maxPageX = -Math.floor(info.maxScrollX/info.visibleWidth);
+				info.maxPageY = -Math.floor(info.maxScrollY/info.visibleHeight);
 	
 				snap = this._snapToPage(resetX, resetY);
 				resetX = snap.x;
@@ -464,21 +546,21 @@ new Element.Subclass("$IScroller", {
 				this._setPosition(resetX, resetY, true);
 			}
 			
-			info.scrollX = this.scrollHorizontally && (info.scrollerWidth > info.scrollWidth);
-			info.scrollY = this.scrollVertically && (!_bounceLock && !this.scrollX || info.scrollerHeight > info.scrollHeight);
+			info.scrollX = this.scrollHorizontally && (info.scrollerWidth > info.visibleWidth);
+			info.scrollY = this.scrollVertically && (!_bounceLock && !this.scrollX || info.scrollerHeight > info.visibleHeight);
 	
 			// Update horizontal scrollbar
-			if (Browser.threed && this.showScrollbars && info.scrollX) {
-				info.scrollBarX = info.scrollBarX || new _iScrollbar('horizontal', this.parentNode);
-				info.scrollBarX.init(info.scrollWidth, info.scrollerWidth);
+			if (this.showScrollbars && info.scrollX) {
+				info.scrollBarX = info.scrollBarX || new ScrollThumb('horizontal', this.parentNode, this.appearance);
+				info.scrollBarX.init(info.visibleWidth, info.scrollerWidth);
 			} else if (info.scrollBarX) {
 				info.scrollBarX = info.scrollBarX.remove();
 			}
 	
 			// Update vertical scrollbar
-			if (Browser.threed && this.showScrollbars && info.scrollY && info.scrollerHeight > info.scrollHeight) {
-				info.scrollBarY = info.scrollBarY || new _iScrollbar('vertical', this.parentNode);
-				info.scrollBarY.init(info.scrollHeight, info.scrollerHeight);
+			if (this.showScrollbars && info.scrollY && info.scrollerHeight > info.visibleHeight) {
+				info.scrollBarY = info.scrollBarY || new ScrollThumb('vertical', this.parentNode, this.appearance);
+				info.scrollBarY.init(info.visibleHeight, info.scrollerHeight);
 			} else if (info.scrollBarY) {
 				info.scrollBarY = info.scrollBarY.remove();
 			}
@@ -488,11 +570,11 @@ new Element.Subclass("$IScroller", {
 		_setPosition: function (x, y, hideScrollBars) {
 			var info = this._scrollInfo;
 	
-			info.x = x;
-			info.y = y;
+			info.x = (x == null ? info.x : x) || 0;
+			info.y = (y == null ? info.y : y) || 0;
 			if (Browser.cssTransitions) {
 //TODO: genericise style name
-				this.style.webkitTransform = _translate(info.x||0, info.y||0);
+				this.style.webkitTransform = _translate(info.x, info.y);
 			} else {
 				this.left = info.x;
 				this.top = info.y;
@@ -516,7 +598,7 @@ new Element.Subclass("$IScroller", {
 			var info = this._scrollInfo;
 	
 			time = time || 0;
-			this.transitionSpeed = time;//300;//time;
+			this.transitionSpeed = time;
 			
 			if (info.scrollBarX) {
 				info.scrollBarX.bar.transitionSpeed = time;
@@ -568,13 +650,13 @@ new Element.Subclass("$IScroller", {
 				time
 			;
 	
-			if (info.directionX > 0) 		x = Math.floor(x/info.scrollWidth);
-			else if (info.directionX < 0) 	x = Math.ceil(x/info.scrollWidth);
-			else							x = Math.round(x/info.scrollWidth);
+			if (info.directionX > 0) 		x = Math.floor(x/info.visibleWidth);
+			else if (info.directionX < 0) 	x = Math.ceil(x/info.visibleWidth);
+			else							x = Math.round(x/info.visibleWidth);
 
 			info.pageX = -x;
 
-			x = x * info.scrollWidth;
+			x = x * info.visibleWidth;
 			if (x > 0) {
 				x = info.pageX = 0;
 			} else if (x < info.maxScrollX) {
@@ -582,13 +664,13 @@ new Element.Subclass("$IScroller", {
 				x = info.maxScrollX;
 			}
 	
-			if (info.directionY > 0) 		y = Math.floor(y/info.scrollHeight);
-			else if (info.directionY < 0)	y = Math.ceil(y/info.scrollHeight);
-			else							y = Math.round(y/info.scrollHeight);
+			if (info.directionY > 0) 		y = Math.floor(y/info.visibleHeight);
+			else if (info.directionY < 0)	y = Math.ceil(y/info.visibleHeight);
+			else							y = Math.round(y/info.visibleHeight);
 
 			info.pageY = -y;
 
-			y = y * info.scrollHeight;
+			y = y * info.visibleHeight;
 			if (y > 0) {
 				y = info.pageY = 0;
 			} else if (y < info.maxScrollY) {
@@ -598,8 +680,8 @@ new Element.Subclass("$IScroller", {
 	
 			// Snap with constant speed (proportional duration)
 			time = Math.round(Math.max(
-					Math.abs(info.x - x) / info.scrollWidth * 100,
-					Math.abs(info.y - y) / info.scrollHeight * 100
+					Math.abs(info.x - x) / info.visibleWidth * 100,
+					Math.abs(info.y - y) / info.visibleHeight * 100
 				));
 				
 			return { x: x, y: y, time: time };
@@ -651,59 +733,33 @@ new Element.Subclass("$IScroller", {
 // TODO:  I'm not clear why this needs the whole canvas thing:
 //			-- couldn't it just be a single rounded div and we set it's size/position?
 var uid = 0;
-function _iScrollbar (direction, parent) {
-	var doc = document;
-	
+function ScrollThumb (direction, parent, appearance) {
 	this.direction = direction;
-	this.uid = ++uid;
-
-	// Create main scrollbar
-	this.bar = doc.createElement("scroll-thumb");
-	this.bar.className = direction;
 
 	// Create scrollbar wrapper
-	this.wrapper = doc.createElement("scroll-thumb-mask");
-	this.wrapper.className = direction;
-	this.wrapper.style.cssText = "-webkit-mask:-webkit-canvas(scrollbar" + this.uid + this.direction + ");"
+	var wrapper = this.wrapper = Element.create("scroll-track", {	className:direction, 
+																	appearance:appearance
+																});
+
+	// Create main scrollbar
+	this.bar = Element.create("scroll-thumb");
 
 	// Add scrollbar to the DOM
-	this.wrapper.appendChild(this.bar);
-	parent.appendChild(this.wrapper);
+	wrapper.appendChild(this.bar);
+	parent.appendChild(wrapper);
+	
+	if (_alwaysShowScrollbar) this.wrapper.opacity = 1;
 }
 
 
 //TODO: why is this a canvas???  Should be able to just use a round-cornered div
-_iScrollbar.prototype = {
-	init: function (scroll, size) {
-		var doc = document,
-			pi = Math.PI,
-			ctx;
-
+ScrollThumb.prototype = {
+	init : function (scroll, size) {
 		// Create scrollbar mask
 		if (this.direction == 'horizontal') {
-			if (this.maxSize != this.wrapper.offsetWidth) {
-				this.maxSize = this.wrapper.offsetWidth;
-				ctx = doc.getCSSCanvasContext("2d", "scrollbar" + this.uid + this.direction, this.maxSize, 5);
-				ctx.fillStyle = "rgb(0,0,0)";
-				ctx.beginPath();
-				ctx.arc(2.5, 2.5, 2.5, pi/2, -pi/2, false);
-				ctx.lineTo(this.maxSize-2.5, 0);
-				ctx.arc(this.maxSize-2.5, 2.5, 2.5, -pi/2, pi/2, false);
-				ctx.closePath();
-				ctx.fill();
-			}
+			this.maxSize = this.wrapper.offsetWidth;
 		} else {
-			if (this.maxSize != this.wrapper.offsetHeight) {
-				this.maxSize = this.wrapper.offsetHeight;
-				ctx = doc.getCSSCanvasContext("2d", "scrollbar" + this.uid + this.direction, 5, this.maxSize);
-				ctx.fillStyle = "rgb(0,0,0)";
-				ctx.beginPath();
-				ctx.arc(2.5, 2.5, 2.5, pi, 0, false);
-				ctx.lineTo(5, this.maxSize-2.5);
-				ctx.arc(2.5, this.maxSize-2.5, 2.5, 0, pi, false);
-				ctx.closePath();
-				ctx.fill();
-			}
+			this.maxSize = this.wrapper.offsetHeight;
 		}
 
 		this.size = Math.max(Math.round(this.maxSize * this.maxSize / size), 6);
@@ -712,41 +768,56 @@ _iScrollbar.prototype = {
 		this.bar.style[this.direction == 'horizontal' ? 'width' : 'height'] = this.size + 'px';
 	},
 	
-	_setPosition: function (pos) {
+	_setPosition : function (pos) {
 		if (this.wrapper.style.opacity != '1') this.show();
 
 		pos = Math.round(this.toWrapperProp * pos);
+		var size = this.size;
 
+		// if scrolled off the top
 		if (pos < 0) {
 			pos = _shrinkScrollbar ? pos + pos*3 : 0;
 			if (this.size + pos < 7) {
 				pos = -this.size + 6;
 			}
-		} else if (pos > this.maxScroll) {
+			// shrink the height of the bar so it stays within bounds
+			size += pos;
+			pos = 0;
+		} 
+		// if scrolled off the bottom
+		else if (pos > this.maxScroll) {
 			pos = _shrinkScrollbar ? pos + (pos-this.maxScroll)*3 : this.maxScroll;
 			if (this.size + this.maxScroll - pos < 7) {
 				pos = this.size + this.maxScroll - 6;
 			}
+			// shrink the height of the bar so it stays within bounds
+			size += (this.maxScroll - pos);
 		}
-
-		pos = (this.direction == 'horizontal' ? _translate(pos,0) : _translate(0,pos));
-//TODO: genericise style name
-		this.bar.style.webkitTransform = pos;
+		
+		if (this.direction == "horizontal") {
+			this.bar.left = pos;
+			this.bar.width = size;
+		} else {
+			this.bar.top = pos;
+			this.bar.height = size;
+		}
 	},
 
-	show: function () {
+	show : function () {
+		if (_alwaysShowScrollbar) return;
 //TODO: genericise style name
 		if (Browser.threed) this.wrapper.style.webkitTransitionDelay = 0;
 		this.wrapper.style.opacity = '1';
 	},
 
-	hide: function () {
+	hide : function () {
+		if (_alwaysShowScrollbar) return;
 //TODO: genericise style name
 		if (Browser.threed) this.wrapper.style.webkitTransitionDelay = 350;
 		this.wrapper.style.opacity = '0';
 	},
 	
-	remove: function () {
+	remove : function () {
 		this.wrapper.parentNode.removeChild(this.wrapper);
 		return null;
 	}

@@ -194,7 +194,7 @@ Observable.prototype = {
 
 	// Call a method as some other class.
 	//	If calling a function with the same name as the calling function,
-	//	you can generally omit the function name.  However, you ca specify
+	//	you can generally omit the function name.  However, you can specify
 	//	it if you want to be explicit or you want to call a different method.
 	as : function as(someClass, args) {
 		var constructor = (typeof someClass === "string" ? hope.get(someClass) : someClass);

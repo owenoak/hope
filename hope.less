@@ -314,8 +314,18 @@
 		position:absolute;
 		-webkit-transition:-webkit-transform cubic-bezier(0,0,0.25,1) 0;
 		cursor:move;
-		white-space:nowrap;
 	}
+
+	scroller[direction=vertical] {
+		width:100%;
+		min-height:100%;
+	}
+
+	scroller[direction=horizontal] {
+		height:100%;
+		min-width: 100%;
+	}
+
 	
 	.gecko scroller {
 		cursor:-moz-grab;
@@ -329,56 +339,59 @@
 		cursor:-moz-grabbing !important;
 	}
 
-	scroll-thumb {
-		position:absolute;
-		top:0;left:0;
-		-webkit-transition-timing-function:cubic-bezier(0,0,0.25,1);
-		pointer-events:none;
-		-webkit-transition-delay:0;
-		-webkit-transition-property:-webkit-transform;
-		-webkit-transform:translate3d(0,0,0);
-		z-index:10;
-		background:rgba(0,0,0,0.5);
-	}
+	/* scrollbar track */
+		scroll-track {
+			position:absolute;
+			z-index:10;
+			pointer-events:none;
+			overflow:hidden;
+		//	opacity:0;
+			-webkit-transition-duration:300ms;
+			-webkit-transition-delay:0;
+			-webkit-transition-property:opacity;
+			background:rgba(0,0,0,0.2);
+			.round(3px);
+		}
+		
+		scroll-track.horizontal {
+			height:6px;
+			bottom:0px;
+			left:0px;
+			right:0px;
+		}
+	
+		scroll-track.vertical {
+			top:0px;
+			right:3px;
+			bottom:0px;
+			width:6px;
+		}
 
-	scroll-thumb.horizontal {
-		-webkit-border-radius:3px 2px;
-		min-width:6px;
-		min-height:5px
-	}
-	
-	scroll-thumb.vertical {
-		-webkit-border-radius:2px 3px;
-		min-width:5px;
-		min-height:6px
-	}
-	
+	/* scrollbar thumb */
+		scroll-thumb {
+			pointer-events:none;
+			position:absolute;
+			top:0;left:0;
+			-webkit-transition-timing-function:cubic-bezier(0,0,0.25,1);
+			-webkit-transition-delay:0;
+			-webkit-transition-property:all;
+			-webkit-transform:translate3d(0,0,0);
+			z-index:10;
+			.round(3px);
+			min-width:6px;
+			min-height:6px;
+			background:rgba(0,0,0,0.7);
+		}
 
-	scroll-thumb-mask {
-		position:absolute;
-		z-index:10;
-		pointer-events:none;
-		overflow:hidden;
-		opacity:0;
-		-webkit-transition-duration:300ms;
-		-webkit-transition-delay:0;
-		-webkit-transition-property:opacity;
-	}
 	
-	scroll-thumb-mask.horizontal {
-		bottom:2px;
-		left:2px;
-		right:7px;
-		height:5px;
-	}
-
-	scroll-thumb-mask.vertical {
-		top:2px;
-		right:2px;
-		bottom:7px;
-		width:5px;
-	}
+	/* light appearance */
+		scroll-track[appearance=light] {
+			background:rgba(255,255,255,0.2);
+		}
 	
+		scroll-track[appearance=light] scroll-thumb {
+			background:rgba(255,255,255,0.4);
+		}
 	
 	
 /*** Sections: can have header and footers ***/
@@ -441,7 +454,10 @@
 		background-color:#999;
 		border:3px solid #999;
 		.round(8px);
-		.shadow();
+	}
+
+	.desktop contextmenu {
+		.shadow();	
 	}
 
 	.mobile contextmenu {
@@ -659,8 +675,11 @@
 
 	
 	overlay[appearance=white] > mask > border {
-		.shadow(5px,5px,5px);
 		background-color:white;
+	}
+
+	.desktop overlay[appearance=white] > mask > border {
+		.shadow(5px,5px,5px);	
 	}
 
 	overlay[appearance=white].hasHeader > mask > border > header {
@@ -669,9 +688,12 @@
 
 /*** blue overlay ***/
 	overlay[appearance=blue] > mask > border {
-		.shadow(5px,5px,5px);
 		background-color:#1b1e2b;
 		border:3px solid white;
+	}
+
+	.desktop overlay[appearance=blue] > mask > border {
+		.shadow(5px,5px,5px);
 	}
 
 	overlay[appearance=blue].hasHeader > mask > border > header {
@@ -766,6 +788,33 @@
 		font-weight:bold;
 		text-align:center;
 	}
+
+
+/*** blue panel ***/
+	panel[appearance=blue] {}
+
+	panel[appearance=blue] > header {
+		background-color:#444a63;
+		.roundTop(10px);
+		color:white;
+		padding:0 10px;
+		line-height: 40px;
+		text-align:center;
+		font-weight: bold;
+	}
+
+	panel[appearance=blue] > container {
+		.roundBottom(10px);
+		background:#32384e;
+		color:white;
+	}
+	
+	panel[appearance=blue] footer {
+	
+	}
+
+
+
 
 /*** popup panel (kinda a hybrid -- UI guidelines? ***/
 
