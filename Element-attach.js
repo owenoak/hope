@@ -29,6 +29,9 @@ hope.extend(Element, {
 	//	NOTE: this is done BEFORE the element is initialized(), 
 	//			so you can use these values in templates, etc.
 	initializeElement : function(element, properties) {
+		// handle text nodes, comments, etc
+		if (!element.initialize) return;
+		
 		if (element.hasOwnProperty("initialized")) return;
 		
 		// if we have an adapter for this type of element, reassign the element's prototype
@@ -291,7 +294,7 @@ Element.prototype.extend({
 			var parentSelector = what[0], partId = what[1];
 			var parent = this.selectUp(parentSelector);
 			if (!parent) {
-				return console.error("Couldn't find parent id "+parentSelector+" for part",partId,"for"+this);
+				return console.error("Couldn't find parent id "+parentSelector+" for part",partId,"for",this);
 			}
 //console.warn("adding ",this,"as part ",partId,"to",parent);
 			parent.addPart(this, partId);

@@ -97,6 +97,7 @@ hope.extend(E, {
 				var value = attributes[attribute];
 				switch (attribute) {
 					case "html" 	: element.innerHTML = value; break;
+					case "className": element.className = value; break;
 					case "value" 	: element.value = value; break;
 					default			: element.setAttribute(attribute, value);
 				}
@@ -422,10 +423,13 @@ EP.extendIf({
 		if (!it) return this;
 		if (typeof it === "string") {	
 			it = E.inflate(it);
-//			if (setupTags !== false) Element.initializeElements(it);
+			if (setupTags !== false) Element.initializeElements(it);
 		}
-		if (it.length) 				this.appendList(it);
-		else if (it instanceof Element)	this.appendChild(it);
+		if (typeof it == "string" || typeof it == "number") {
+			it = document.createTextNode(it);
+		}
+		if (it instanceof Element || it instanceof Text)	this.appendChild(it);
+		else if (it.length) 		this.appendList(it);
 		else						throw "trying to append non-element "+it;
 		return this;
 	},
@@ -433,7 +437,8 @@ EP.extendIf({
 	appendList : function(list) {
 		if (!list || !list.length) return this;
 		for (var i = 0, last = list.length; i < last; i++) {
-			this.appendChild(list[i]);
+			var it = list[i];
+			if (it != null) this.append(it);
 		}
 		return this;
 	},
