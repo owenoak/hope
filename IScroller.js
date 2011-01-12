@@ -62,7 +62,8 @@ new Element.Subclass("$IScroller", {
 						}
 		}),
 		
-		appearance : new Attribute({name:"appearance", inherit:true, value:"dark"}),
+		// "light" or "dark"
+		appearance : new Attribute({name:"appearance", inherit:true, value:"light"}),
 		
 //TODO: rename?
 		scrollHorizontally : new Getter(function(){

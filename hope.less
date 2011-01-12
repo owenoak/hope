@@ -326,13 +326,16 @@
 		height:100%;
 	}
 
-	
+	scroller[direction=vertical].scrolling * {
+		cursor:row-resize !important;
+	}
+
+	scroller[direction=horizontal].scrolling * {
+		cursor:col-resize !important;
+	}
+
 	.gecko scroller {
 		cursor:-moz-grab;
-	}
-	
-	scroller.scrolling * {
-		cursor:col-resize !important;
 	}
 
 	.gecko scroller.scrolling * {
@@ -349,8 +352,8 @@
 			-webkit-transition-duration:300ms;
 			-webkit-transition-delay:0;
 			-webkit-transition-property:opacity;
-			background:rgba(0,0,0,0.2);
 			.round(3px);
+//			background:rgba(255,255,255,0.2);
 		}
 		
 		scroll-track.horizontal {
@@ -380,17 +383,17 @@
 			.round(3px);
 			min-width:6px;
 			min-height:6px;
-			background:rgba(0,0,0,0.7);
+			background:rgba(255,255,255,0.4);
 		}
 
 	
 	/* light appearance */
-		scroll-track[appearance=light] {
-			background:rgba(255,255,255,0.2);
+		scroll-track[appearance=dark] {
+//			background:rgba(0,0,0,0.2);
 		}
 	
-		scroll-track[appearance=light] scroll-thumb {
-			background:rgba(255,255,255,0.4);
+		scroll-track[appearance=dark] scroll-thumb {
+			background:rgba(0,0,0,0.7);
 		}
 	
 	
@@ -903,9 +906,6 @@
 		top:43px;
 		border:0px;	
 		background:white;
-	}
-
-	body.horizontal webview > iframe {
 		width:1024px; height:725px;
 	}
 
