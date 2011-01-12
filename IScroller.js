@@ -10,36 +10,6 @@
  * 
  */
 
-/** SMART LOCK
-to do this make the following mods:
-line 37: add a trailing comma
-line 38: smartLock: true
-line 281: Add the following, inside if (that.dist > 5) {
-
-if (!that.moved && that.options.smartLock) {
-// Set the smart lock sector
-that.smartLockSector = -1;
-if (Math.abs(leftDelta) < 2 && topDelta < -3) {
-that.smartLockSector = 1;
-} else if (Math.abs(topDelta) 3) {
-that.smartLockSector = 2;
-} else if (Math.abs(leftDelta) 3) {
-that.smartLockSector = 3;
-} else if (Math.abs(topDelta) < 2 && leftDelta < -3) {
-that.smartLockSector = 4;
-}
-}
-// Apply the smartlock if needed
-if (that.smartLockSector == 1 || that.smartLockSector == 3) {
-newX = that.x;
-leftDelta = 0;
-} else if (that.smartLockSector == 2 || that.smartLockSector == 4) {
-newY = that.y;
-topDelta = 0;
-}
-
-**/
-
 
 Script.require("{{hope}}Element-attach.js", function(){
 
@@ -86,6 +56,8 @@ new Element.Subclass("$IScroller", {
 		// h[orizontal], v[ertical], or b[oth]
 		direction : new Attribute({name:"direction", inherit:true, value:"both",
 						onChange : function() {
+//							this.left = 0;
+//							this.top = 0;
 							this.soon("reflow");
 						}
 		}),
@@ -267,6 +239,8 @@ new Element.Subclass("$IScroller", {
 				;
 				x = visibleCenter - elementLeft - (elementWidth/2);
 				if (x != null) x = x.between(info.maxScrollX, 0);
+			} else {
+				x = 0;
 			}
 
 			if (info.scrollY) {
@@ -276,6 +250,8 @@ new Element.Subclass("$IScroller", {
 				;
 				y = visibleCenter - elementTop - (elementHeight/2);
 				if (y != null) y = y.between(info.maxScrollY, 0);
+			} else {
+				y = 0;
 			}
 
 			this.scrollTo(x, y, runtime);
