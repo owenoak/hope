@@ -107,6 +107,22 @@ var XHR = {
 		request.send(null);
 	},
 	
+	
+	// SYNCHRONOUSLY fetch an arbitrary file via XHR.
+	// 	@returns the responseText immediately if it worked.
+	//	@errback is called if can't load the file, returns <undefined>.
+	getImmediately : function (url, errback, scope, cache) {
+		var request = new XMLHttpRequest();
+		url = XHR.expand(url);
+		request.open("GET", XHR.addCacheParam(url, cache), false);
+		request.send(null);
+		if (request.status === 200 || request.status === 0) {
+			return request.responseText;
+		} else if (errback) {
+			errback.call(scope, request.status, request);
+		}
+	},
+	
 	// encode an object of parameters
 	encode : function(params) {
 		// format the params
