@@ -27,8 +27,10 @@ new Element.Subclass("$WebView", {
 			
 			set : function(url) {
 				setTimeout(function(){
-					this.$frame.src = url;
-					if (this.autoShow && url && url != "about:blank") this.visible = true;
+					try {
+						this.$frame.src = url;
+						if (this.autoShow && url && url != "about:blank") this.visible = true;
+					} catch (e) {}
 				}.bind(this),0);
 			}
 		}),
