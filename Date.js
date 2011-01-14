@@ -49,6 +49,8 @@ hope.extend(Date, {
 	}
 });
 
+// make sure the "Date.now" method is implemented
+if (!Date.now) Date.now = function() { return (new Date()).getTime() };
 
 hope.extend(Date.prototype, {
 
@@ -103,7 +105,7 @@ hope.extend(Date.prototype, {
 	// eg:  "EDT"
 	// NOTE: uses the UNSAFE Date.TIMEZONE_PARSER to figure out the timezone for this date
 	getTimezone : function() {
-		return Date.DOW_NAMES[this.getDay()];
+throw "date.getTimezone() not implemented";
 	},
 
 	
@@ -124,6 +126,9 @@ hope.extend(Date.prototype, {
 
 	
 });
+
+
+
 
 
 
