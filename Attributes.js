@@ -107,28 +107,6 @@ Attribute.initializers = {
 			}
 		}
 	},
-/*	
-	"flag" : function(options) {
-		// if default is false, true if attribute is not `true`, empty string, "yes" or "true"
-		if (options.value === false) {
-			options.normalize = function(newValue, oldValue, options) {
-				return (newValue === true || newValue === "" || newValue === "yes" || newValue === "true");
-			}
-		}
-		// if default is true, true if attribute is not `false`, "no", "false"		
-		else if (options.value === true) {
-			options.normalize = function(newValue, oldValue, options) {
-				return (newValue !== false && newValue !== "no" && newValue !== "false");
-			}
-		} 
-		// otherwise true if set at all
-		else {
-			options.normalize = function(newValue, oldValue, options) {
-				return (newValue != null);
-			}
-		}	
-	},
-*/
 	
 	"flag" : function(options) {
 		var conditions = options.trueIf || options.falseIf,

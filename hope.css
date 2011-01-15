@@ -184,7 +184,7 @@ dataset {
 *[visible=no] {
   display: none !important;
 }
-hcenter, center {
+hcenter {
   position: relative;
   display: box !important;
   display: -webkit-box !important;
