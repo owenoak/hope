@@ -143,7 +143,21 @@ var XHR = {
 		request.send(postBody);
 	},
 	
-	
+	// SYNCHRONOUSLY post some data via XHR.
+	// 	@returns the responseText immediately if it worked.
+	//	@errback is called if can't load the file, returns <undefined>.
+	postImmediately : function (url, urlParams, postBody, callback, errback, scope) {
+		url = XHR.expand(url).appendParameters(urlParams);
+		var request = new XMLHttpRequest();
+		request.open("POST", url, false);
+		request.send(postBody);
+		if (request.status === 200 || request.status === 0) {
+			return request.responseText;
+		} else if (errback) {
+			errback.call(scope, request.status, request);
+		}
+	},
+
 	
 	// Save @data to a @file on the server.s
 	//	ASSUMES:

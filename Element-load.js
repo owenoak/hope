@@ -13,11 +13,8 @@ Element.prototype.extend({
 
 		if (!scope) scope = this;
 		var onLoaded = function(html, request) {
-			this.html = html;
-			delete this._loading;
-			this._loaded = true;
-
-			if (callback) callback.call(scope, this, html, request);
+			this._loadedHTML(html);
+			if (callback) callback.call(scope, html, request, this);
 			if (this.global) hope.setReady(this.global, true, this);
 			this.fire("loaded", html, request);
 			this.fire("ready");
@@ -38,6 +35,14 @@ Element.prototype.extend({
 		this._loaded = false;
 		this._loading = true;
 		return this;
+	},
+
+	// Callback when html has actually been loaded.
+	//	We inject it as our .html and set our ._loaded flag;
+	_loadedHTML : function(html) {
+		this.html = html;
+		delete this._loading;
+		this._loaded = true;
 	},
 
 	// url to load from
