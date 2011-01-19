@@ -287,7 +287,7 @@ EP.extendIf({
 	// return first descendant which matches selector
 	select : window.select,
 	
-	// return first parent (including us if @includeIs is not false) which matches selector
+	// return first parent (including us if @includeUs is not false) which matches selector
 	selectUp : function(selector, includeUs) {
 //HACKY
 		if (typeof selector === "string" && selector.charAt(0) === "$") return window[selector];

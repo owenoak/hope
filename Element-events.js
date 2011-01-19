@@ -261,7 +261,7 @@ try {
 		// NOTE: returns null so you can assign this to a variable to clear it.
 		un : function un(eventType, boundHandler) {
 			// try a standard remove (necessary if we've bound the event in capture phase)
-			if (boundHandler.__captured__) {
+			if (boundHandler && boundHandler.__captured__) {
 				this.removeEventListener(eventType, boundHandler, true);
 			} else {
 				// now remove from our event list mechanism

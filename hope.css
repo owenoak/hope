@@ -85,7 +85,6 @@
   box-sizing: border-box;
   -moz-user-select: -moz-none;
   -webkit-user-select: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 table {
   font-size: inherit;

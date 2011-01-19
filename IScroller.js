@@ -26,9 +26,11 @@ _scrollerEvents[Browser.EVENT.move] = "onTouchMove";
 //_scrollerEvents["DOMSubtreeModified"] = "onDOMModified";
 
 
+// events always attached to the windo
 var _windowEvents = {};
 _windowEvents[Browser.EVENT.resize] = "onReflow";
-_windowEvents[Browser.EVENT.up] = "onTouchEnd";
+
+
 
 var _docEvents = {};
 //TODO: genericise style name
@@ -264,11 +266,14 @@ new Element.Subclass("$IScroller", {
 			// if more than one finger is down, forget it
 			if (Browser.mobile && event.touches && event.touches.length > 1) return;
 
+			// capture mouseup before it goes to the page elements to call onTouchEnd
+			this._globalUpEvent = window.capture(Browser.EVENT.up, this.onTouchEnd, this);
+
 			if (!this._scrollInfo) this.fire("reflow");
 			if (!this.enabled) return;
 	
 			event.preventDefault();
-//			event.stopPropagation();
+			event.stopPropagation();
 			
 			var info = this._scrollInfo;
 			info.scrolling = true;
@@ -280,17 +285,6 @@ new Element.Subclass("$IScroller", {
 	
 			this._setTransitionTime(0);
 	
-//TODO: this was breaking touch on the pad - what the hell was it doing anyway?
-			// Check if the scroller is really where it should be
-//			if (Browser.threed && (_momentum || this.snap)) {
-//				var matrix = new WebKitCSSMatrix(window.getComputedStyle(this).webkitTransform);
-//				if (matrix.event != info.x || matrix.f != info.y) {
-//					document.unhook(_docEvents, this);
-//					if (info.onTransitionEnd) info.onTransitionEnd = document.un("webkitTransitionEnd", info.onTransitionEnd);
-//					this._setPosition(matrix.e, matrix.f);
-//XXX					info.moved = true;
-//				}
-//			}
 			info.touchStartX = event.touch.pageX;
 			info.scrollStartX = info.x;
 	
@@ -361,8 +355,10 @@ new Element.Subclass("$IScroller", {
 		},
 		
 		onTouchEnd: function(event) {
+			// clear the captured window.mouseUp event
+			window.un(Browser.EVENT.up, this._globalUpEvent);
+
 			if (!this._scrollInfo.scrolling) return;
-//console.warn("end");
 
 			this.classList.remove("scrolling");
 			
@@ -378,7 +374,7 @@ new Element.Subclass("$IScroller", {
 			info.scrolling = false;
 	
 			if (info.startOpacity != 1) this.opacity = info.startOpacity;
-	
+
 			if (!info.moved) {
 				this._resetPosition();
 				// if touchable, generate a click event manually
@@ -397,8 +393,25 @@ new Element.Subclass("$IScroller", {
 					ev._fake = true;
 					target.dispatchEvent(ev);
 				}
-	
 				return;
+			} else {
+				// if we get here, scrolling actually happened
+				//	we want to eat any mouseup and click events so they don't 
+				//	go to things underneath the mouse (scrolling trumps clicking)
+			
+				event.preventDefault();			
+				event.stopPropagation();	
+
+				// capture the click event and unhook it (immediately) on a timer
+				//	this is the only way I can figure out to reliably eat the click
+				var _captured = window.capture("click",function(event){
+					// console.warn('eating click'); 
+					event.stop();
+				});
+				setTimeout(function(){
+					// console.warn("unhooked window click eater")
+					window.un("click", _captured);
+				},0);
 			}
 	
 			if (!this.snap && time > 250) {			// Prevent slingshot effect
@@ -434,6 +447,9 @@ new Element.Subclass("$IScroller", {
 			}
 	
 			this.scrollTo(newPositionX, newPositionY, newDuration);
+console.error("GOT TO END");
+
+			return false;
 		},
 	
 		onTransitionEnd: function () {
@@ -612,8 +628,6 @@ new Element.Subclass("$IScroller", {
 			} else {
 				if (info.moved) {
 					this.onScrollEnd();		// Execute custom code on scroll end
-//TODO: this was messing up click handling
-//					info.moved = false;
 				}
 	
 				// Hide the scrollbars
