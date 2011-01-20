@@ -11,6 +11,10 @@ Element.prototype.extend({
 	loadHTML : function loadHTML(url, callback, errback, scope) {
 		if (!url) url = this.url;
 
+		// use XHR.expand(url) to dereference any {{namedPaths}} in the URL
+		url = XHR.expand(url);
+		this.url = url;
+
 		if (!scope) scope = this;
 		var onLoaded = function(html, request) {
 			this._loadedHTML(html);
@@ -29,7 +33,6 @@ Element.prototype.extend({
 
 		if (this.global) hope.clearReady(this.global);
 
-		this.attr("url", url);
 		XHR.get(url, onLoaded, onError, this, false);
 
 		this._loaded = false;
@@ -46,7 +49,7 @@ Element.prototype.extend({
 	},
 
 	// url to load from
-	url : new Attribute({name:"url"}),
+	url : new Attribute({name:"url", update:true}),
 	autoLoad : new Attribute({name:"autoLoad", type:"flag", trueIf:["",true,"true","yes"]}),
 
 	onLoaded : new Attribute({name:"onLoaded", type:"event"}),

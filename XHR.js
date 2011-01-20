@@ -21,6 +21,10 @@ var XHR = {
 		// path to head of hope scripts, set in loader
 		hope : HOPE_PATH
 	},
+	
+	addPath : function(name, url) {
+		XHR.paths[name] = url;
+	},
 
 	// given a @url, interpret any named paths in the url (eg:  "{{hope}}foo")
 	expand : function(url) {
@@ -173,9 +177,10 @@ hope.setGlobal("XHR", XHR);
 
 
 // set XHR.paths.page to the base URL of the page (minus any query stuff)
-XHR.paths.page = XHR.path(""+window.location);
+XHR.addPath("page", XHR.path(""+window.location));
 
 // default XHR.paths.app to the same as XHR.paths.page	(app may change it in user code)
-XHR.paths.app = XHR.paths.page;
+XHR.addPath("app", XHR.paths.page);
+
 
 })();// end hidden from global scope
