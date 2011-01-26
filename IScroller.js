@@ -447,7 +447,7 @@ new Element.Subclass("$IScroller", {
 			}
 	
 			this.scrollTo(newPositionX, newPositionY, newDuration);
-console.error("GOT TO END");
+//console.error("GOT TO END");
 
 			return false;
 		},

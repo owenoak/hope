@@ -10,11 +10,33 @@ Script.require("{{hope}}Element-attach.js", function(){
 new Element.Subclass("$Action", {
 	tag : "action",
 	properties : {
-		listeners : "click",
+
+//TODO: touchStart ???
+		listeners : "mousedown,click",
 
 		// action to do when clicked
 //TODO: recast this as an event...  "onDo" ? "onActivated" (yuck)
 		handler : new Attribute({name:"handler", type:"function", args:"event"}),
+
+		onMousedown : function(event) {
+			if (!this.enabled) return;
+			this.activate();
+			document.body.once("mouseup", this.deactivate, this);
+		},
+		
+		// show as "active"
+		activate : function() {
+			this.classList.add("active");
+		},
+
+		// show as "inactive"
+		deactivate : function() {
+			this.classList.remove("active");
+		},
+
+		onMouseup : function(event) {
+			if (this.enabled) this.classList.remove("active");
+		},
 
 		onClick : function(event) {
 			if (this.enabled && this.handler) this.handler(event);

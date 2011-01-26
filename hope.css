@@ -147,6 +147,11 @@ panel {
 inline, output {
   display: inline-block;
 }
+/* standard button height/line-height */
+.buttonHeight {
+  height: 30px;
+  line-height: 30px;
+}
 /*** horizontal and vertical stretch boxes ***/
 vbox {
   position: relative;
@@ -260,7 +265,7 @@ row > * {
   -moz-border-radius: 12px;
   border-radius: 12px;
   border: 0px;
-  background: url(theme/ios/searchFieldIcon.png) white no-repeat 5px center;
+  background: url(theme/ios/field-searchIcon.png) white no-repeat 5px center;
   color: black;
   min-height: 24px !important;
   padding-left: 30px;
@@ -298,12 +303,27 @@ action {
   padding: 2px 5px;
   cursor: pointer;
   white-space: nowrap;
-  line-height: 1.3em;
+  height: 30px;
+  line-height: 30px;
+}
+/* make gecko spacing for buttons/bars match webkit.  Why is this necessary? */
+.gecko action[appearance=black],
+.gecko action[appearance=blue],
+.gecko action[appearance=red],
+.gecko action[appearance=green],
+.gecko action[appearance=yellow],
+.gecko action[appearance=white],
+.gecko action[appearance=prev],
+.gecko action[appearance=next],
+.gecko tabselector tab {
+  line-height: 29px;
 }
 action[icon] {
-  padding-left: 40px;
-  background-position: left center;
-  background-repeat: no-repeat;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+action[icon-text] {
+  padding-left: 35px !important;
 }
 action[appearance=icon] {
   background-color: none;
@@ -311,159 +331,170 @@ action[appearance=icon] {
   padding: 0px;
   vertical-align: baseline;
 }
-action[appearance=blue], action[appearance=red], action[appearance=green] {
-  height: 32px !important;
-  max-height: 32px;
+action[appearance=black],
+action[appearance=blue],
+action[appearance=lightBlue],
+action[appearance=red],
+action[appearance=green],
+action[appearance=yellow],
+action[appearance=white] {
   background-color: none;
   color: white;
   text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-  padding: 0px;
+  padding: 0px 10px;
   margin-right: 5px;
 }
-action[appearance=blue][selected] {
+action[appearance=black] {
   border-color: transparent;
-  border-width: 9px 15px 8px 15px;
-  border-image: url(theme/ios/blueBtn-selected.png) 9 15 8 15 round;
-  -moz-border-image: url(theme/ios/blueBtn-selected.png) 9 15 8 15 round;
-  -webkit-border-image: url(theme/ios/blueBtn-selected.png) 9 15 8 15 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-black.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-black.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-black.png) 0 5 0 5 round;
+}
+action[appearance=black].active {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 round;
 }
 action[appearance=blue] {
   border-color: transparent;
-  border-width: 9px 15px 8px 15px;
-  border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
-  -moz-border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
-  -webkit-border-image: url(theme/ios/blueBtn.png) 9 15 8 15 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-blue.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-blue.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-blue.png) 0 5 0 5 round;
+}
+action[appearance=blue].active {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-blue-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-blue-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-blue-active.png) 0 5 0 5 round;
+}
+action[appearance=blue][selected] {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
+}
+action[appearance=blue][selected].active {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
+}
+action[appearance=lightBlue] {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
+}
+action[appearance=lightBlue].active {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
 }
 action[appearance=red] {
   border-color: transparent;
-  border-width: 9px 15px 8px 15px;
-  border-image: url(theme/ios/redBtn.png) 9 15 8 15 round;
-  -moz-border-image: url(theme/ios/redBtn.png) 9 15 8 15 round;
-  -webkit-border-image: url(theme/ios/redBtn.png) 9 15 8 15 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-red.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-red.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-red.png) 0 5 0 5 round;
+}
+action[appearance=red].active {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-red-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-red-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-red-active.png) 0 5 0 5 round;
 }
 action[appearance=green] {
   border-color: transparent;
-  border-width: 9px 15px 8px 15px;
-  border-image: url(theme/ios/greenBtn.png) 9 15 8 15 round;
-  -moz-border-image: url(theme/ios/greenBtn.png) 9 15 8 15 round;
-  -webkit-border-image: url(theme/ios/greenBtn.png) 9 15 8 15 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-green.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-green.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-green.png) 0 5 0 5 round;
 }
-action[appearance=blueBar] {
-  height: 32px !important;
-  max-height: 32px;
-  background-color: none;
+action[appearance=green].active {
   border-color: transparent;
-  border-width: 6px 1px 6px 1px;
-  border-image: url(theme/ios/blueBar.png) 6 1 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar.png) 6 1 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar.png) 6 1 6 1 round;
-  color: white;
-  text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-  padding: 3px 15px;
-  line-height: 13px;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-green-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-green-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-green-active.png) 0 5 0 5 round;
 }
-action[appearance=blueBar]:first-child {
+action[appearance=yellow] {
   border-color: transparent;
-  border-width: 6px 0px 6px 6px;
-  border-image: url(theme/ios/blueBar-start.png) 6 0 6 6 round;
-  -moz-border-image: url(theme/ios/blueBar-start.png) 6 0 6 6 round;
-  -webkit-border-image: url(theme/ios/blueBar-start.png) 6 0 6 6 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 round;
 }
-action[appearance=blueBar]:last-child {
+action[appearance=yellow].active {
   border-color: transparent;
-  border-width: 6px 6px 6px 1px;
-  border-image: url(theme/ios/blueBar-end.png) 6 6 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar-end.png) 6 6 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar-end.png) 6 6 6 1 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-yellow-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-yellow-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-yellow-active.png) 0 5 0 5 round;
 }
-action[appearance=blueBar][selected] {
+action[appearance=white] {
   border-color: transparent;
-  border-width: 9px 15px 8px 15px;
-  border-image: url(theme/ios/blueBar-selected.png) 9 15 8 15 round;
-  -moz-border-image: url(theme/ios/blueBar-selected.png) 9 15 8 15 round;
-  -webkit-border-image: url(theme/ios/blueBar-selected.png) 9 15 8 15 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-white.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-white.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-white.png) 0 5 0 5 round;
 }
-action[appearance=blueBar][selected]:first-child {
+action[appearance=white].active {
   border-color: transparent;
-  border-width: 6px 0px 6px 6px;
-  border-image: url(theme/ios/blueBar-selected-start.png) 6 0 6 6 round;
-  -moz-border-image: url(theme/ios/blueBar-selected-start.png) 6 0 6 6 round;
-  -webkit-border-image: url(theme/ios/blueBar-selected-start.png) 6 0 6 6 round;
-}
-action[appearance=blueBar][selected]:last-child {
-  border-color: transparent;
-  border-width: 6px 6px 6px 1px;
-  border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/btn-white-active.png) 0 5 0 5 round;
+  -moz-border-image: url(theme/ios/btn-white-active.png) 0 5 0 5 round;
+  -webkit-border-image: url(theme/ios/btn-white-active.png) 0 5 0 5 round;
 }
 action[appearance=prev] {
   overflow: hidden;
-  height: 32px !important;
-  max-height: 32px;
-  border-color: transparent;
-  border-width: 9px 15px 8px 20px;
-  border-image: url(theme/ios/bluePrev.png) 9 15 8 20 round;
-  -moz-border-image: url(theme/ios/bluePrev.png) 9 15 8 20 round;
-  -webkit-border-image: url(theme/ios/bluePrev.png) 9 15 8 20 round;
   color: white;
   text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-  padding: 0px;
+  padding: 0;
   margin-right: 5px;
   text-align: center;
-}
-action[appearance=prev]:hover {
   border-color: transparent;
-  border-width: 9px 15px 8px 20px;
-  border-image: url(theme/ios/bluePrev-selected.png) 9 15 8 20 round;
-  -moz-border-image: url(theme/ios/bluePrev-selected.png) 9 15 8 20 round;
-  -webkit-border-image: url(theme/ios/bluePrev-selected.png) 9 15 8 20 round;
+  border-width: 0px 13px 0px 17px;
+  border-image: url(theme/ios/nav-back-black.png) 0 13 0 17 round;
+  -moz-border-image: url(theme/ios/nav-back-black.png) 0 13 0 17 round;
+  -webkit-border-image: url(theme/ios/nav-back-black.png) 0 13 0 17 round;
+}
+action[appearance=prev].active {
+  border-color: transparent;
+  border-width: 0px 13px 0px 17px;
+  border-image: url(theme/ios/nav-back-black-active.png) 0 13 0 17 round;
+  -moz-border-image: url(theme/ios/nav-back-black-active.png) 0 13 0 17 round;
+  -webkit-border-image: url(theme/ios/nav-back-black-active.png) 0 13 0 17 round;
 }
 action[appearance=next] {
   overflow: hidden;
-  height: 32px !important;
-  max-height: 32px;
-  border-color: transparent;
-  border-width: 9px 20px 8px 15px;
-  border-image: url(theme/ios/blueNext.png) 9 20 8 15 round;
-  -moz-border-image: url(theme/ios/blueNext.png) 9 20 8 15 round;
-  -webkit-border-image: url(theme/ios/blueNext.png) 9 20 8 15 round;
   color: white;
   text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
   padding: 0px;
   margin-right: 5px;
   text-align: center;
-}
-action[appearance=next]:hover {
   border-color: transparent;
-  border-width: 9px 20px 8px 15px;
-  border-image: url(theme/ios/blueNext-selected.png) 9 20 8 15 round;
-  -moz-border-image: url(theme/ios/blueNext-selected.png) 9 20 8 15 round;
-  -webkit-border-image: url(theme/ios/blueNext-selected.png) 9 20 8 15 round;
+  border-width: 0px 17px 0px 13px;
+  border-image: url(theme/ios/nav-forward-black.png) 0 17 0 13 round;
+  -moz-border-image: url(theme/ios/nav-forward-black.png) 0 17 0 13 round;
+  -webkit-border-image: url(theme/ios/nav-forward-black.png) 0 17 0 13 round;
 }
-.gecko action[appearance=blue],
-.gecko action[appearance=red],
-.gecko action[appearance=green],
-.gecko action[appearance=prev],
-.gecko action[appearance=next] {
-  line-height: 13px;
-}
-/*** very big green buttons ***/
-action[appearance=bigGreen] {
-  height: 50px !important;
-  max-height: 50px;
-  background-color: none;
+action[appearance=next].active {
   border-color: transparent;
-  border-width: 9px 25px 20px 25px;
-  border-image: url(theme/ios/bigGreen.png) 9 25 20 25 round;
-  -moz-border-image: url(theme/ios/bigGreen.png) 9 25 20 25 round;
-  -webkit-border-image: url(theme/ios/bigGreen.png) 9 25 20 25 round;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0;
-  padding: 0px;
-  margin-right: 5px;
+  border-width: 0px 17px 0px 13px;
+  border-image: url(theme/ios/nav-forward-black-active.png) 0 17 0 13 round;
+  -moz-border-image: url(theme/ios/nav-forward-black-active.png) 0 17 0 13 round;
+  -webkit-border-image: url(theme/ios/nav-forward-black-active.png) 0 17 0 13 round;
 }
 /*** scroller for some content ***/
 scroller {
@@ -631,9 +662,9 @@ contextmenu[showchecks] action {
 contextmenu action[selected] {
   border-color: transparent;
   border-width: 2px 20px 0px 0px;
-  border-image: url(theme/icons/menuChecked.png) 2 20 0 0 stretch;
-  -moz-border-image: url(theme/icons/menuChecked.png) 2 20 0 0 stretch;
-  -webkit-border-image: url(theme/icons/menuChecked.png) 2 20 0 0 stretch;
+  border-image: url(theme/icons/menu-check.png) 2 20 0 0 stretch;
+  -moz-border-image: url(theme/icons/menu-check.png) 2 20 0 0 stretch;
+  -webkit-border-image: url(theme/icons/menu-check.png) 2 20 0 0 stretch;
 }
 /*** Toolbar ***/
 toolbar {
@@ -664,9 +695,9 @@ toolbar[appearance=black] {
   border-width: 0 6px;
   border-color: transparent;
   border-width: 0 6px;
-  border-image: url(theme/ios/topToolbar.png) 0 6 0 6 round;
-  -moz-border-image: url(theme/ios/topToolbar.png) 0 6 0 6 round;
-  -webkit-border-image: url(theme/ios/topToolbar.png) 0 6 0 6 round;
+  border-image: url(theme/ios/toolbar-black-top.png) 0 6 0 6 round;
+  -moz-border-image: url(theme/ios/toolbar-black-top.png) 0 6 0 6 round;
+  -webkit-border-image: url(theme/ios/toolbar-black-top.png) 0 6 0 6 round;
   height: 43px;
   width: 100%;
   padding: 0px 10px;
@@ -712,54 +743,55 @@ toolbar[appearance=black] tabselector {
   display: inline-block;
 }
 tabselector tab {
+  height: 30px;
+  line-height: 30px;
   display: inline-block;
-  height: 32px;
   color: white;
   text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-  border-color: transparent;
-  border-width: 6px 1px 6px 1px;
-  border-image: url(theme/ios/blueBar.png) 6 1 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar.png) 6 1 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar.png) 6 1 6 1 round;
-  padding: 3px 20px;
+  padding: 0px 20px;
   cursor: pointer;
+  border-color: transparent;
+  border-width: 0px 1px 0px 1px;
+  border-image: url(theme/ios/segment-black.png) 0 1 0 1 round;
+  -moz-border-image: url(theme/ios/segment-black.png) 0 1 0 1 round;
+  -webkit-border-image: url(theme/ios/segment-black.png) 0 1 0 1 round;
 }
 tabselector tab:first-child {
   padding-left: 15px;
   border-color: transparent;
-  border-width: 6px 0px 6px 6px;
-  border-image: url(theme/ios/blueBar-start.png) 6 0 6 6 round;
-  -moz-border-image: url(theme/ios/blueBar-start.png) 6 0 6 6 round;
-  -webkit-border-image: url(theme/ios/blueBar-start.png) 6 0 6 6 round;
+  border-width: 0px 1px 0px 6px;
+  border-image: url(theme/ios/segment-black-start.png) 0 1 0 6 round;
+  -moz-border-image: url(theme/ios/segment-black-start.png) 0 1 0 6 round;
+  -webkit-border-image: url(theme/ios/segment-black-start.png) 0 1 0 6 round;
 }
 tabselector tab:last-child {
   padding-right: 15px;
   border-color: transparent;
-  border-width: 6px 6px 6px 1px;
-  border-image: url(theme/ios/blueBar-end.png) 6 6 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar-end.png) 6 6 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar-end.png) 6 6 6 1 round;
+  border-width: 0px 6px 0px 1px;
+  border-image: url(theme/ios/segment-black-end.png) 0 6 0 1 round;
+  -moz-border-image: url(theme/ios/segment-black-end.png) 0 6 0 1 round;
+  -webkit-border-image: url(theme/ios/segment-black-end.png) 0 6 0 1 round;
 }
 tabselector tab[selected] {
   border-color: transparent;
-  border-width: 6px 1px 6px 1px;
-  border-image: url(theme/ios/blueBar-selected.png) 6 1 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar-selected.png) 6 1 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar-selected.png) 6 1 6 1 round;
+  border-width: 0px 1px 0px 1px;
+  border-image: url(theme/ios/segment-black-selected.png) 0 1 0 1 round;
+  -moz-border-image: url(theme/ios/segment-black-selected.png) 0 1 0 1 round;
+  -webkit-border-image: url(theme/ios/segment-black-selected.png) 0 1 0 1 round;
 }
 tabselector tab[selected]:first-child {
   border-color: transparent;
-  border-width: 6px 0px 6px 6px;
-  border-image: url(theme/ios/blueBar-selected-start.png) 6 0 6 6 round;
-  -moz-border-image: url(theme/ios/blueBar-selected-start.png) 6 0 6 6 round;
-  -webkit-border-image: url(theme/ios/blueBar-selected-start.png) 6 0 6 6 round;
+  border-width: 0px 1px 0px 6px;
+  border-image: url(theme/ios/segment-black-selected-start.png) 0 1 0 6 round;
+  -moz-border-image: url(theme/ios/segment-black-selected-start.png) 0 1 0 6 round;
+  -webkit-border-image: url(theme/ios/segment-black-selected-start.png) 0 1 0 6 round;
 }
 tabselector tab[selected]:last-child {
   border-color: transparent;
-  border-width: 6px 6px 6px 1px;
-  border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
-  -moz-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
-  -webkit-border-image: url(theme/ios/blueBar-selected-end.png) 6 6 6 1 round;
+  border-width: 0px 6px 0px 1px;
+  border-image: url(theme/ios/segment-black-selected-end.png) 0 6 0 1 round;
+  -moz-border-image: url(theme/ios/segment-black-selected-end.png) 0 6 0 1 round;
+  -webkit-border-image: url(theme/ios/segment-black-selected-end.png) 0 6 0 1 round;
 }
 /*** notice panels ***/
 notice {
@@ -805,7 +837,7 @@ overlay > mask > border > close {
   height: 42px;
   left: -20px;
   top: -20px;
-  background: url(theme/ios/overlay-close.png) no-repeat;
+  background: url(theme/ios/closebox-large.png) no-repeat;
   z-index: 10;
   cursor: pointer;
 }
@@ -905,7 +937,7 @@ panel[appearance=grey] toolbar {
   -webkit-border-top-right-radius: 5px;
   -webkit-border-top-left-radius: 5px;
   height: 44px;
-  background-image: url(theme/ios/greybar.png);
+  background-image: url(theme/ios/toolbar-grey.png);
 }
 panel[appearance=grey] toolbar action {
   border: 0px;
@@ -946,9 +978,9 @@ listSelector {
   display: block;
   border-color: transparent;
   border-width: 50px 15px 15px 15px;
-  border-image: url(theme/ios/blackPopup.png) 50 15 15 15 round;
-  -moz-border-image: url(theme/ios/blackPopup.png) 50 15 15 15 round;
-  -webkit-border-image: url(theme/ios/blackPopup.png) 50 15 15 15 round;
+  border-image: url(theme/ios/popup-black.png) 50 15 15 15 round;
+  -moz-border-image: url(theme/ios/popup-black.png) 50 15 15 15 round;
+  -webkit-border-image: url(theme/ios/popup-black.png) 50 15 15 15 round;
   z-index: 10000;
 }
 listSelector > container {
@@ -960,7 +992,7 @@ listSelector > .arrow {
   top: -48px;
   width: 100%;
   height: 20px;
-  background: url(theme/ios/blackPopup-arrow.png) no-repeat top center;
+  background: url(theme/ios/popup-black-arrow-top.png) no-repeat top center;
 }
 listSelector label {
   white-space: nowrap;
@@ -968,12 +1000,12 @@ listSelector label {
 }
 listSelector row[selected] label {
   color: #1a4c8b;
-  background: url(theme/ios/check.png) no-repeat right center;
+  background: url(theme/ios/menu-check.png) no-repeat right center;
 }
 listSelectorButton {
   padding: 10px 40px 10px 10px;
   color: #1a4c8b;
-  background: url(theme/ios/moreArrow.png) no-repeat right center;
+  background: url(theme/ios/menu-more.png) no-repeat right center;
   white-space: nowrap;
 }
 /*** CheckSwitch - iOS style checkbox ***/
@@ -995,17 +1027,17 @@ checkswitch div {
   position: absolute;
   height: 27px;
   width: 149px;
-  background: url(theme/ios/checkswitch-on.png), url(theme/ios/checkswitch-off.png);
+  background: url(theme/ios/switch-on.png), url(theme/ios/switch-off.png);
   background-repeat: no-repeat;
   -webkit-transition: left ease-in 200ms;
 }
 checkswitch div.off {
   left: -55px;
-  background: url(theme/ios/checkswitch-off.png) no-repeat;
+  background: url(theme/ios/switch-off.png) no-repeat;
 }
 checkswitch div.on {
   left: 0px;
-  background: url(theme/ios/checkswitch-on.png) no-repeat;
+  background: url(theme/ios/switch-on.png) no-repeat;
 }
 /*** WebView -- full screen embedded web browser ***/
 webview {
@@ -1045,6 +1077,11 @@ icon[disabled] {
 }
 /* Icon backgrounds -- attach by having a [icon] attribute on some element.
 	   It's up to your calling context to set where/how the icon shows up.			*/
+*[icon=action] {
+  background-image: url(theme/ios/icon-light-action.png);
+  width: 23px;
+  height: 18px;
+}
 *[icon=add] {
   background-image: url(theme/icons/add.png);
 }
@@ -1109,55 +1146,55 @@ icon[disabled] {
   background-image: url(theme/icons/windowTile.png);
 }
 *[icon=arrowRight] {
-  background-image: url(theme/ios/arrowRightBlue.png);
+  background-image: url(theme/ios/circle-right-blue.png);
   width: 29px;
   height: 29px;
 }
 *[icon=arrowLeft] {
-  background-image: url(theme/ios/arrowLeftBlue.png);
+  background-image: url(theme/ios/circle-left-blue.png);
   width: 29px;
   height: 29px;
 }
 *[icon=minusRed] {
-  background-image: url(theme/ios/minusRed.png);
+  background-image: url(theme/ios/circle-minus-red.png);
   width: 29px;
   height: 29px;
 }
 *[icon=minusRed].vertical {
-  background-image: url(theme/ios/minusRedVertical.png);
+  background-image: url(theme/ios/circle-delete-red.png);
 }
 *[icon=minusBlue] {
-  background-image: url(theme/ios/minusBlue.png);
+  background-image: url(theme/ios/circle-minus-blue.png);
   width: 29px;
   height: 29px;
 }
 *[icon=plusBlue] {
-  background-image: url(theme/ios/plusBlue.png);
+  background-image: url(theme/ios/circle-plus-blue.png);
   width: 29px;
   height: 29px;
 }
 *[icon=greySearch] {
-  background-image: url(theme/ios/greySearch.png);
+  background-image: url(theme/ios/greyBtn-search.png);
   width: 43px;
   height: 31px;
 }
 *[icon=greyExpand] {
-  background-image: url(theme/ios/greyExpand.png);
+  background-image: url(theme/ios/greyBtn-expand.png);
   width: 43px;
   height: 31px;
 }
 *[icon=greyCollapse] {
-  background-image: url(theme/ios/greyCollapse.png);
+  background-image: url(theme/ios/greyBtn-collapse.png);
   width: 43px;
   height: 31px;
 }
 *[icon=greyZoomIn] {
-  background-image: url(theme/ios/greyZoomIn.png);
+  background-image: url(theme/ios/greyBtn-zoomIn.png);
   width: 43px;
   height: 31px;
 }
 *[icon=greyZoomOut] {
-  background-image: url(theme/ios/greyZoomOut.png);
+  background-image: url(theme/ios/greyBtn-zoomOut.png);
   width: 43px;
   height: 31px;
 }
