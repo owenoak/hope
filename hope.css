@@ -150,7 +150,7 @@ inline, output {
 /* standard button height/line-height */
 .buttonHeight {
   height: 30px;
-  line-height: 30px;
+  line-height: 29px;
 }
 /*** horizontal and vertical stretch boxes ***/
 vbox {
@@ -304,19 +304,20 @@ action {
   cursor: pointer;
   white-space: nowrap;
   height: 30px;
-  line-height: 30px;
-}
-/* make gecko spacing for buttons/bars match webkit.  Why is this necessary? */
-.gecko action[appearance=black],
-.gecko action[appearance=blue],
-.gecko action[appearance=red],
-.gecko action[appearance=green],
-.gecko action[appearance=yellow],
-.gecko action[appearance=white],
-.gecko action[appearance=prev],
-.gecko action[appearance=next],
-.gecko tabselector tab {
   line-height: 29px;
+}
+/* make webkit spacing for buttons/bars match gecko. */
+.webkit action[appearance=black],
+.webkit action[appearance=blue],
+.webkit action[appearance=red],
+.webkit action[appearance=green],
+.webkit action[appearance=yellow],
+.webkit action[appearance=white],
+.webkit action[appearance=prev],
+.webkit action[appearance=next],
+.webkit tabselector tab {
+  line-height: 30px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 action[icon] {
   padding-left: 5px !important;
@@ -351,7 +352,7 @@ action[appearance=black] {
   -moz-border-image: url(theme/ios/btn-black.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-black.png) 0 5 0 5 round;
 }
-action[appearance=black].active {
+action[appearance=black]:active, action[appearance=black].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 round;
@@ -365,7 +366,7 @@ action[appearance=blue] {
   -moz-border-image: url(theme/ios/btn-blue.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-blue.png) 0 5 0 5 round;
 }
-action[appearance=blue].active {
+action[appearance=blue]:active, action[appearance=blue].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-blue-active.png) 0 5 0 5 round;
@@ -379,7 +380,7 @@ action[appearance=blue][selected] {
   -moz-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
 }
-action[appearance=blue][selected].active {
+action[appearance=blue][selected]:active, action[appearance=blue][selected].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
@@ -393,7 +394,7 @@ action[appearance=lightBlue] {
   -moz-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-lightBlue.png) 0 5 0 5 round;
 }
-action[appearance=lightBlue].active {
+action[appearance=lightBlue]:active, action[appearance=lightBlue].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-lightBlue-active.png) 0 5 0 5 round;
@@ -407,7 +408,7 @@ action[appearance=red] {
   -moz-border-image: url(theme/ios/btn-red.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-red.png) 0 5 0 5 round;
 }
-action[appearance=red].active {
+action[appearance=red]:active, action[appearance=red].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-red-active.png) 0 5 0 5 round;
@@ -421,7 +422,7 @@ action[appearance=green] {
   -moz-border-image: url(theme/ios/btn-green.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-green.png) 0 5 0 5 round;
 }
-action[appearance=green].active {
+action[appearance=green]:active, action[appearance=green].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-green-active.png) 0 5 0 5 round;
@@ -435,7 +436,7 @@ action[appearance=yellow] {
   -moz-border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 round;
 }
-action[appearance=yellow].active {
+action[appearance=yellow]:active, action[appearance=yellow].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-yellow-active.png) 0 5 0 5 round;
@@ -449,7 +450,7 @@ action[appearance=white] {
   -moz-border-image: url(theme/ios/btn-white.png) 0 5 0 5 round;
   -webkit-border-image: url(theme/ios/btn-white.png) 0 5 0 5 round;
 }
-action[appearance=white].active {
+action[appearance=white]:active, action[appearance=white].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-white-active.png) 0 5 0 5 round;
@@ -469,7 +470,7 @@ action[appearance=prev] {
   -moz-border-image: url(theme/ios/nav-back-black.png) 0 13 0 17 round;
   -webkit-border-image: url(theme/ios/nav-back-black.png) 0 13 0 17 round;
 }
-action[appearance=prev].active {
+action[appearance=prev]:active, action[appearance=prev].active {
   border-color: transparent;
   border-width: 0px 13px 0px 17px;
   border-image: url(theme/ios/nav-back-black-active.png) 0 13 0 17 round;
@@ -489,7 +490,7 @@ action[appearance=next] {
   -moz-border-image: url(theme/ios/nav-forward-black.png) 0 17 0 13 round;
   -webkit-border-image: url(theme/ios/nav-forward-black.png) 0 17 0 13 round;
 }
-action[appearance=next].active {
+action[appearance=next]:active, action[appearance=next].active {
   border-color: transparent;
   border-width: 0px 17px 0px 13px;
   border-image: url(theme/ios/nav-forward-black-active.png) 0 17 0 13 round;
@@ -638,6 +639,7 @@ contextmenu action {
   -moz-border-radius: 5px;
   border-radius: 5px;
   padding: 5px 15px;
+  line-height: 1.4em;
 }
 contextmenu action:hover {
   background-color: #ffe933;
@@ -653,7 +655,7 @@ contextmenu action[disabled] {
 contextmenu action[icon] {
   background-repeat: no-repeat;
   background-position: 6px center;
-  padding-left: 29px;
+  padding-left: 29px !important;
 }
 contextmenu[showchecks] action {
   padding-right: 10px;
@@ -744,7 +746,7 @@ toolbar[appearance=black] tabselector {
 }
 tabselector tab {
   height: 30px;
-  line-height: 30px;
+  line-height: 29px;
   display: inline-block;
   color: white;
   text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;

@@ -59,7 +59,7 @@
 	/* standard button height/line-height */
 	.buttonHeight {
 		height:30px;
-		line-height:30px;
+		line-height:29px;
 	}
 
 
@@ -178,19 +178,23 @@
 			white-space:nowrap;
 			.buttonHeight;
 		}
+		
+		
 	
-		/* make gecko spacing for buttons/bars match webkit.  Why is this necessary? */
-		.gecko action[appearance=black],
-		.gecko action[appearance=blue],
-		.gecko action[appearance=red],
-		.gecko action[appearance=green],
-		.gecko action[appearance=yellow],
-		.gecko action[appearance=white],
-		.gecko action[appearance=prev],
-		.gecko action[appearance=next],
-		.gecko tabselector tab
+		/* make webkit spacing for buttons/bars match gecko. */
+		.webkit action[appearance=black],
+		.webkit action[appearance=blue],
+		.webkit action[appearance=red],
+		.webkit action[appearance=green],
+		.webkit action[appearance=yellow],
+		.webkit action[appearance=white],
+		.webkit action[appearance=prev],
+		.webkit action[appearance=next],
+		.webkit tabselector tab
 		{
-			line-height:29px;
+			line-height:30px;
+			// highlight with images rather than outline
+			.noTapHighlight;
 		}
 	
 	
@@ -232,67 +236,75 @@
 
 
 		action[appearance=black] {
-			.iosButtonBorder(url(theme/ios/btn-black.png));
+			.ButtonBorder(url(theme/ios/btn-black.png));
 		}
 
+		action[appearance=black]:active,
 		action[appearance=black].active {
-			.iosButtonBorder(url(theme/ios/btn-black-active.png));
+			.ButtonBorder(url(theme/ios/btn-black-active.png));
 		}
 
 		action[appearance=blue] {
-			.iosButtonBorder(url(theme/ios/btn-blue.png));
+			.ButtonBorder(url(theme/ios/btn-blue.png));
 		}
 
+		action[appearance=blue]:active,
 		action[appearance=blue].active {
-			.iosButtonBorder(url(theme/ios/btn-blue-active.png));
+			.ButtonBorder(url(theme/ios/btn-blue-active.png));
 		}
 
 		action[appearance=blue][selected] {
-			.iosButtonBorder(url(theme/ios/btn-lightBlue.png));
+			.ButtonBorder(url(theme/ios/btn-lightBlue.png));
 		}
 
+		action[appearance=blue][selected]:active,
 		action[appearance=blue][selected].active {
-			.iosButtonBorder(url(theme/ios/btn-lightBlue-active.png));
+			.ButtonBorder(url(theme/ios/btn-lightBlue-active.png));
 		}
 
 		action[appearance=lightBlue] {
-			.iosButtonBorder(url(theme/ios/btn-lightBlue.png));
+			.ButtonBorder(url(theme/ios/btn-lightBlue.png));
 		}
 
+		action[appearance=lightBlue]:active,
 		action[appearance=lightBlue].active {
-			.iosButtonBorder(url(theme/ios/btn-lightBlue-active.png));
+			.ButtonBorder(url(theme/ios/btn-lightBlue-active.png));
 		}
 
 		action[appearance=red] {
-			.iosButtonBorder(url(theme/ios/btn-red.png));
+			.ButtonBorder(url(theme/ios/btn-red.png));
 		}
 
+		action[appearance=red]:active,
 		action[appearance=red].active {
-			.iosButtonBorder(url(theme/ios/btn-red-active.png));
+			.ButtonBorder(url(theme/ios/btn-red-active.png));
 		}
 
 		action[appearance=green] {
-			.iosButtonBorder(url(theme/ios/btn-green.png));
+			.ButtonBorder(url(theme/ios/btn-green.png));
 		}
 
+		action[appearance=green]:active,
 		action[appearance=green].active {
-			.iosButtonBorder(url(theme/ios/btn-green-active.png));
+			.ButtonBorder(url(theme/ios/btn-green-active.png));
 		}
 
 		action[appearance=yellow] {
-			.iosButtonBorder(url(theme/ios/btn-yellow.png));
+			.ButtonBorder(url(theme/ios/btn-yellow.png));
 		}
 
+		action[appearance=yellow]:active,
 		action[appearance=yellow].active {
-			.iosButtonBorder(url(theme/ios/btn-yellow-active.png));
+			.ButtonBorder(url(theme/ios/btn-yellow-active.png));
 		}
 
 		action[appearance=white] {
-			.iosButtonBorder(url(theme/ios/btn-white.png));
+			.ButtonBorder(url(theme/ios/btn-white.png));
 		}
 
+		action[appearance=white]:active,
 		action[appearance=white].active {
-			.iosButtonBorder(url(theme/ios/btn-white-active.png));
+			.ButtonBorder(url(theme/ios/btn-white-active.png));
 		}
 
 
@@ -304,12 +316,13 @@
 		    margin-right:5px;
 		    text-align:center;
 
-			.iosNavBackBorder(url(theme/ios/nav-back-black.png);
+			.NavBackBorder(url(theme/ios/nav-back-black.png);
 		}
 
 
+		action[appearance=prev]:active,
 		action[appearance=prev].active {
-			.iosNavBackBorder(url(theme/ios/nav-back-black-active.png);
+			.NavBackBorder(url(theme/ios/nav-back-black-active.png);
 		}
 		
 		
@@ -320,11 +333,12 @@
 		    padding:0px;
 		    margin-right:5px;
 		    text-align:center;
-			.iosNavForwardBorder(url(theme/ios/nav-forward-black.png);
+			.NavForwardBorder(url(theme/ios/nav-forward-black.png);
 		}
 
+		action[appearance=next]:active,
 		action[appearance=next].active {
-			.iosNavForwardBorder(url(theme/ios/nav-forward-black-active.png);
+			.NavForwardBorder(url(theme/ios/nav-forward-black-active.png);
 		}
 
 		
@@ -511,6 +525,7 @@
 		margin:1px 0px;
 		.round();
 		padding:5px 15px; 
+		line-height: 1.4em;
 	}
 	
 	contextmenu action:hover {
@@ -533,7 +548,7 @@
 	contextmenu action[icon] {
 		background-repeat:no-repeat;
 		background-position:6px center;
-		padding-left:29px;
+		padding-left:29px !important;
 	}
 
 // menus with checks
@@ -611,31 +626,31 @@
 	    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 		padding:0px 20px;
 		cursor:pointer;
-		.iosSegment(url(theme/ios/segment-black.png);
+		.Segment(url(theme/ios/segment-black.png);
 	}
 	
 	tabselector tab:first-child {
 		padding-left:15px;
-		.iosSegmentStart(url(theme/ios/segment-black-start.png);
+		.SegmentStart(url(theme/ios/segment-black-start.png);
 	}
 	
 	tabselector tab:last-child {
 		padding-right:15px;
-		.iosSegmentEnd(url(theme/ios/segment-black-end.png);
+		.SegmentEnd(url(theme/ios/segment-black-end.png);
 	}
 
 
 	// different graphics for selected mode
 	tabselector tab[selected] {
-		.iosSegment(url(theme/ios/segment-black-selected.png);
+		.Segment(url(theme/ios/segment-black-selected.png);
 	}
 
 	tabselector tab[selected]:first-child {
-		.iosSegmentStart(url(theme/ios/segment-black-selected-start.png);
+		.SegmentStart(url(theme/ios/segment-black-selected-start.png);
 	}
 	
 	tabselector tab[selected]:last-child {
-		.iosSegmentEnd(url(theme/ios/segment-black-selected-end.png);
+		.SegmentEnd(url(theme/ios/segment-black-selected-end.png);
 	}
 
 /*** notice panels ***/
