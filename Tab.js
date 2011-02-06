@@ -3,15 +3,15 @@
 Script.require("{{hope}}Section.js", function(){
 
 
-$Action.Subclass("$Tab", {
+hope.Action.Subclass("hope.Tab", {
 	tag : "tab"
 });
 
-$Stack.Subclass("$TabGroup", {
+hope.Stack.Subclass("hope.TabGroup", {
 	tag : "tabgroup",
 	properties : {
 		itemSelector : "tabselector",
-		selectorConstructor : $Tab
+		selectorConstructor : hope.Tab
 	}
 });
 

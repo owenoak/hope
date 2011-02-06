@@ -14,7 +14,7 @@
 
 Script.require("{{hope}}Element-attach.js", function(){
 
-new Element.Subclass("$Menu", {
+new Element.Subclass("hope.Menu", {
 	tag : "contextmenu",
 	properties : {
 		visible : false,
@@ -75,7 +75,7 @@ hope.onReady("document", function() {
 		//	if ctrl key is down, show the standard menu instead of the custom menu
 		if (event.ctrlKey) return;
 		
-		$Menu.showMenuFor(element, event);
+		hope.Menu.showMenuFor(element, event);
 	});
 });
 

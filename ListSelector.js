@@ -5,7 +5,7 @@
 Script.require("{{hope}}Menu.js", function(){
 
 
-new $Menu.Subclass("$ListSelector", {
+new hope.Menu.Subclass("hope.ListSelector", {
 	tag : "listSelector",
 	mixins : "Valued",
 	properties : {
@@ -48,7 +48,7 @@ new $Menu.Subclass("$ListSelector", {
 });
 
 
-new $Action.Subclass("$ListSelectorButton", {
+new hope.Action.Subclass("hope.ListSelectorButton", {
 	tag : "listSelectorButton",
 	mixins : "Valued",
 	properties : {
@@ -65,7 +65,7 @@ new $Action.Subclass("$ListSelectorButton", {
 		update : function() {
 			var menu = this.$menu, value;
 			if (menu) value = menu.selectedLabel();
-			this.innerHTML = value || this.value;
+			this.html = value || this.value;
 		},
 		
 		onShown : function() {

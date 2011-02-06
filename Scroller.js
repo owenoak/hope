@@ -10,7 +10,7 @@ Script.require("{{hope}}Element-style.js", function(){
 //TODO: if mouse is not up, when currentX == parentX, stop the timer somehow
 //TODO: watch unloaded and remove our events!!!  (especially the resize event!!!)
 
-new Element.Subclass("$Scroller", {
+new Element.Subclass("hope.Scroller", {
 	tag : "scroller",
 	properties : { 
 	

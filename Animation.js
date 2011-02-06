@@ -34,20 +34,20 @@ Script.require("{{hope}}Element.js", function(){
 		},
 		
 		getAnimation : function(animationName, callback, speed) {
-			return $Animation.makeAnimation(this, animationName, callback, speed);
+			return hope.Animation.makeAnimation(this, animationName, callback, speed);
 		}
 	});
 	
 	//
-	// $Animation singleton for creating animation objects
+	// hope.Animation singleton for creating animation objects
 	//
-	function $Animation(element, options) {
+	function Animation(element, options) {
 		if (!element) throw "Must pass an element when create animations";
 		this.element = element;
 		if (options) for (var key in options) if (options[key]) this[key] = options[key];
 	}
-	hope.setGlobal("$Animation", $Animation);
-	$Animation.prototype = {
+	hope.Animation = Animation;
+	Animation.prototype = {
 		speed : "normal",
 		
 		speeds : {
@@ -145,14 +145,14 @@ Script.require("{{hope}}Element.js", function(){
 			return speed;
 		},
 		
-	};//end $Animation.prototype
+	};//end hope.Animation.prototype
 	
 	
 	//
 	//	static methods
 	//
 	
-	hope.extend($Animation, {
+	hope.extend(hope.Animation, {
 		// map of known animation constructors
 		constructors : {},
 		
@@ -177,7 +177,7 @@ Script.require("{{hope}}Element.js", function(){
 
 			if (name === "none" || speed == "instant") return;
 			
-			var constructor = $Animation.constructors[name.toLowerCase()];
+			var constructor = Animation.constructors[name.toLowerCase()];
 			if (!constructor) return;
 			
 			return new constructor(element, 
@@ -189,16 +189,16 @@ Script.require("{{hope}}Element.js", function(){
 		//	Also gives the element a method to call the animation directly.
 		Subclass : function(options) {
 			var name = options.name;
-			if (!name) throw "Must pass a name when creating an $Animation subclass";
+			if (!name) throw "Must pass a name when creating an Animation subclass";
 
-			var constructor = function $AnAnimation(element, options) {
+			var constructor = function AnAnimation(element, options) {
 				if (!element) throw "Must pass an element when create animations";
 				this.element = element;
 				if (options) for (var key in options) if (options[key]) this[key] = options[key];
 			}
-			constructor.prototype = hope.setProto(options, $Animation.prototype);
+			constructor.prototype = hope.setProto(options, Animation.prototype);
 
-			$Animation.constructors[name.toLowerCase()] = constructor;
+			Animation.constructors[name.toLowerCase()] = constructor;
 			
 			Element.prototype[name] = function(callback, speed) {
 				new constructor(this, {callback:callback, speed:speed||this.animationSpeed}).go();
@@ -208,7 +208,7 @@ Script.require("{{hope}}Element.js", function(){
 	});
 	
 
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "fadeIn",
 		properties : { 
 			opacity : { 
@@ -223,7 +223,7 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 	
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "fadeOut",
 		properties : { 
 			opacity : { 
@@ -237,9 +237,9 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 	
-	$Animation.showHidePairs.fade = {"show" : "fadeIn", "hide" : "fadeOut"};
+	Animation.showHidePairs.fade = {"show" : "fadeIn", "hide" : "fadeOut"};
 	
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "wipeDown",
 		properties : { 
 			height : { 
@@ -263,7 +263,7 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 	
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "wipeUp",
 		properties : { 
 			height : { 
@@ -287,9 +287,9 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 
-	$Animation.showHidePairs.wipeDown = {"show" : "wipeDown", "hide" : "wipeUp"};
+	Animation.showHidePairs.wipeDown = {"show" : "wipeDown", "hide" : "wipeUp"};
 	
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "wipeRight",
 		properties : {
 			width : {
@@ -312,7 +312,7 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 	
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "wipeLeft",
 		properties : {
 			width : {
@@ -334,11 +334,11 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 
-	$Animation.showHidePairs.side = {"show" : "wipeRight", "hide" : "wipeLeft"};
+	Animation.showHidePairs.side = {"show" : "wipeRight", "hide" : "wipeLeft"};
 
 
 
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "slideDown",
 		properties : { 
 			top : {
@@ -356,7 +356,7 @@ Script.require("{{hope}}Element.js", function(){
 		cleanup : function(element, animation) {}
 	});
 	
-	new $Animation.Subclass({
+	new Animation.Subclass({
 		name : "slideUp",
 		properties : { 
 			top : { 
@@ -376,7 +376,7 @@ Script.require("{{hope}}Element.js", function(){
 		}
 	});
 
-	$Animation.showHidePairs.slideDown = {"show" : "slideDown", "hide" : "slideUp"};
+	Animation.showHidePairs.slideDown = {"show" : "slideDown", "hide" : "slideUp"};
 
 	
 Script.loaded("{{hope}}Animation.js");

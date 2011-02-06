@@ -2,7 +2,7 @@
 
 Script.require("{{hope}}Element-attach.js", function(){
 
-new $Section.Subclass("$Overlay", {
+new hope.Section.Subclass("hope.Overlay", {
 	tag : "overlay",
 				
 	properties : {
@@ -30,7 +30,7 @@ new $Section.Subclass("$Overlay", {
 
 
 // create an overlay w/id "loadingMessage" to show/hide messages when loading
-new $Overlay.Subclass("$LoadingMessage", {
+new hope.Overlay.Subclass("hope.LoadingMessage", {
 	tag : "overlay",
 	selector : "#loadingMessage",
 	properties : {

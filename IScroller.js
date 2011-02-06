@@ -50,7 +50,7 @@ var _desktopCompatibility = false,
 	_wrapperOverflow = (_desktopCompatibility ? "auto" : "hidden")
 ;
 
-new Element.Subclass("$IScroller", {
+new Element.Subclass("hope.IScroller", {
 	tag : "scroller",
 	properties : {
 		listeners : "reflow",
@@ -716,7 +716,7 @@ new Element.Subclass("$IScroller", {
 			return null;
 		}
 	}//end properties
-});// end Element.Subclass("$IScroll")
+});// end Element.Subclass("hope.IScroller")
 
 
 // visible scrollbar thinger

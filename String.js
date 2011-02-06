@@ -143,6 +143,12 @@ hope.extendIf(String.prototype, {
 			if (!expressions[i].test(this)) return false;
 		}
 		return true;
+	},
+	
+	
+	// expand tags (eg: `<foo ... />` ) to binary tags (eg `<foo ...></foo>` )
+	expandUnaryTags : function() {
+		return this.replace(/<([^! \/]+)([^>]*?) ?\/>/g, "<$1$2></$1>");
 	}
 });
 
@@ -186,7 +192,7 @@ hope.extend(String.prototype, {
 		return Element.inflate(html, selector);
 	},
 	
-	inflate1 : function(scope) {
+	inflateFirst : function(scope) {
 		return this.inflate(scope)[0];
 	}
 });

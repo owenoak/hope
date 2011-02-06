@@ -117,7 +117,7 @@ Element.prototype.extend({
 		
 		// if we have a 'url' attribute & are set to autoLoad, load now
 		if (this.url && this.autoLoad) {
-			this.loadHTML(this.url);
+			this.load(this.url);
 		} 
 		// otherwise tell the system we're ready
 		else {
@@ -148,7 +148,7 @@ Element.prototype.extend({
 		if (templated) {
 			if (Element.debug) console.debug(this,"inflating template");
 			// completely replace our innerHTML with the template
-			this.innerHTML = this.template.expand(this);
+			this.innerHTML = this.template.expand(this).expandUnaryTags();
 			// reset our 'container' to the first <container> child, or us
 			this.container = (this.select(this.childContainerSelector) || this);
 		} else {
@@ -335,8 +335,7 @@ Element.prototype.extend({
 	listeners : new InstanceMap({
 		name : "listeners", 
 		tupelize : true,
-		inherit : true,
-		value : "ready"
+		inherit : true
 	})
 });
 
@@ -390,7 +389,7 @@ hope.unload(Element._clearGlobals);
 
 
 
-$Element.Subclass("$Group", {
+new Element.Subclass("hope.Group", {
 	tag : "group",
 	properties : {
 		ignoreWhitespace:true

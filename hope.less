@@ -5,7 +5,18 @@
 	* {
 		.borderBox;
 		.noselect;
-//		.noTapHighlight;
+	}
+
+	html {
+		width: 100%;
+		height: 100%;	
+	}
+	
+	body {
+		margin:0px; 
+		width: 100%;
+		height: 100%;
+		line-height: 1.2;
 	}
 
 	table {	
@@ -19,6 +30,7 @@
 	/* make input boxes selectable */
 	input, textarea {
 		.selectable;
+		line-height: 1.4;
 	}
 	
 	/* add flex to an element by giving it a flex attribute */
@@ -42,7 +54,9 @@
 	border,
 	group,
 	notice,
-	panel
+	panel,
+	title,
+	splitter
 	{
 		position:relative;
 		display:block;
@@ -50,26 +64,18 @@
 
 	// inline-block things
 	inline,
-	output
+	output,
+	tabselector,
+	message
 	{
 		display:inline-block;
 	}
 	
-	
-	/* standard button height/line-height */
-	.buttonHeight {
-		height:30px;
-		line-height:29px;
-	}
 
 
 /*** horizontal and vertical stretch boxes ***/
 	vbox {
 		.box(vertical,stretch);
-	}
-
-	vbox * {
-		.boxChild;
 	}
 
 /*** Blocks of inline javascript or xml ***/
@@ -95,8 +101,6 @@
 		display:none !important;
 	}
 
-
-
 	hcenter
 	{
 		.hCenterBox;
@@ -105,6 +109,12 @@
 	vcenter {
 		.vCenterBox;
 	}
+
+
+/*** add scrolling (doesn't work on iOS -- YET)  ***/
+	*[scroll]				{	overflow-x:auto;	overflow-y:auto;	}
+	*[scroll=horizontal] 	{	overflow-x:auto; 	overflow-y:hidden;	}
+	*[scroll=vertical] 		{	overflow-x:hidden; 	overflow-y:auto;	}
 
 
 /*** generic mask, centers contents horizontally and vertically.  dark mask.  ***/
@@ -116,6 +126,13 @@
 	
 
 /*** ad-hoc tables ***/
+	// set of united rows (more-or-less a table)
+	rows {
+		display: table !important;
+		width: 100%;
+		border-collapse:collapse;
+	}
+
 	row {
 		display:table-row !important;
 		width:100%;
@@ -123,8 +140,56 @@
 	
 	row > * {
 		display:table-cell !important;
-		vertical-align:top;
+		vertical-align:baseline;
 	}
+
+	// add a 'flex' attribute to things inside a <row> to make them full width
+	row > *[flex] {
+		width:100%;
+	}
+
+
+/*** Generic inputs ***/
+
+	input,
+	textarea
+	{
+		.fieldShadow;		
+		.round(5px);
+		-moz-appearance:none;
+		border:0px;
+		padding:5px;
+		margin: 2px 0;
+	}
+	
+	input[appearance~=translucent] {
+		background-color: rgba(255, 255, 255, 0.3);
+		color: white;
+	}
+
+	input[type=number] {
+		text-align:right;
+		width: 8em;
+	}
+
+	input[appearance~=small] {
+		width: 5em;
+	}
+
+	input[type=currency] {
+		background-image:url(theme/widgets/field-currency-dollar.png);
+		background-position:3px center;
+		background-repeat:no-repeat;
+		padding-left: 12px;
+		width: 8em;
+		text-align:right;
+	}
+	
+
+	input[type=url] {
+		width:100%;
+	}
+
 
 
 /*** Search-style input ***/
@@ -147,18 +212,11 @@
 		max-width: 180px;
 	}
 
-	input[appearance=smallNumber] {
-		.fieldShadow;		
-		.round(5px);
-		-moz-appearance:none;
-		border:0px;
-		width:3em;
-		text-align:right;
-		vertical-align:top;
-		padding:5px;
-
-		font-size:1.3em;
-		margin-bottom:8px;
+/*** <ui> is the outer container of our user interface ***/
+	ui {
+		position:absolute;
+		left:0; top:0;
+		width: 100%; height: 100%;
 	}
 
 
@@ -169,146 +227,130 @@
 
 	/* default for actions is to look like buttons */
 		action {
+			.button-ish;
 			position:relative;
-			display:inline-block;
 			border:1px outset black;
-			.round(10%);
-			padding:2px 5px;
 			cursor:pointer;
 			white-space:nowrap;
-			.buttonHeight;
-		}
-		
-		
-	
-		/* make webkit spacing for buttons/bars match gecko. */
-		.webkit action[appearance=black],
-		.webkit action[appearance=blue],
-		.webkit action[appearance=red],
-		.webkit action[appearance=green],
-		.webkit action[appearance=yellow],
-		.webkit action[appearance=white],
-		.webkit action[appearance=prev],
-		.webkit action[appearance=next],
-		.webkit tabselector tab
-		{
-			line-height:30px;
-			// highlight with images rather than outline
-			.noTapHighlight;
-		}
-	
-	
-		action[icon] {
-			padding-left: 5px !important;
-			padding-right: 5px !important;
 		}
 
-		action[icon-text] {
-			padding-left:35px !important;
-		}
-
-		action[appearance=icon] {
-			background-color:none;
-			border:0px;
-			padding:0px;
-			vertical-align:baseline;
-		}
-
-
-		action[appearance=black],
-		action[appearance=blue],
-		action[appearance=lightBlue],
-		action[appearance=red],
-		action[appearance=green],
-		action[appearance=yellow],
-		action[appearance=white]
-		{
+		/* NOTE: default to black button look */
+		action {
 			background-color:none;
 			color:white;
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
-		    padding:0px 10px;
-		    margin-right:5px;
-		}
-
-		action[appearance=blue]:last-child {
-//		    margin-right:0px;		
-		}
-
-
-		action[appearance=black] {
+			margin-left:2px;
+		    margin-right:2px;
 			.ButtonBorder(url(theme/ios/btn-black.png));
 		}
+		
+		action[icon] {
+			padding:0 5px;
+		}
 
-		action[appearance=black]:active,
-		action[appearance=black].active {
+		action[title] {
+			padding:0 10px;
+		}
+		
+		action[icon][label] {
+			padding:0 5px;		
+		}
+		action[icon][label] > icon {
+			left: -3px;
+		}
+
+
+		action[appearance~=black],
+		toolbar[appearance~=black] action,
+		action[appearance~=blue],
+		action[appearance~=lightBlue],
+		action[appearance~=red],
+		action[appearance~=green],
+		action[appearance~=yellow],
+		action[appearance~=white]
+		{
+		}
+
+
+		action[appearance~=black],
+		toolbar[appearance~=black] action
+		{
+//			.ButtonBorder(url(theme/ios/btn-black.png));
+		}
+
+		action[appearance~=black]:active,
+		action[appearance~=black].active,
+		toolbar[appearance~=black] action:active,
+		toolbar[appearance~=black] action.active
+		{
 			.ButtonBorder(url(theme/ios/btn-black-active.png));
 		}
 
-		action[appearance=blue] {
+		action[appearance~=blue] {
 			.ButtonBorder(url(theme/ios/btn-blue.png));
 		}
 
-		action[appearance=blue]:active,
-		action[appearance=blue].active {
+		action[appearance~=blue]:active,
+		action[appearance~=blue].active {
 			.ButtonBorder(url(theme/ios/btn-blue-active.png));
 		}
 
-		action[appearance=blue][selected] {
+		action[appearance~=blue][selected] {
 			.ButtonBorder(url(theme/ios/btn-lightBlue.png));
 		}
 
-		action[appearance=blue][selected]:active,
-		action[appearance=blue][selected].active {
+		action[appearance~=blue][selected]:active,
+		action[appearance~=blue][selected].active {
 			.ButtonBorder(url(theme/ios/btn-lightBlue-active.png));
 		}
 
-		action[appearance=lightBlue] {
+		action[appearance~=lightBlue] {
 			.ButtonBorder(url(theme/ios/btn-lightBlue.png));
 		}
 
-		action[appearance=lightBlue]:active,
-		action[appearance=lightBlue].active {
+		action[appearance~=lightBlue]:active,
+		action[appearance~=lightBlue].active {
 			.ButtonBorder(url(theme/ios/btn-lightBlue-active.png));
 		}
 
-		action[appearance=red] {
+		action[appearance~=red] {
 			.ButtonBorder(url(theme/ios/btn-red.png));
 		}
 
-		action[appearance=red]:active,
-		action[appearance=red].active {
+		action[appearance~=red]:active,
+		action[appearance~=red].active {
 			.ButtonBorder(url(theme/ios/btn-red-active.png));
 		}
 
-		action[appearance=green] {
+		action[appearance~=green] {
 			.ButtonBorder(url(theme/ios/btn-green.png));
 		}
 
-		action[appearance=green]:active,
-		action[appearance=green].active {
+		action[appearance~=green]:active,
+		action[appearance~=green].active {
 			.ButtonBorder(url(theme/ios/btn-green-active.png));
 		}
 
-		action[appearance=yellow] {
+		action[appearance~=yellow] {
 			.ButtonBorder(url(theme/ios/btn-yellow.png));
 		}
 
-		action[appearance=yellow]:active,
-		action[appearance=yellow].active {
+		action[appearance~=yellow]:active,
+		action[appearance~=yellow].active {
 			.ButtonBorder(url(theme/ios/btn-yellow-active.png));
 		}
 
-		action[appearance=white] {
+		action[appearance~=white] {
 			.ButtonBorder(url(theme/ios/btn-white.png));
 		}
 
-		action[appearance=white]:active,
-		action[appearance=white].active {
+		action[appearance~=white]:active,
+		action[appearance~=white].active {
 			.ButtonBorder(url(theme/ios/btn-white-active.png));
 		}
 
 
-		action[appearance=prev] {
+		action[appearance~=prev] {
 			overflow:hidden;
 			color:white;
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
@@ -320,13 +362,13 @@
 		}
 
 
-		action[appearance=prev]:active,
-		action[appearance=prev].active {
+		action[appearance~=prev]:active,
+		action[appearance~=prev].active {
 			.NavBackBorder(url(theme/ios/nav-back-black-active.png);
 		}
 		
 		
-		action[appearance=next] {
+		action[appearance~=next] {
 			overflow:hidden;
 			color:white;
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
@@ -336,8 +378,8 @@
 			.NavForwardBorder(url(theme/ios/nav-forward-black.png);
 		}
 
-		action[appearance=next]:active,
-		action[appearance=next].active {
+		action[appearance~=next]:active,
+		action[appearance~=next].active {
 			.NavForwardBorder(url(theme/ios/nav-forward-black-active.png);
 		}
 
@@ -426,58 +468,143 @@
 
 	
 	/* light appearance */
-		scroll-track[appearance=dark] {
+		scroll-track[appearance~=dark] {
 //			background:rgba(0,0,0,0.2);
 		}
 	
-		scroll-track[appearance=dark] scroll-thumb {
+		scroll-track[appearance~=dark] scroll-thumb {
 			background:rgba(0,0,0,0.7);
 		}
 	
 	
 /*** Sections: can have header and footers ***/
 	section {
-//		.box(vertical,stretch);
+		.box(vertical,stretch);
+		.flex;
 	}
 
-	section > * {
-//		.boxChild;
-	}
-
-	// container is the main body of a section, etc.  It sometimes scrolls.
+	// container is the main body of a section, etc.  Stick a scroller in it to make it scroll.
 	section > container {
-//		.urgentFlex;
-		width:100%;
-		min-height:100%;
+		.flex;
+		.box(vertical, stretch);
+	}
+
+	section > container > * {
+		display: block;
 	}
 	
-	section > container > section {
-		display:block;
-		height:100%; 
+	/* inset-look for section/panel */
+	panel[appearance~=inset],
+	section[appearance~=inset] > container 
+	{
+		.insetPanel;
+		padding: 10px;
 	}
 	
 	
 	
 /*** Stack: section which shows one item at a time ***/
 	stack {
-		display:block;
-		width:100%; height:100%;
+		.box(vertical,stretch);
 	}
 	
 	// container is the main body of a section, etc.  It sometimes scrolls.
 	stack > container {
-		width:100%; height:100%;
+		.flex;
+		.box(vertical,stretch);	
 	}
 
 	// container is the main body of a section, etc.  It sometimes scrolls.
-	stack > container > section {
-		width:100%; height:100%;
-	}
+	stack > container > section {}
 
 	
 
+/*** ListViewer ***/
+	listviewer {
+		display:block;
+		.box(vertical,stretch);
+	}
+	
+	listviewer > container {
+		.flex;
+		overflow:hidden;
+	}
+
+	listviewer > container > rows {
+		border-collapse:separate;
+		table-layout: fixed;
+	}
+	
+	listviewer > container > rows > row {
+		cursor: pointer;
+	}
+
+	listviewer > container > rows > row > * {}
+	
+	listviewer > container > rows > row[selected] {}
+
+	listviewer > container > rows > row[selected] > * {
+		background:white;
+	}
+	
+	listviewer > container > rows > row > label {
+		padding:7px 5px;
+	}
+	listviewer > container > rows > row > output {
+		padding:7px 5px;
+	}
 
 
+/*	inset look	*/
+
+	listviewer[appearance=inset] {}
+	
+	listviewer[appearance=inset] > container {
+		.insetPanel;
+		padding:10px;
+	}
+
+	listviewer[appearance=inset] > container > rows > row > * {
+		border-bottom:1px solid #ccc;
+		border-top:1px solid #999;
+		line-height: 1.5;
+	}
+
+	listviewer[appearance=inset] > container > rows > row:first-child > * {
+		border-top-width: 0;
+	}
+
+	listviewer[appearance=inset] > container > rows > row[selected] {
+		.outsetShadow;	
+		background-color:rgba(255,223,71,.8);
+		.round(3px);
+		font-weight:bold;
+	}
+
+	listviewer[appearance=inset] > container > rows > row[selected] > * {
+		background:transparent;	
+	}
+
+
+
+
+/*** ItemViewer ***/
+	itemviewer {
+		display:block;
+	}
+	
+	itemviewer > container > rows {}
+	itemviewer > container > rows > row {}
+	itemviewer > container > rows > row > label {}
+
+	// set to the arrow cursor because you can select the text by clicking
+	itemviewer > container > rows > row > output {
+		cursor: default;
+	}
+
+	itemViewer[appearance~=inset] {
+		.insetPanel;	
+	}
 
 /*** Menu elements ***/
 // menu outer element
@@ -485,20 +612,13 @@
 		left:0;top:0;
 		position:absolute;
 		z-index:10000;
-		background:white;
-		overflow:hidden;
 		display:inline-block;
-		-moz-padding-start:0;
-		-webkit-padding-start:0;
-		list-style-type:none;
 		margin:0;
-		background-color:#999;
-		border:3px solid #999;
-		.round(8px);
+		.borderImage(url(theme/ios/alert-decoration.png), 14 14 14 13, 14px 14px 14px 13px);
 	}
 
 	.desktop contextmenu {
-		.shadow();	
+//		.shadow();	
 	}
 
 	.mobile contextmenu {
@@ -508,7 +628,7 @@
 // separator between menu items
 	contextmenu separator {
 		display:block;
-		height:2px; overflow:hidden;
+		height:4px; overflow:hidden;
 	}
 
 // group of menuitems -- no visual appearance, use to show/hide/etc a bunch at once
@@ -520,23 +640,18 @@
 	contextmenu action {
 		display:block;
 		width:100%;
-		background-color:white;
-		border-color:transparent;
-		margin:1px 0px;
-		.round();
-		padding:5px 15px; 
-		line-height: 1.4em;
+		margin:2px 0px;
 	}
 	
-	contextmenu action:hover {
+	Xcontextmenu action:hover {
 		background-color:rgb(255,233,51);
 	}
 
-	contextmenu action:active {
+	Xcontextmenu action:active {
 		background-color:lightblue;
 	}
 
-	contextmenu action[disabled] {
+	Xscontextmenu action[disabled] {
 		opacity:.15;
 		background-color:white !important;
 		cursor:default;
@@ -545,19 +660,19 @@
 
 	
 // menus with icons
-	contextmenu action[icon] {
+	Xcontextmenu action[icon] {
 		background-repeat:no-repeat;
 		background-position:6px center;
 		padding-left:29px !important;
 	}
 
 // menus with checks
-	contextmenu[showchecks] action {
+	Xcontextmenu[showchecks] action {
 		padding-right:10px;
 		border-right-width:20px;
 	}
 
-	contextmenu action[selected] {
+	Xcontextmenu action[selected] {
 		.borderImage(url(theme/icons/menu-check.png), 2 20 0 0, 2px 20px 0px 0px,stretch);
 	}
 
@@ -568,21 +683,51 @@
 
 	toolbar {
 		.box(horizontal,center);
-		width:100%;
-		padding:0px 10px;
+		height:43px;
+		padding:0px 5px;
+		width: 100%;
 	}
 	toolbar > * {
-		.boxChild;
+		display: block;
+		vertical-align:middle;
 	}
 
-	toolbar[appearance=black] {
-		.boxAlign(center);
-		border-width:0 6px;
-		.borderImage(url(theme/ios/toolbar-black-top.png), 0 6 0 6, 0 6px);
-		height:43px;
-		width:100%;
-		padding:0px 10px;
+	toolbar > label {
+		margin-left:10px;
+		margin-right:10px;
 	}
+	
+	toolbar[appearance~=top] {
+		.roundTop(5px);
+	}
+
+
+	/* black toolbar */
+
+		toolbar[appearance~=black] {
+			background:url(theme/ios/toolbar-black.png) repeat-x;
+			color:white;
+		}
+	
+		
+		toolbar[appearance~=black] label {
+			font-weight:bold;
+		}
+
+	/* "inset" appearance toolbar */
+		toolbar[appearance~=inset] {
+			.insetPanel;
+			padding: 3px 10px 0 10px;
+		}
+
+		toolbar[appearance~=inset] label {
+			line-height: 31px;
+			font-weight:bold;
+		}
+
+		.gecko toolbar[appearance~=inset] label {
+			line-height: 28px;
+		}
 
 
 /*** Spring is a spacer which uses flex to greedily take up space ***/
@@ -591,37 +736,43 @@
 	}
 
 
+/*** Spacer is a fixed-width spacer.  
+ 	 Default is 10px wide.  Use style='width:#px' to set width. 
+***/
+	spacer {
+		position:relative !important;
+		display:inline-block;
+		width: 10px;
+	}
+
+
 /*** Tabs and TabBar ***/
 
 
 	tabgroup {
 		.box(vertical,stretch);
-		width:100%; height:100%;
-	}
-	tabgroup > * {
-		.boxChild;
 	}
 
 	tabgroup > container {
-		.urgentFlex;
-		width:100%; min-height:100%;
-		overflow:visible;
+		.flex(1);
+		.box(vertical,stretch);
 	}
 	
 	tabgroup > toolbar {}
 	
-	tabgroup > container > section {}
+	tabgroup > container > * {
+		.flex;
+	}
 
 	tabgroup > container > section > container {}
 
 	/* tabselector holds a bunch of actions which select tabgroup children */
-	toolbar[appearance=black] tabselector {
-		display:inline-block;
+	tabselector {
+		white-space:nowrap;
 	}
-	
+
 	tabselector tab {
-		.buttonHeight;
-		display:inline-block;
+		.button-ish;
 		color:white;
 	    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 		padding:0px 20px;
@@ -653,6 +804,13 @@
 		.SegmentEnd(url(theme/ios/segment-black-selected-end.png);
 	}
 
+
+	/** add tighter spacing to a tabselector by adding css class "tight" **/
+	tabselector.tight tab {
+		padding: 0 10px;
+	}
+
+
 /*** notice panels ***/
 	notice {
 		display:block;
@@ -661,7 +819,18 @@
 		font-size:1.5em;
 	}
 
-	overlay[appearance=blue] notice {
+	notice[appearance=smoke] {
+		.round(20px);
+		opacity: .6;
+		margin: 3em;
+		padding: 2em;
+		border:5px solid white;
+		background-color: black;
+		color: white;
+	}
+
+
+	overlay[appearance~=blue] notice {
 		color:white;
 		padding:50px;
 	}
@@ -716,51 +885,114 @@
 	}
 
 	
-	overlay[appearance=white] > mask > border {
+	overlay[appearance~=white] > mask > border {
 		background-color:white;
 	}
 
-	.desktop overlay[appearance=white] > mask > border {
+	.desktop overlay[appearance~=white] > mask > border {
 		.shadow(5px,5px,5px);	
 	}
 
-	overlay[appearance=white].hasHeader > mask > border > header {
+	overlay[appearance~=white].hasHeader > mask > border > header {
 		border-bottom:1px solid #999;
 	}
 
 /*** blue overlay ***/
-	overlay[appearance=blue] > mask > border {
+	overlay[appearance~=blue] > mask > border {
 		background-color:#1b1e2b;
 		border:3px solid white;
 	}
 
-	.desktop overlay[appearance=blue] > mask > border {
+	.desktop overlay[appearance~=blue] > mask > border {
 		.shadow(5px,5px,5px);
 	}
 
-	overlay[appearance=blue].hasHeader > mask > border > header {
+	overlay[appearance~=blue].hasHeader > mask > border > header {
 		position:relative;
 		top:-4px;
 		.roundTop(20px);
 		background-color:white;
 	}
 
-	overlay[appearance=blue] > mask > border > container {
+	overlay[appearance~=blue] > mask > border > container {
 		padding:10px;
 	}
 	
-	overlay[appearance=blue] label.head {
+	overlay[appearance~=blue] label.head {
 		color:white;
 		text-align:left;
 		font-size:1.3em;
 		font-weight:bold;
 		margin:1em;
 	}
+	
+	
+/*** form overlay ***/
+	overlay[appearance~=form] > mask > border {
+		background-color:#1b1e2b;
+		border:5px solid white;
+		color: white;
+	}
+
+	.desktop overlay[appearance~=form] > mask > border {
+		.shadow(5px,5px,5px);
+	}
+
+	overlay[appearance~=form].hasHeader > mask > border > header title {
+		display: block;
+		font-size: 2em;
+		font-weight: bold;
+		margin: 10px 0;
+	}
+
+
+	overlay[appearance~=form] > mask > border > container {
+		.round(20px);
+		background-color: #32384e;
+		padding:10px;
+		color: white;
+	}
+
+	overlay[appearance~=form].hasHeader > mask > border > footer {
+		padding: 5px 10px;
+	}
+
+
+/*** form section ***/
+	section[appearance~=form] {}
+
+	section[appearance~=form] > container {
+		padding: 10px;
+	}
+
+	section[appearance~=form] > container > row,
+	section[appearance~=form] > container > rows > row 
+	{
+		
+	}
+	
+	section[appearance~=form] > container > row > *,
+	section[appearance~=form] > container > rows > row > * 
+	{
+		vertical-align: baseline;
+	}
+
+	section[appearance~=form] > container > row > label,
+	section[appearance~=form] > container > rows > row > label 
+	{
+		text-align:right;
+		font-weight:bold;
+		opacity:.5;
+		padding-left:10px;
+		padding-right:5px;
+	}
+
+
 
 
 /*** white panel/container ***/
-	panel[appearance=white],
-	container[appearance=white] {
+	panel[appearance~=white],
+	container[appearance~=white] {
 		.round(10px);
 		.boxShadow(inset 0px 1px 4px rgba(0,0,0,0.5));
 		background:white;
@@ -768,35 +1000,35 @@
 		font-size: 1.3em;
 	}
 
-	panel[appearance=white] > container > row,
-	container[appearance=white] > row {
+	panel[appearance~=white] > container > row,
+	container[appearance~=white] > row {
 		width:100%;
 	}
 
-	panel[appearance=white] > container > row > *,
-	container[appearance=white] > row > * {
+	panel[appearance~=white] > container > row > *,
+	container[appearance~=white] > row > * {
 		border-bottom:1px solid #ccc;
 		vertical-align:middle;
 	}
 
-	panel[appearance=white] > container > row:last-child > *,
-	container[appearance=white] > row:last-child > * {
+	panel[appearance~=white] > container > row:last-child > *,
+	container[appearance~=white] > row:last-child > * {
 		border-bottom-width:0;
 	}
 
-	panel[appearance=white] > container > row > label,
-	container[appearance=white] > row > label {
+	panel[appearance~=white] > container > row > label,
+	container[appearance~=white] > row > label {
 		width: 100%;
 		font-weight:bold;
 	}
 
-	panel[appearance=white] {
+	panel[appearance~=white] {
 		margin:1em 10% 1.5em 10%;
 		width:80%;
 		color:black;
 	}
 
-	panel[appearance=white] > container > row > label {
+	panel[appearance~=white] > container > row > label {
 		width: 100%;
 		font-weight:bold;
 		padding-left:1em;
@@ -805,25 +1037,25 @@
 
 
 /*** grey panel ***/
-	panel[appearance=grey] {
+	panel[appearance~=grey] {
 		background-color:#40434f;
 		.round(5px);
 	}
 
-	panel[appearance=grey] toolbar {
+	panel[appearance~=grey] toolbar {
 		.roundTop(5px);
 		height:44px;
 		background-image:url(theme/ios/toolbar-grey.png);
 	}
 
-	panel[appearance=grey] toolbar action {
+	panel[appearance~=grey] toolbar action {
 		border:0px;
 		margin-left:10px;
 		margin-right:-5px;
 	}
 	
 	
-	panel[appearance=grey] toolbar label {
+	panel[appearance~=grey] toolbar label {
 		text-shadow: rgba(255, 255, 255, 0.4) 1px 1px 0;
 		font-size:1.6em;
 		color:#717880;
@@ -833,9 +1065,9 @@
 
 
 /*** blue panel ***/
-	panel[appearance=blue] {}
+	panel[appearance~=blue] {}
 
-	panel[appearance=blue] > header {
+	panel[appearance~=blue] > header {
 		background-color:#444a63;
 		.roundTop(10px);
 		color:white;
@@ -845,13 +1077,13 @@
 		font-weight: bold;
 	}
 
-	panel[appearance=blue] > container {
+	panel[appearance~=blue] > container {
 		.roundBottom(10px);
 		background:#32384e;
 		color:white;
 	}
 	
-	panel[appearance=blue] footer {
+	panel[appearance~=blue] footer {
 	
 	}
 
@@ -936,23 +1168,47 @@
 
 /*** WebView -- full screen embedded web browser ***/
 	webview {
-		position:absolute;
-		left:0px; top:0px;
+		position:relative;
+		.box(vertical,stretch);
 	}
 
 	webview > iframe {
-		position:absolute;
-		top:43px;
 		border:0px;	
+		.flex;
 		background:white;
-		width:1024px; height:725px;
 	}
 
-	body.vertical webview > iframe {
-		width:768px; height:981px;
+
+
+/*** Split pane (divides into horizontally or vertically stacked panes) ***/
+	splitter {
+		position:relative;
+		.box(vertical,stretch);	
 	}
 
+	splitter[direction=horizontal] {
+		.box(horizontal,stretch);	
+	}
+
+	// GRR....
+	splitter[direction=horizontal][visible=no] {
+		display:none !important;
+	}
+
+
+	splitter > splitbar {
+		position:absolute;
+		z-index: 2;
+		left:10px; right:0; 
+		height: 10px;
+		background-color: green;
+	}
 	
+	splitter[direction=horizontal] > splitbar {
+		top:0;
+		right: auto;
+		height:100%;
+	}
 
 
 
@@ -960,13 +1216,13 @@
 
 	/* icon element -- use this inside a button with border-image */
 		icon {
+			.backgroundFullWidth;
 			display:inline-block;
 			position:relative;
-			width:16px; height:16px;
 			background-position:left center;
 			background-repeat:no-repeat;		
-			.backgroundFullWidth;
 			cursor:pointer;
+			vertical-align:middle;
 		}
 		
 		icon[disabled] {
@@ -977,67 +1233,59 @@
 	/* Icon backgrounds -- attach by having a [icon] attribute on some element.
 	   It's up to your calling context to set where/how the icon shows up.			*/
 
-		*[icon=action]			{	background-image:url(theme/ios/icon-light-action.png);	width:23px; height:18px;}
 
 
-//TODO: these are silk icons -- rename?		
-		*[icon=add]				{	background-image:url(theme/icons/add.png);	}
-		*[icon=down]			{	background-image:url(theme/icons/down.png);	}
-		*[icon=horizontal]		{	background-image:url(theme/icons/horizontal.png);	}
-		*[icon=large] 			{	background-image:url(theme/icons/large.png);	}
-		*[icon=left]			{	background-image:url(theme/icons/left.png);	}
-		*[icon=medium] 			{	background-image:url(theme/icons/medium.png);	}
-		*[icon=moveBackwards]	{	background-image:url(theme/icons/moveBackwards.png);	}
-		*[icon=moveForwards]	{	background-image:url(theme/icons/moveForwards.png);	}
-		*[icon=moveToBack]		{	background-image:url(theme/icons/moveToBack.png);	}
-		*[icon=moveToFront]		{	background-image:url(theme/icons/moveToFront.png);	}
-		*[icon=refresh]			{	background-image:url(theme/icons/refresh.png);	}
-		*[icon=remove] 			{	background-image:url(theme/icons/remove.png);	}
-		*[icon=right]			{	background-image:url(theme/icons/right.png);	}
-		*[icon=small] 			{	background-image:url(theme/icons/small.png);	}
-		*[icon=save] 			{	background-image:url(theme/icons/save.png);	}
-		*[icon=up]				{	background-image:url(theme/icons/up.png);	}
-		*[icon=vertical]		{	background-image:url(theme/icons/vertical.png);	}
-		*[icon=window]			{	background-image:url(theme/icons/window.png);	}
-		*[icon=windowChart]		{	background-image:url(theme/icons/windowChart.png);	}
-		*[icon=windowSwitch]	{	background-image:url(theme/icons/windowSwitch.png);	}
-		*[icon=windowTile]		{	background-image:url(theme/icons/windowTile.png);	}
+		/* silk icons -- they don't match but there are a lot of them! */
+		*[icon|=silk] > icon				{	width: 16px; height: 16px;	}
+		*[icon=silk-add] > icon				{	background-image:url(theme/silk/add.png);	}
+		*[icon=silk-down] > icon			{	background-image:url(theme/silk/down.png);	}
+		*[icon=silk-horizontal] > icon		{	background-image:url(theme/silk/horizontal.png);	}
+		*[icon=silk-large] > icon 			{	background-image:url(theme/silk/large.png);	}
+		*[icon=silk-left] > icon			{	background-image:url(theme/silk/left.png);	}
+		*[icon=silk-link] > icon			{	background-image:url(theme/silk/link.png);	}
+		*[icon=silk-medium] > icon 			{	background-image:url(theme/silk/medium.png);	}
+		*[icon=silk-moveBackwards] > icon	{	background-image:url(theme/silk/moveBackwards.png);	}
+		*[icon=silk-moveForwards] > icon	{	background-image:url(theme/silk/moveForwards.png);	}
+		*[icon=silk-moveToBack] > icon		{	background-image:url(theme/silk/moveToBack.png);	}
+		*[icon=silk-moveToFront] > icon		{	background-image:url(theme/silk/moveToFront.png);	}
+		*[icon=silk-pencil] > icon			{	background-image:url(theme/silk/pencil.png);	}
+		*[icon=silk-person] > icon			{	background-image:url(theme/silk/person.png);	}
+		*[icon=silk-refresh] > icon			{	background-image:url(theme/silk/refresh.png);	}
+		*[icon=silk-remove] > icon 			{	background-image:url(theme/silk/remove.png);	}
+		*[icon=silk-right] > icon			{	background-image:url(theme/silk/right.png);	}
+		*[icon=silk-small] > icon 			{	background-image:url(theme/silk/small.png);	}
+		*[icon=silk-save] > icon 			{	background-image:url(theme/silk/save.png);	}
+		*[icon=silk-up] > icon				{	background-image:url(theme/silk/up.png);	}
+		*[icon=silk-vertical] > icon		{	background-image:url(theme/silk/vertical.png);	}
+		*[icon=silk-window] > icon			{	background-image:url(theme/silk/window.png);	}
+		*[icon=silk-windowChart] > icon		{	background-image:url(theme/silk/windowChart.png);	}
+		*[icon=silk-windowSwitch] > icon	{	background-image:url(theme/silk/windowSwitch.png);	}
+		*[icon=silk-windowTile] > icon		{	background-image:url(theme/silk/windowTile.png);	}
 
 
+	/* light icons */
+		*[icon=light-action] > icon	{	background-image:url(theme/ios/icon-light-action.png);	width:23px; height:18px; }
+		*[icon=light-left] > icon 	{	background-image:url(theme/ios/icon-light-left.png);	width:16px; height:19px; left: -1px; }
+		*[icon=light-right] > icon 	{	background-image:url(theme/ios/icon-light-right.png);	width:16px; height:19px; left: 1px; }
 
-//TODO: icon=ios-blah-blah ?
-		*[icon=arrowRight]		{	background-image:url(theme/ios/circle-right-blue.png);	
-									width:29px; height:29px;
-								}
-		*[icon=arrowLeft]		{	background-image:url(theme/ios/circle-left-blue.png);	
-									width:29px; height:29px;
-								}
 
-		*[icon=minusRed]		{	background-image:url(theme/ios/circle-minus-red.png);	
-									width:29px; height:29px;
-								}
-		*[icon=minusRed].vertical	{	background-image:url(theme/ios/circle-delete-red.png);	}
+	/* circle icons */
+		*[icon|=circle] > icon 				{	width:29px; height:29px;	}
+		*[icon=circle-add-blue] > icon 		{	background-image:url(theme/ios/circle-add-blue.png);	}
+		*[icon=circle-add-green] > icon 	{	background-image:url(theme/ios/circle-add-green.png);	}
+		*[icon=circle-checked-red] > icon 	{	background-image:url(theme/ios/circle-checked-red.png);	}
+		*[icon=circle-delete-red] > icon 	{	background-image:url(theme/ios/circle-delete-red.png);	}
+		*[icon=circle-error-red] > icon 	{	background-image:url(theme/ios/circle-error-red.png);	}
+		*[icon=circle-error-red] > icon 	{	background-image:url(theme/ios/circle-error-red.png);	}
+		*[icon=circle-left-blue] > icon 	{	background-image:url(theme/ios/circle-left-blue.png);	}
+		*[icon=circle-minus-blue] > icon 	{	background-image:url(theme/ios/circle-minus-blue.png);	}
+		*[icon=circle-minus-red] > icon 	{	background-image:url(theme/ios/circle-minus-red.png);	}
+		*[icon=circle-right-blue] > icon 	{	background-image:url(theme/ios/circle-right-blue.png);	}
 
-		*[icon=minusBlue]		{	background-image:url(theme/ios/circle-minus-blue.png);	
-									width:29px; height:29px;
-								}
-		*[icon=plusBlue]		{	background-image:url(theme/ios/circle-plus-blue.png);	
-									width:29px; height:29px;
-								}
-
-//TODO: re-do these as grey buttons with white icon backgrounds
-		*[icon=greySearch]		{	background-image:url(theme/ios/greyBtn-search.png);	
-									width:43px; height:31px;
-								}
-		*[icon=greyExpand]		{	background-image:url(theme/ios/greyBtn-expand.png);	
-									width:43px; height:31px;
-								}
-		*[icon=greyCollapse]	{	background-image:url(theme/ios/greyBtn-collapse.png);	
-									width:43px; height:31px;
-								}
-		*[icon=greyZoomIn]		{	background-image:url(theme/ios/greyBtn-zoomIn.png);	
-									width:43px; height:31px;
-								}
-		*[icon=greyZoomOut]		{	background-image:url(theme/ios/greyBtn-zoomOut.png);	
-									width:43px; height:31px;
-								}
+	/* status dots */
+		*[icon|=dot] > icon					{	width: 16px; height: 16px;	}
+		*[icon=dot-green] > icon			{	background-image:url(theme/ios/dot-green.png);			}
+		*[icon=dot-yellow] > icon			{	background-image:url(theme/ios/dot-yellow.png);			}
+		*[icon=dot-red] > icon				{	background-image:url(theme/ios/dot-red.png);			}
+		
+		

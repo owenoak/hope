@@ -81,12 +81,32 @@
 		-webkit-border-bottom-right-radius: @radius;
 	}
 
+	.roundLeft(@radius:5px) {
+		-moz-border-radius-topleft: @radius;
+		-moz-border-radius-bottomleft: @radius;
+		-webkit-border-top-left-radius: @radius;
+		-webkit-border-bottom-left-radius: @radius;
+	}
+
+	.roundRight(@radius:5px) {
+		-moz-border-radius-topright: @radius;
+		-moz-border-radius-bottomright: @radius;
+		-webkit-border-top-right-radius: @radius;
+		-webkit-border-bottom-right-radius: @radius;
+	}
+
+
 
 	// normal shadow specified in pieces
 	.shadow(@x:3px, @y:3px, @blur:5px, @color:rgba(0, 0, 0, 0.4)) {
 		  box-shadow: @x @y @blur @color;
 		  -moz-box-shadow: @x @y @blur @color;
 		  -webkit-box-shadow: @x @y @blur @color;
+	}
+
+	/* shadow from above */
+	.verticalShadow {
+		.shadow(0px,3px,7px,rgba(0, 0, 0, 0.8));
 	}
 	
 	// normal shadow, specified all at once
@@ -104,11 +124,28 @@
 	}
 
 
- 	// inset shadow
- 	.fieldShadow() {
+ 	// field inset shadow
+ 	.fieldShadow {
 		-moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
 		-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
  	}
+ 	
+ 	
+	// outset shadow
+ 	.outsetShadow {
+		-moz-box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.9);
+		-webkit-box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.9);
+ 	}
+
+	
+	// nice inset panel look
+	.insetPanel {
+		.fieldShadow;
+		.round(10px);
+		background:rgba(255,255,255,.5);
+		padding: 10px;	
+	}
+
  	
 	// poster shadow: both inset and outset
 	.posterShadow() {
@@ -130,6 +167,7 @@
 	.ButtonBorder(@url) {
 		.borderImage(@url, 0 5 0 5, 0px 5px 0px 5px);
 	}
+
 	
 	// special:  iOS nav-back button
 	.NavBackBorder(@url) {
@@ -139,7 +177,7 @@
 	// special:  iOS nav-forward button
 	.NavForwardBorder(@url) {
 		.borderImage(@url, 0 17 0 13, 0px 17px 0px 13px);
-	}
+	}	
 
 
 	// special:  iOS segment control start
@@ -156,6 +194,14 @@
 	.SegmentEnd(@url) {
 		.borderImage(@url, 0 6 0 1, 0px 6px 0px 1px);
 	}
+	
+	/* standard button height/line-height */
+	.button-ish {
+		.noTapHighlight;
+		display:inline-block;
+		height:30px;
+		line-height: 29px;
+	}	
 	
 	
 	// rotate a certain number of degrees

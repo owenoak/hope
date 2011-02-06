@@ -28,6 +28,7 @@ var XHR = {
 
 	// given a @url, interpret any named paths in the url (eg:  "{{hope}}foo")
 	expand : function(url) {
+		if (!url) return url;
 		var match = url.match(_NAMED_PATH_MATCHER);
 		if (match) {
 			var path = XHR.paths[match[1]];

@@ -6,7 +6,7 @@ Script.require("{{hope}}Element-attach.js", function(){
 //	- are shown one at a time (via stack.selected), and
 //	- take up the full space of the stack
 //	- 
-new $Section.Subclass("$Stack", {
+new hope.Section.Subclass("hope.Stack", {
 	tag : "stack",
 	properties : {
 		// set to a css selector for our child element to be used as a selector
@@ -14,7 +14,7 @@ new $Section.Subclass("$Stack", {
 		itemSelector : null,
 		
 		// constructor for our item selectors
-		selectorConstructor : $Action,
+		selectorConstructor : hope.Action,
 
 		// switch the visible section when selected
 		listeners : "selected,deselected",
@@ -25,7 +25,7 @@ new $Section.Subclass("$Stack", {
 			if (typeof selector === "string") {
 				this.itemSelector = this.select(selector) || select(selector);
 			}
-			this.as($Section);
+			this.as(hope.Section);
 			
 			// set up the selected item on a timer...
 			var stack = this;
@@ -54,7 +54,9 @@ new $Section.Subclass("$Stack", {
 				if (newValue) this.fire("selected", newValue);
 			}
 		}),
-		selectedChild : Getter(function() {
+		
+		// pointer to our selected section
+		$selection : Getter(function() {
 			var selection = this.selection;
 			return (selection ? select("#"+selection) : undefined);
 		}),

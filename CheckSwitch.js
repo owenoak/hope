@@ -3,7 +3,7 @@
 Script.require("{{hope}}Element.js", function(){
 
 
-new $Element.Subclass("$CheckSwitch", {
+new Element.Subclass("hope.CheckSwitch", {
 	tag : "checkswitch",
 	mixins : "Valued",
 	properties : {

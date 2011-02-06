@@ -1,8 +1,11 @@
-/*** Make an element or class of elements drag-resizable by its edges by mixing this into it ***/
+/*** Make an element or class of elements drag-resizable by its edges by mixing this into it.
+	Call:
+		this.initResize();
+	to start resize tracking, e.g. in an onReady handler for your object.
+
+***/
 
 //TODO:  make sure the element is absolutely positioned when we start resizing!
-//TODO:	 constrain to parent, constrain to only certain edges
-//TODO:  when resizing, watch the arrow keys to nudge
 
 Script.require("{{hope}}Element.js", function() {
 
@@ -10,7 +13,7 @@ var Resizable = {
 	// mix methods into an element, but don't intialize
 	mixinTo : function(it) {
 		if (it.isAClass) it = it.prototype;
-		hope.extendIf(it, Resizable.properties);
+		hope.extendIf(it, this.prototype);
 		return it;
 	},
 	
@@ -25,24 +28,17 @@ hope.setGlobal("Resizable", Resizable);
 
 Resizable.resizableEventMap = {
 	"mousedown" : "onResizeStart",
-	"mousemove" : "onMouseMove",
-	"mouseout" : "onMouseOut"
+	"mousemove" : "onResizeMove",
+	"mouseout" : "onResizeOut"
 }
 
 Resizable.bodyEventMap = {
-	"mousemove" : "onResizing",
-	"mouseup" : "onResizeEnd",
-//	"keypress" : "onResizeKey"
+	"mousemove" : "onResizingMove",
+	"mouseup" : "onResizingEnd"
 }
 
 
-Resizable.properties = {
-	listeners : "mousedown:onResizeStart,mousemove:onMouseMove,mouseout:onMouseOut",
-
-	// Should we express our size in relative coordinates (percentages?)
-//TODO: this is broken in WebKit, we're getting some sort of creeping error as we resize if relative is true
-	resizeRelative : false,
-
+Resizable.prototype = {
 	// # of pixels for our 'edge'
 	edgeSize : new Attribute({name:"edgeSize", type:"number", value:10, inherit:true}),
 	
@@ -72,25 +68,25 @@ Resizable.properties = {
 	
 	
 	// Called when the cursor is moving over us, to show the appropriate resize cursor
-	onMouseMove : function(event) {
+	onResizeMove : function(event) {
 		if (this._resizeInfo) return;
 		var edge = this.getEventEdge(event),
-			resize = this._resizeMoveInfo || (this._resizeMoveInfo = {})
+			info = this._resizeMoveInfo || (this._resizeMoveInfo = {})
 		;
 		if (edge) {
-			if (edge != resize.edge) {
-				if (resize.cursor == null) resize.cursor = this.style.cursor;
-				resize.edge = edge;
+			if (edge != info.edge) {
+				if (info.cursor == null) info.cursor = this.style.cursor;
+				info.edge = edge;
 				this.style.cursor = this.getEdgeCursor(edge);
 			}
 		} else {
-			if (resize.cursor != null) this.style.cursor = resize.cursor;
+			if (info.cursor != null) this.style.cursor = info.cursor;
 		}
 	},
-	onMouseOut : function(event) {
+	onResizeOut : function(event) {
 		if (this._resizeInfo) return;
-		var resize = this._resizeMoveInfo;
-		if (resize && resize.cursor != null) this.style.cursor = resize.cursor;
+		var info = this._resizeMoveInfo;
+		if (info && info.cursor != null) this.style.cursor = info.cursor;
 		delete this._resizeMoveInfo;
 	},
 
@@ -120,7 +116,39 @@ Resizable.properties = {
 			element = clone;
 		}
 
-		var resize = element._resizeInfo = {
+		var info = element._getResizeInfo(element, edge, !!clone);
+		
+		// call updateSize to set all properties initially
+		this.updateSize(null, info);
+
+		// set info.N true if we should resize the north side, etc
+		for (var i = 0; i < edge.length; i++) {
+			info[edge[i]] = true;
+		}
+
+		if (info.C) {
+			info.offsetX = element.pageLeft - event.pageX;
+			info.offsetY = element.pageTop - event.pageY;
+
+			if (element.cloneable && event.altKey) {
+				
+			}
+		} else {
+			// minimum we're allowed to resize
+			info.min = element.resizeMin;
+		}
+		
+//console.dir(info);
+		// show the appropriate cursor
+		element.style.cursor =  document.body.style.cursor = element.getEdgeCursor(edge);
+		
+		// have the body notify us of events so we can manipulate our size
+		document.body.hookup(Resizable.bodyEventMap, element);
+	},
+	
+	//PRIVATE
+	_getResizeInfo : function(element, edge, cloned) {
+		var info = element._resizeInfo = {
 			// name of the resize edge
 			edge 		: edge,
 			
@@ -129,60 +157,38 @@ Resizable.properties = {
 
 			// current cursor
 			cursor 		: (this._resizeMoveInfo ? this._resizeMoveInfo.cursor 
-												: element.style.cursor)
+												: element.style.cursor),
+												
+			size		: element.bounds
 		}
-		if (clone) resize.cloned = true;
-
-		// set resize.N true if we should resize the north side, etc
-		for (var i = 0; i < edge.length; i++) {
-			resize[edge[i]] = true;
-		}
-
-		if (resize.C) {
-			resize.offsetX = element.pageLeft - event.pageX;
-			resize.offsetY = element.pageTop - event.pageY;
-
-			if (element.cloneable && event.altKey) {
-				
-			}
-		} else {
-			// minimum we're allowed to resize
-			resize.min = element.resizeMin;
-		}
-
-		
-//console.dir(resize);
-		// show the appropriate cursor
-		element.style.cursor =  document.body.style.cursor = element.getEdgeCursor(edge);
-		
-		// have the body notify us of events so we can manipulate our size
-		document.body.hookup(Resizable.bodyEventMap, element);
+		if (cloned) info.cloned = true;
+		return info;
 	},
 	
 	
 	// called when we're actually resizing
-	onResizing : function(event) {
-		var resize = this._resizeInfo;
+	onResizingMove : function(event) {
+		var info = this._resizeInfo;
 
-		if (resize.C) {
+		if (info.C) {
 			// constrain if the shift key is held down
-			resize.constrain = event.shiftKey;
-			if (resize.constrain) {
+			info.constrain = event.shiftKey;
+			if (info.constrain) {
 				// figure out the direction to constrain after movement of 5 px or more
-				if (resize.direction == null) {
-					if (resize.startX == null) {
-						resize.startX = event.pageX;
-						resize.startY = event.pageY;
+				if (info.direction == null) {
+					if (info.startX == null) {
+						info.startX = event.pageX;
+						info.startY = event.pageY;
 					} else {
-						var deltaX = Math.abs(event.pageX - resize.startX),
-							deltaY = Math.abs(event.pageY - resize.startY)
+						var deltaX = Math.abs(event.pageX - info.startX),
+							deltaY = Math.abs(event.pageY - info.startY)
 						;
 						if (deltaX > 5 || deltaY > 5) {
 							if (deltaX > deltaY) {
-								resize.direction = "H";
+								info.direction = "H";
 								this.style.cursor = "col-resize";
 							} else {
-								resize.direction = "V";
+								info.direction = "V";
 								this.style.cursor = "row-resize";
 							}
 						}
@@ -190,129 +196,135 @@ Resizable.properties = {
 				}
 			} else {
 				this.style.cursor = "move";
-				delete resize.direction;
-				delete resize.startX;
-				delete resize.startY;
+				delete info.direction;
+				delete info.startX;
+				delete info.startY;
 			}
-			this.onResizeCenter(resize, event.pageX, event.pageY);
+			this.onResizeCenter(info, event.pageX, event.pageY);
 		} else {
-			if (resize.N) 		this.onResizeTop(resize, event.pageX, event.pageY);
-			else if (resize.S)	this.onResizeBottom(resize, event.pageX, event.pageY);
-			if (resize.W) 		this.onResizeLeft(resize, event.pageX, event.pageY);
-			else if (resize.E)  this.onResizeRight(resize, event.pageX, event.pageY);
+			if (info.N) 		this.onResizeTop(info, event.pageX, event.pageY);
+			else if (info.S)	this.onResizeBottom(info, event.pageX, event.pageY);
+			if (info.W) 		this.onResizeLeft(info, event.pageX, event.pageY);
+			else if (info.E)  	this.onResizeRight(info, event.pageX, event.pageY);
 		}
 
-		// fire the onResized event		
-		this.onResized();
-	},
-	
-	
-	onResizeCenter : function(resize, eventX, eventY) {
-		var left = eventX - resize.parent.left + resize.offsetX,
-			top = eventY - resize.parent.top + resize.offsetY
-		;
-//console.warn(resize.constrain , resize.direction);
-		if (resize.constrain && resize.direction) {
-			if (resize.direction === "H") 	top = this.top;
-			else							left = this.left;
-		}
-		if (this.constrain) {
-			if (left < 0) {
-				left = 0;
-			} else if (left + this.width > resize.parent.width) {
-				left = resize.parent.width - this.width;
-			}
-			if (top < 0) {
-				top = 0;
-			} else if (top + this.height > resize.parent.height) {
-				top = resize.parent.height - this.height;
-			}
-		}
-		this._resizeTo({left:left, top:top});
+		// fire the "resizing" event		
+		this.fire("resizing");
 	},
 
-	onResizeLeft : function(resize, eventX, eventY) {
-		var left = eventX - resize.parent.left;
-		if (this.constrain && left < 0) left = 0;
-		var width = this.right - left;
-		if (width < resize.min) {
-			width = resize.min;
-			left = this.right - width;
-		}
-		this._resizeTo({left:left, width:width});
-	},
-
-	onResizeTop : function(resize, eventX, eventY) {
-		var top = eventY - resize.parent.top;
-		if (this.constrain && top < 0) top = 0;
-		var height = this.bottom - top;
-		if (height < resize.min) {
-			height = resize.min;
-			top = this.bottom - height;		
-		}
-		this._resizeTo({top:top, height:height});
-	},
-
-	onResizeRight : function(resize, eventX, eventY) {
-		var width = eventX - this.pageLeft;
-		if (this.constrain && this.pageLeft + width > resize.parent.right) {
-			width = resize.parent.width - this.left;
-		}
-		if (width < resize.min) width = resize.min;
-		this._resizeTo({width:width});
-		this.width = width;
-	},
-
-	onResizeBottom : function(resize, eventX, eventY) {
-		var height = eventY - this.pageTop;
-		if (this.constrain && this.pageTop + height > resize.parent.bottom) {
-			height = resize.parent.height - this.top;
-		}
-		if (height < resize.min) height = resize.min;
-		this._resizeTo({height:height});
-	},
-
-	
-	// Set left/top/width/height according to size passed in.
-	_resizeTo : function(size) {
-		if (this.resizeRelative) {
-			var parent = this.offsetParent.bounds;
-//console.info("width:", size.width , "was:", this.width,  "    left:",size.left, "was:",this.left);
-			if (parent.width !== 0 && parent.height !== 0) {
-				size.left = ((size.left != null ? size.left : this.left) / parent.width).toPercent()+"%";
-				size.top = ((size.top != null ? size.top : this.top) / parent.height).toPercent()+"%";
-				size.width = ((size.width != null ? size.width : this.width) / parent.width).toPercent()+"%";
-				size.height = ((size.height != null ? size.height : this.height) / parent.height).toPercent()+"%";
-			}
-		}
-		if (size.left !== undefined) this.left = size.left;
-		if (size.top !== undefined) this.top = size.top;
-		if (size.width !== undefined) this.width = size.width;
-		if (size.height !== undefined) this.height = size.height;
-	},
-	
-	
 	// Called when the mouse goes up after we've resized.
 	//	Fires event "onResized".
-	onResizeEnd : function(event) {
-		var resize = this._resizeInfo;
-		if (!resize) return;
+	onResizingEnd : function(event) {
+		var info = this._resizeInfo;
+		if (!info) return;
 		
 		// clear the body events
 		document.body.unhook(Resizable.bodyEventMap, this);
 		
 		// reset the cursor
-		this.style.cursor = resize.cursor;
+		this.style.cursor = info.cursor;
 		document.body.style.cursor = "";
 
 //HACK
-		if (resize.cloned) this.prompt();
+		if (info.cloned) this.prompt();
 
 		// clear the resize data
 		delete this._resizeInfo;
+		
+		this.fire("resized");
+	},
+		
+	
+	onResizeCenter : function(info, eventX, eventY) {
+		// adjust for the initial mouse offset for the TL of the element
+		var newLeft = eventX - info.parent.left + info.offsetX,
+			newTop = eventY - info.parent.top + info.offsetY
+		;
+//console.warn(info.constrain , info.direction);
+		if (info.constrain && info.direction) {
+			if (info.direction === "H") 	newTop = this.top;
+			else							newLeft = this.left;
+		}
+		if (this.constrain) {
+			if (newLeft < 0) {
+				newLeft = 0;
+			} else if (newLeft + this.width > info.parent.width) {
+				newLeft = info.parent.width - this.width;
+			}
+			if (newTop < 0) {
+				newTop = 0;
+			} else if (newTop + this.height > info.parent.height) {
+				newTop = info.parent.height - this.height;
+			}
+		}
+		this.updateSize({left:newLeft, top:newTop}, info);
+	},
+
+	onResizeLeft : function(info, eventX, eventY) {
+		var newLeft = eventX - info.parent.left;
+		if (this.constrain && newLeft < 0) newLeft = 0;
+		var delta = newLeft - this.left,
+			newWidth = this.width - delta
+		;
+		if (newWidth < info.min) {
+			newWidth = info.min;
+			var right = this.left + this.width;
+			newLeft = right - newWidth;
+		}
+		this.updateSize({left:newLeft, width:newWidth}, info);
+	},
+
+	onResizeTop : function(info, eventX, eventY) {
+		var newTop = eventY - info.parent.top;
+		if (this.constrain && newTop < 0) newTop = 0;
+		
+		var	delta = newTop - this.top,
+			newHeight = this.height - delta
+		;
+
+		if (newHeight < info.min) {
+			newHeight = info.min;
+			var bottom = this.top + this.height;
+			newTop = bottom - newHeight;		
+		}
+		this.updateSize({top:newTop, height:newHeight}, info);
+	},
+
+	onResizeRight : function(info, eventX, eventY) {
+		var newWidth = eventX - this.pageLeft;
+		if (this.constrain && this.pageLeft + newWidth > info.parent.right) {
+			newWidth = info.parent.width - this.left;
+		}
+		if (newWidth < info.min) newWidth = info.min;
+		this.updateSize({width:newWidth}, info);
+	},
+
+	onResizeBottom : function(info, eventX, eventY) {
+		var newHeight = eventY - this.pageTop;
+		if (this.constrain && this.pageTop + newHeight > info.parent.bottom) {
+			newHeight = info.parent.height - this.top;
+		}
+		if (newHeight < info.min) newHeight = info.min;
+		this.updateSize({height:newHeight}, info);
+	},
+
+	
+	// Set left/top/width/height according to size passed in.
+	//	If you don't specify a size or dimensions, sets to current size,
+	//		so all coordinates are actually set.
+	//	If you pass resizeMoveInfo structure, uses/updates that for/to the current size.
+	updateSize : function(size, info) {
+		if (!size) size = {};
+		var current = (info ? info.size : this.bounds);
+		this.left 	= current.left	 = (size.left != null ? size.left : current.left);
+		this.top 	= current.top 	 = (size.top != null ? size.top : current.top);
+		this.width 	= current.width  = (size.width != null ? size.width : current.width);
+		this.height	= current.height = (size.height != null ? size.height : current.height);
+
+//console.warn(this.attr("style"));
 	},
 	
-
+	
 	//
 	//	bring to front/send to back/etc
 	//
@@ -348,14 +360,6 @@ Resizable.properties = {
 		return (this.parentNode ? this.parentNode.elements.indexOf(this) : -1);
 	},
 
-
-	// CRAP: this isn't working
-	// TODO: watch for the arrow keys and nudge if they're pressed
-	onResizeKey : function(event) {},
-	
-	// Fired when we've actually been resized.
-	// Use element.bounds or element.pageBounds to get our current size.
-	onResized : function() {},
 
 	//
 	// "edge" detection  (TODO: move this somewhere else?)

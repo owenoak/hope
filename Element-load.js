@@ -3,31 +3,59 @@
 Script.require("{{hope}}Element.js", function(){
 
 Element.prototype.extend({
+	// url to load from
+	url : new Attribute({name:"url", update:true}),
+	
+	// if true, we load automatically once we've been set up
+	autoLoad : new Attribute({name:"autoLoad", type:"flag", trueIf:["",true,"true","yes"]}),
+
+	// have we been loaded
+	isLoaded : false,
+	
+	// are we currently loading
+	isLoading : false,
+
+	// was there a load error?
+	// TODO: set to some string on error ???
+	loadError : false,
+
 	//	Load HTML and replace our innerHTML with it.
 	//	Note that this automatically calls Element.initializeElements() on all children.
 	//	if @callback is provided, that will be called with:
 	//		(element, html, XHRequest) AFTER the html has been set.
 	//		and should return (possibly massaged) html to insert.
-	loadHTML : function loadHTML(url, callback, errback, scope) {
-		if (!url) url = this.url;
+	load : function load(url, callback, errback, scope) {
+		this.url = XHR.expand(this.url);
+		url = XHR.expand(url) || this.url;
+		
+		var callbackHandler, errbackHandler
+		if (callback) callbackHandler = this.once("loaded", callback, scope);
+		if (errback) errbackHandler = this.once("loadError", errback, scope);
 
-		// use XHR.expand(url) to dereference any {{namedPaths}} in the URL
-		url = XHR.expand(url);
+//TODO: if loadError, start loading again, right???
+//TODO: is this right???
+		if (this.isLoading && (url == this.url)) return;
 		this.url = url;
-
-		if (!scope) scope = this;
+	
 		var onLoaded = function(html, request) {
-			this._loadedHTML(html);
-			if (callback) callback.call(scope, html, request, this);
-			if (this.global) hope.setReady(this.global, true, this);
+			// clear the errbackHandler in case we're loaded again
+			if (errbackHandler) this.un(errbackHandler);
+			
+			// call .processLoad() to set the html
+			this.processLoad(html, request);
+			this.isLoading = false;
+			this.isLoaded = true;
 			this.fire("loaded", html, request);
+			if (this.global) hope.setReady(this.global, true, this);
 			this.fire("ready");
 		};
 		var onError = function(status, request) {
-			delete this._loading;
-			this._loaded = false;
+			// clear the callbackHandler in case we're loaded again
+			if (callbackHandler) this.un(callbackHandler);
+
+			this.isLoading = this.isLoaded = false;
+			this.loadError = true;
 			if (this.global) hope.readyError(this.global, status);
-			if (errback) errback.call(scope, this, status, request);
 			this.fire("loadError", status, request);
 		}
 
@@ -35,43 +63,17 @@ Element.prototype.extend({
 
 		XHR.get(url, onLoaded, onError, this, false);
 
-		this._loaded = false;
-		this._loading = true;
+		this.isLoaded = this.loadError = false;
+		this.isLoading = true;
 		return this;
 	},
 
-	// Callback when html has actually been loaded.
-	//	We inject it as our .html and set our ._loaded flag;
-	_loadedHTML : function(html) {
+	// Called when html has actually been loaded.
+	//	Default is to take the html response and set our .html to it.
+	//	Override and massage the html before calling the super method to change the response.
+//TODO: name
+	processLoad : function(html, request) {
 		this.html = html;
-		delete this._loading;
-		this._loaded = true;
-	},
-
-	// url to load from
-	url : new Attribute({name:"url", update:true}),
-	autoLoad : new Attribute({name:"autoLoad", type:"flag", trueIf:["",true,"true","yes"]}),
-
-	onLoaded : new Attribute({name:"onLoaded", type:"event"}),
-	onLoadError : new Attribute({name:"onLoadError", type:"event"}),
-
-	// Load some HTML and inject it after our HTML.
-	//	Same @callback semantics as `element.loadHtml()`.
-	inject : function inject(url, callback, errback, scope) {
-		if (!scope) scope = this;
-		
-		var onLoaded = function(html) {
-				if (callback) html = callback.apply(scope, arguments);
-				if (html !== null) this.append(html);
-			};
-		;
-		if (!errback) {
-			errback = function errback() {
-				console.error("Couldn't load file "+url);
-			}
-		}
-		errback = errback.bind(scope);
-		XHR.get(url, onLoaded, errback, this, false);
 	}
 });
 

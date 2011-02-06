@@ -7,12 +7,34 @@
 
 Script.require("{{hope}}Element-attach.js", function(){
 
-new Element.Subclass("$Action", {
+new Element.Subclass("hope.Action", {
 	tag : "action",
 	properties : {
 
 //TODO: touchStart ???
 		listeners : "mousedown,click",
+
+		// named icon to show
+		icon : new Attribute({name:"icon", update:true,
+			onChange : function(newValue) {
+				// make sure we have an icon sub-element
+				if (this.select("icon") == null) this.prepend(new hope.Icon());
+//console.warn(this,"changing icon to ",newValue, this.select("icon"));
+				return newValue;			
+			}
+		}),
+
+		// label for the action (user-visible)
+		label : new Attribute({name:"label", update:true,
+			onChange : function(newValue) {
+				// get a pointer to our <label> or create one if necessary
+				var label = this.select("label") || this.append(new hope.Label());
+				label.html = newValue;
+//console.warn(this,"changing label to ",newValue, label);
+				return newValue;
+			}
+		}),
+		
 
 		// action to do when clicked
 //TODO: recast this as an event...  "onDo" ? "onActivated" (yuck)
@@ -35,7 +57,7 @@ new Element.Subclass("$Action", {
 		},
 
 		onMouseup : function(event) {
-			if (this.enabled) this.classList.remove("active");
+			if (this.enabled) this.deactivate();
 		},
 
 		onClick : function(event) {

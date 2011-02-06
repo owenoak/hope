@@ -46,7 +46,7 @@ EP.extendIf({
 			this._visible = visible;
 
 			if (initialized && visible !== oldValue) {
-				var animation = $Animation.getShowHideOperation(visible, this, callback);
+				var animation = hope.Animation.getShowHideOperation(visible, this, callback);
 				if (animation) return animation.go();
 			}
 			callback();
@@ -202,7 +202,7 @@ EP.extendIf({
 	
 	right : new Property({
 		get : function() {
-			return this.left + this.width;
+			return parseFloat(this.styles.right);
 		},
 		
 		set : function(right) {
@@ -213,7 +213,7 @@ EP.extendIf({
 
 	bottom : new Property({
 		get : function() {
-			return this.top + this.height;
+			return parseFloat(this.styles.bottom);
 		},
 		
 		set : function(bottom) {
@@ -257,7 +257,7 @@ EP.extendIf({
 	pageLeft : new Property({
 		get : function() {
 			var left = this.offsetLeft, parent = this.offsetParent;
-			while (parent != $body) {
+			while (parent && parent != $body) {
 				left += parent.offsetLeft;
 				parent = parent.offsetParent;
 			}
@@ -272,7 +272,7 @@ EP.extendIf({
 	pageTop : new Property({
 		get : function() {
 			var top = this.offsetTop, parent = this.offsetParent;
-			while (parent != $body) {
+			while (parent && parent != $body) {
 				top += parent.offsetTop;
 				parent = parent.offsetParent;
 			}
@@ -323,7 +323,7 @@ EP.extendIf({
 		}
 	}),
 	
-	
+/*	
 	// bounds as a percentage of our offsetParent
 	relativeBounds : new Property({
 		get : function() {
@@ -331,12 +331,12 @@ EP.extendIf({
 				our = this.pageBounds, 
 				parent = this.offsetParent.pageBounds
 			;
-			bounds.left = ((our.left - parent.left) / parent.width).toPercent(4)+"%";
-			bounds.top = ((our.top - parent.top) / parent.height).toPercent(4)+"%";
-			bounds.width = (our.width / parent.width).toPercent(4)+"%";
-			bounds.height = (our.height / parent.height).toPercent(4)+"%";
-			bounds.right = (our.right / parent.right).toPercent(4)+"%";
-			bounds.bottom = (our.bottom / parent.bottom).toPercent(4)+"%";
+			bounds.left = ((our.left - parent.left) / parent.width).toPercent(3)+"%";
+			bounds.top = ((our.top - parent.top) / parent.height).toPercent(3)+"%";
+			bounds.width = (our.width / parent.width).toPercent(3)+"%";
+			bounds.height = (our.height / parent.height).toPercent(3)+"%";
+			bounds.right = (our.right / parent.right).toPercent(3)+"%";
+			bounds.bottom = (our.bottom / parent.bottom).toPercent(3)+"%";
 			return bounds;
 		},
 		
@@ -344,7 +344,48 @@ EP.extendIf({
 			debugger;
 		}
 	}),
-	
+*/
+
+	// bounds as a percentage of our offsetParent
+	relativeBounds : new Property({
+		get : function() {
+			if (!this.offsetParent) return {};
+			
+			var size = {},
+				styles = this.styles,
+				our = this.pageBounds, 
+				parent = this.offsetParent.pageBounds
+			;
+			var left = this.style.left || ""+styles.left;
+			if (!left.contains("%")) 
+				left = ((our.left - parent.left) / parent.width).toPercent(3)+"%"
+			size.left = left;
+
+			var top = this.style.top || ""+styles.top;
+			if (!top.contains("%")) 
+				top = ((our.top - parent.top) / parent.height).toPercent(3)+"%"
+			size.top = top;
+
+			var width = this.style.width || ""+styles.width;
+			if (!width.contains("%")) 
+				width = (our.width / parent.width).toPercent(3)+"%"
+			size.width = width;
+
+			var height = this.style.height || ""+styles.height;
+			if (!height.contains("%")) 
+				height = (our.height / parent.height).toPercent(3)+"%"
+			size.height = height;
+
+//			size.right = ((parseFloat(size.left)+parseFloat(size.width)) / 100).toPercent(3)+"%";
+//			size.bottom = ((parseFloat(size.top)+parseFloat(size.height)) / 100).toPercent(3)+"%";
+			return size;
+		},
+		
+		set : function(bounds) {
+			debugger;
+		}
+	}),
+
 	
 	// move so we're under the mouse
 	// TODO: anchor
@@ -354,8 +395,8 @@ EP.extendIf({
 			top = event.pageY
 		;
 		if (this.offsetParent) {
-			left -= this.offsetParent.left;
-			top -= this.offsetParent.top;
+			left -= this.offsetParent.pageLeft;
+			top -= this.offsetParent.pageTop;
 		}
 		this.left = left;
 		this.top = top;

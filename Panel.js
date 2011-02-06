@@ -1,13 +1,11 @@
-/* Panel. */
+/* Panel -- just a container for things. */
 
-Script.require("{{hope}}Section.js", function(){
+Script.require("{{hope}}Element-attach.js", function(){
 
 
-new $Section.Subclass("$Panel", {
+new Element.Subclass("hope.Panel", {
 	tag : "panel",
-	properties : {
-		template : "<container></container>",
-	}
+	properties : {}
 });
 
 

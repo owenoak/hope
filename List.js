@@ -244,6 +244,13 @@ var listMethods = {
 		return this;
 	},
 	
+	// clear the entire list
+	clear : function() {
+		for (var i = this.length -1; i >= 0; i--) {
+			this.removeItem(i);
+		}
+	},
+	
 	// clean up a list by removing null/undefined items
 	clean : function() {
 		return this.remove(null);

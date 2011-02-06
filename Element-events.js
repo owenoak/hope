@@ -72,14 +72,28 @@ Script.require("{{hope}}Element.js", function(){
 	
 	function _fireEvent(element, event, args) {
 //console.warn("_fireEvent",element, event, args);
-		var eventType = (typeof event === "string" ? event : event.type);
-//DEBUG: this was throwing an error occasionally in FF -- looks like a race condition
-try {
-		var methods = element.data["on"+eventType];
-} catch (e) { console.error(element, event, args); }
-		if (!methods) return true;
+		var eventType = (typeof event === "string" ? event : event.type),
+			eventName = "on" + eventType.capitalize()
+		;
+		
+		// get a pointer to the stored methods to execute
 
-//TODO: check the 'stop' properties of the event after each one
+		//DEBUG: this was throwing an error occasionally in FF -- looks like a race condition
+		//NOTE:  the try...catch is actually pretty slow...
+		try {
+			var methods = element.data[eventName];
+		} catch (e) { 
+			console.error(element, event, args); 
+		}
+		// if we're not actually observing that event, but we DO have a method with the eventName
+		//	call that (???)
+		if (!methods) {
+			if (typeof element[eventName] === "function") {
+				return !!(element[eventName].apply(element, args));
+			}
+			return true;
+		}
+
 		var i = -1, method, returnVal = true, removedAny;
 		while (method = methods[++i]) {
 			if (typeof method === "string") {
@@ -101,15 +115,15 @@ try {
 	// cleanup the element after removing an event
 	function _cleanupAfterRemove(element, eventType) {
 		var data = element.data,
-			onEvent = "on"+eventType,
-			methods = data[onEvent]
+			eventName = "on" + eventType.capitalize()
+			methods = data[eventName]
 		;
 		if (methods && methods.length === 0) {
 			// remove the event listener
 			element.removeEventListener(eventType, _eventHandler, false);
 
 			// remove the list of events from our data object
-			delete data[onEvent];
+			delete data[eventName];
 
 			// remove the event from the list of events
 			data.events = (data.events ? data.events.remove(eventType) : null);
@@ -133,7 +147,7 @@ try {
 			}
 			return handlers;
 		} else {
-			if (!handler) handler = "on"+(eventType.capitalize());
+			if (!handler) handler = "on" + eventType.capitalize();
 
 			// IMMEDIATE events are those that should fire immediately for this browser
 			//	(eg: transitionEnd events when the browser doesn't support transitions)
@@ -193,13 +207,13 @@ try {
 	}
 	
 	function _addToEventList(element, eventType, handler) {
-		var data = element.data, onEvent = "on"+eventType;
-		if (!data[onEvent]) {
+		var data = element.data, eventName = "on"+eventType.capitalize();
+		if (!data[eventName]) {
 			// actually attach the standard event listener
 			element.addEventListener(eventType, _eventHandler, false);
 
 			// update the list of events
-			data[onEvent] = [];
+			data[eventName] = [];
 
 			if (data.events) {
 				data.events.push(eventType);
@@ -216,7 +230,7 @@ try {
 		}
 		
 		// add to the list of events
-		data[onEvent].push(handler);
+		data[eventName].push(handler);
 	}
 
 	var eventMethods = {
@@ -242,7 +256,7 @@ try {
 	
 		// are we observing some event at all?
 		observing : function(eventType) {
-			return (this.data["on"+eventType] != null);
+			return (this.data["on"+eventType.capitalze()] != null);
 		},
 	
 		// Attach a single event handler, or a map of event handlers.
@@ -265,7 +279,7 @@ try {
 				this.removeEventListener(eventType, boundHandler, true);
 			} else {
 				// now remove from our event list mechanism
-				var handlers = this.data["on"+eventType];
+				var handlers = this.data["on"+eventType.capitalize()];
 				if (handlers) {
 					Observable._removeObservations(handlers, boundHandler);
 					if (!handlers.length) _cleanupAfterRemove(this, eventType);
@@ -296,6 +310,7 @@ try {
 		},
 		
 		// Tell all of our descendants to fire some event.
+//TODO: stop semantics???
 		fireDown : function(event) {
 			if (this.childElementCount !== 0) {
 				this.elements.forEach(function(it) {
@@ -304,9 +319,16 @@ try {
 				});
 			}
 			return this;
-
 		},
 		
+		// Tell our parents to fire some event.
+//TODO: stop semantics???
+		bubble : function(event) {
+			var args = $args(1);
+			this.fire(event, args);
+			if (this.parentNode) this.parentNode.bubble.apply(this.parentNode, arguments);
+		},
+
 		// Fire an event 'soon'.
 		//	@event is an event object or the string name of an event to fire
 		//	@args are arguments to pass to the observers
@@ -356,12 +378,12 @@ try {
 		
 		_unloadEvents : function(events, data) {
 //console.warn(events);
-			var e = 0, event, onEvent, list;
-			while (event = events[++e]) {
-				var list = data[ (onEvent = "on"+event) ];
+			var e = 0, eventType, eventName, list;
+			while (eventType = events[++e]) {
+				var list = data[ (eventName = "on"+ eventType.capitalize() ) ];
 				// this will effectively null out all of the items in the list, I believe
 				if (list) list.length = 0;
-				delete data[onEvent];
+				delete data[eventName];
 			}
 		}
 	};

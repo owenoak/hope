@@ -14,7 +14,7 @@ EP.constructor = E;
 
 
 
-// if cookie "debug.E" is set, we'll show debug messages when creating/adapting tags
+// if cookie "debug.Element" is set, we'll show debug messages when creating/adapting tags
 //	and set attributes on Elements so you can tell what's going on
 E.debug = hope.debug("Element");
 
@@ -96,7 +96,7 @@ hope.extend(E, {
 			for (var attribute in attributes) {
 				var value = attributes[attribute];
 				switch (attribute) {
-					case "html" 	: element.innerHTML = value; break;
+					case "html" 	: element.html = value; break;
 					case "className": element.className = value; break;
 					case "value" 	: element.value = value; break;
 					default			: element.setAttribute(attribute, value);
@@ -113,7 +113,7 @@ hope.extend(E, {
 	//	otherwise we'll return an ElementList of the childNodes
 	// NOTE: this does not initialize() the returned elements!
 	inflate : function(html, selector) {
-		__CONTAINER.innerHTML = html;
+		__CONTAINER.html = html;
 		if (selector) {
 			var child = __CONTAINER.select(selector);
 			return (child ? __CONTAINER.removeChild(child) : null);
@@ -310,6 +310,21 @@ EP.extendIf({
 	},
 	
 	
+	// this is a different kind of selection -- selecting the contents visually (eg: for copying)
+	selectContents : function() {
+		// clear the selection
+		var selection = window.getSelection();
+		if (selection.rangeCount > 0) selection.removeAllRanges();
+		
+		// create a range with our contents
+		var range = document.createRange();
+		range.selectNodeContents(this);
+
+		// and add it to the selection
+		selection.addRange(range);
+	},
+	
+	
 	// Return true if we match some @selector.  
 	//	Pass:
 	//		- a css selector string or
@@ -331,7 +346,7 @@ EP.extendIf({
 	attr : function(name, value) {
 		// TODO: check value before setting so as to not perturb the dom?
 		if (arguments.length === 1) return this.getAttribute(name);
-		if (value == null || value == "") 	this.removeAttribute(name);
+		if (value == null || value === "") 	this.removeAttribute(name);
 		else								this.setAttribute(name, value);
 		return this;
 	},
@@ -375,6 +390,10 @@ EP.extendIf({
 		
 		set : function(it) {
 			if (typeof it === "string" || typeof it === "number") {
+				// expand unary tags in the input string
+				it = it.expandUnaryTags();
+				this.innerHTML = it;
+			} else if (typeof it === "number") {
 				this.innerHTML = it;
 			} else {
 				this.innerHTML = "";
@@ -431,7 +450,7 @@ EP.extendIf({
 		if (it instanceof Element || it instanceof Text)	this.appendChild(it);
 		else if (it.length) 		this.appendList(it);
 		else						throw "trying to append non-element "+it;
-		return this;
+		return it;
 	},
 	
 	appendList : function(list) {
@@ -440,7 +459,7 @@ EP.extendIf({
 			var it = list[i];
 			if (it != null) this.append(it);
 		}
-		return this;
+		return it;
 	},
 	
 	
@@ -455,7 +474,7 @@ EP.extendIf({
 			var prev = this.firstChild;
 			(prev ? this.insertBefore(it, prev) : this.appendChild(it));
 		} else throw "trying to prepend non-element "+it;
-		return this;
+		return it;
 	},
 	
 	prependList : function(list) {
@@ -464,7 +483,7 @@ EP.extendIf({
 		for (var i = 0, last = list.length; i < last; i++) {
 			prev = (prev ? this.insertBefore(list[i], prev) : this.appendChild(list[i]));
 		}
-		return this;
+		return it;
 	},
 	
 	
@@ -638,13 +657,13 @@ EP.extend({
 //
 //	Subclassing Elements: create subclasses for elements to add custom functionality
 //		- create the subclass via:   
-//			Element.Subclass("$SomeName", { tag:"sometag", properties:{...} });
+//			Element.Subclass("hope.SomeName", { tag:"sometag", properties:{...} });
 //
 //		- create instances by:
-//			new $SomeName();
+//			new hope.SomeName();
 //
 //		- if you want to create an instance but NOT initialize it, do
-//			new $SomeName(false);
+//			new hope.SomeName(false);
 //
 //		- elements with tag name "sometag" will morphed into instance of the class
 //			when Element.initialize() is called on them or on their parent
@@ -652,9 +671,9 @@ EP.extend({
 
 hope.extend(E, {
 	// Create a new Element type, with hookup behaviors and all.
-	//	NOTE: we're actually creating a subclass of the "$Element" base class.
+	//	NOTE: we're actually creating a subclass of the "Element" base class.
 	Subclass : function(id, options) {
-		return new $Element.Subclass(id, options);
+		return new hope.Element.Subclass(id, options);
 	},
 
 	// map of tag => element subclass constructor
@@ -687,7 +706,7 @@ var _TagMap = E.TagMap,
 	_SelectorMap = E.SelectorMap
 ;
 
-new Class("$Element", {
+new Class("hope.Element", {
 	prototype :document.createElement("element").attr("prototype","yes")._setUpData(),
 
 	makeSubclassConstructor : function(id, options) {
@@ -832,14 +851,14 @@ new Class("$Element", {
 			Class.onUnload.call(this);
 		}
 	}
-});// end new Class("$Element")
+});// end new Class("hope.Element")
 
 
 // NOTE: HACK:  Firefox has trouble processing elements with custom constructors
-//				(like HTMLMenuElement) if $Element.prototype hasn't been fully set up.
+//				(like HTMLMenuElement) if hope.Element.prototype hasn't been fully set up.
 //				Checking its Object.keys() seems to fix this.  Not sure why.
 if (Browser.gecko) {
-	var keys = Object.keys($Element.prototype);
+	var keys = Object.keys(hope.Element.prototype);
 }
 
 

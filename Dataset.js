@@ -1,6 +1,8 @@
 /* Datasets 
-	- use .loadHTML()  (from Element-load.js) to load contents into the dataset
+	- use .load()  (from Element-load.js) to load contents into the dataset
 */
+
+//TODO: refactor to use Saveable
 
 Script.require("{{hope}}Element-attach.js", function(){
 
@@ -9,6 +11,16 @@ new Element.Subclass("$Dataset", {
 	properties : {
 		listeners : "save",
 		visible : false,
+
+		onReady : function() {
+			var global = this.globalizeAs;
+			if (global) {
+				hope.setGlobal(global, this.firstChild);
+			}
+		},
+
+		// if set, when we load, we'll set first child of dataset as global with this name
+		globalizeAs : new Attribute("globalizeAs"),
 
 		// generic save url -- note that we encode the file name based on dataset.url
 		// NOTE: THIS IS ALL KINDS OF UNSAFE!

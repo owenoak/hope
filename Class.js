@@ -58,13 +58,13 @@ function Class(id, options) {
 		return new Class(id, options);
 	}
 
-	// some classes have special methods to create their prototypes
-	//	to do fancy hookup.
-	var makeProto = options.makeSubclassPrototype || Super.makeSubclassPrototype;
-	constructor.makeSubclassPrototype = makeProto;
-	// create the prototype if not already defined
-	if (!prototype) {
-		prototype = options.prototype = makeProto(id, options);
+	// some classes have special methods to create their prototypes to do fancy hookup.
+	if (options.makeSubclassPrototype) {
+		constructor.makeSubclassPrototype = options.makeSubclassPrototype;
+		if (!prototype) prototype = options.prototype = options.makeSubclassPrototype(id, options);
+	} else {
+		constructor.makeSubclassPrototype = Super.makeSubclassPrototype;
+		if (!prototype) prototype  = Super.makeSubclassPrototype(id, options);
 	}
 
 	// hook constructor and prototype together

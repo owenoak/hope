@@ -1,9 +1,9 @@
 /* Section.  Can have header/footer/bodies */
 
-Script.require("{{hope}}Element-attach.js", function(){
+Script.require("{{hope}}Panel.js", function(){
 
 
-new Element.Subclass("$Section", {
+new hope.Panel.Subclass("hope.Section", {
 	tag : "section",
 	properties : {
 		template : "<container></container>",

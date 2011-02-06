@@ -3,7 +3,7 @@
 Script.require("{{hope}}Element.js", function(){
 
 
-new $Section.Subclass("$Palette", {
+new hope.Section.Subclass("hope.Palette", {
 	tag : "palette",
 	properties : {
 		visible : false,

@@ -216,26 +216,26 @@ Observable.prototype = {
 
 	// observe some method of this object
 	//	(same semantics as Observable.observe)
-	on : function(property, handler, scope, args) {
-		return Observable.observe("after", this, property, handler, scope, args);
+	on : function(method, handler, scope, args) {
+		return Observable.observe("after", this, method, handler, scope, args);
 	},
 
 	// observe some method of this object
 	//	(same semantics as Observable.observe)
-	before : function(property, handler, scope, args) {
-		return Observable.observe("before", this, property, handler, scope, args);
+	before : function(method, handler, scope, args) {
+		return Observable.observe("before", this, method, handler, scope, args);
 	},
 
 	// observe some method of this object
 	//	(same semantics as Observable.observe)
-	once : function(property, handler, scope, args) {
-		return Observable.observe("once", this, property, handler, scope, args);
+	once : function(method, handler, scope, args) {
+		return Observable.observe("once", this, method, handler, scope, args);
 	},
 
 	// stop observe some method of this object
 	//	(same semantics as Observable.removeObservation)
-	un : function(property, boundHandler) {
-		return Observable.removeObservation(this, property, boundHandler);
+	un : function(method, boundHandler) {
+		return Observable.removeObservation(this, method, boundHandler);
 	},
 
 
