@@ -18,8 +18,8 @@ new Element.Subclass("hope.Action", {
 		icon : new Attribute({name:"icon", update:true,
 			onChange : function(newValue) {
 				// make sure we have an icon sub-element
-				if (this.select("icon") == null) this.prepend(new hope.Icon());
-//console.warn(this,"changing icon to ",newValue, this.select("icon"));
+				if (this.getChild("icon") == null) this.prepend(new hope.Icon());
+//console.warn(this,"changing icon to ",newValue, this.getChild("icon"));
 				return newValue;			
 			}
 		}),
@@ -28,7 +28,7 @@ new Element.Subclass("hope.Action", {
 		label : new Attribute({name:"label", update:true,
 			onChange : function(newValue) {
 				// get a pointer to our <label> or create one if necessary
-				var label = this.select("label") || this.append(new hope.Label());
+				var label = this.getChild("label") || this.append(new hope.Label());
 				label.html = newValue;
 //console.warn(this,"changing label to ",newValue, label);
 				return newValue;

@@ -5,18 +5,15 @@ Script.require("{{hope}}Section.js", function(){
 
 new hope.Section.Subclass("hope.ItemViewer", {
 	tag : "itemviewer",
+	mixins : "Noticeable",
 	properties : {
-		template : "<container><rows></rows></container>",
+		template : "<container visible='no'><rows></rows></container>",
 		
 		// template to draw for each item
 		rowTemplate : "<row><label>{{key}}</label><output>{{value}}</output></row>",
 		
 		// message to show when no items in the list
 		emptyMessage : "",
-
-		// template actually used to show the emptyMessage
-		emptyMessageTemplate : "<row><notice>{{emptyMessage}}</notice></row>",
-
 
 		// .item is the item we're displaying, we update when it changes
 		item : new InstanceProperty({
@@ -32,7 +29,7 @@ new hope.Section.Subclass("hope.ItemViewer", {
 		columns : Attribute({name:"columns", type:"list", value:"", update:true}),
 
 		onReady : function() {
-			this.$rows = this.select("rows");
+			this.$rows = this.getChild("rows");
 			this.onChild("output", "mousedown", "onSelectOutput", this);
 			this.onChild("output", "click", "onSelectOutput", this);
 		},
@@ -46,10 +43,12 @@ new hope.Section.Subclass("hope.ItemViewer", {
 			var item = this.item;
 			
 			if (item == null) {
-				this.$rows.html = this.emptyMessage.expand(this);
+				this.$rows.html = "";
+				if (this.emptyMessage) this.notice = this.emptyMessage;
 				return;
 			}
-
+			this.notice = "";
+			
 			// clear the old list items
 			this.$rows.empty();
 			

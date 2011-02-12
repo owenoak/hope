@@ -98,7 +98,7 @@
 
 
 	// normal shadow specified in pieces
-	.shadow(@x:3px, @y:3px, @blur:5px, @color:rgba(0, 0, 0, 0.4)) {
+	.shadow(@x:0px, @y:3px, @blur:5px, @color:rgba(0, 0, 0, 0.4)) {
 		  box-shadow: @x @y @blur @color;
 		  -moz-box-shadow: @x @y @blur @color;
 		  -webkit-box-shadow: @x @y @blur @color;
@@ -141,10 +141,22 @@
 	// nice inset panel look
 	.insetPanel {
 		.fieldShadow;
+		background:rgba(255,255,255,.3);
 		.round(10px);
-		background:rgba(255,255,255,.5);
-		padding: 10px;	
+		padding:2px;
 	}
+
+	.insetPanelHeader {
+		padding: 5px;	
+	}
+
+	.insetPanelContainer {
+		.round(8px);
+		background:rgba(255,255,255,.3);
+		padding: 10px;
+	}
+
+	.insetPanelFooter {}
 
  	
 	// poster shadow: both inset and outset
@@ -155,7 +167,7 @@
 
 
 	// border image
-	.borderImage(@url, @size, @borderSize, @repeat:round) {
+	.borderImage(@url, @size, @borderSize, @repeat:repeat) {
 		border-color:transparent;
 		border-width:@borderSize;
 		border-image:@url @size @repeat;

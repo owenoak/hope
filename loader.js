@@ -39,6 +39,7 @@ var scripts = [
 		"Action.js",
 		"Menu.js",
 		"IScroller.js",
+		"Notice.js",
 		"Panel.js",
 		"Section.js",
 		"ListViewer.js",
@@ -50,7 +51,11 @@ var scripts = [
 		"Overlay.js",
 		"Palette.js",
 		"Resizable.js",
+		"Reorderable.js",
+		"Editor.js",
 		"Valued.js",
+		"Output.js",
+		"Textfield.js",
 		"CheckSwitch.js",
 		"ListSelector.js"
 	]

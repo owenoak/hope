@@ -250,7 +250,13 @@ EP.extendIf({
 		},
 		
 		set : function(bounds) {
-			debugger;
+			if (!bounds) return;
+			if (bounds.left != null) 	this.left = bounds.left;
+			if (bounds.top != null) 	this.top = bounds.top;
+			if (bounds.width != null) 	this.width = bounds.width;
+			if (bounds.height != null) 	this.height = bounds.height;
+			if (bounds.right != null) 	this.right = bounds.right;
+			if (bounds.bottom != null) 	this.bottom = bounds.bottom;
 		}
 	}),
 	
@@ -520,6 +526,23 @@ EP.extendIf({
 			this.style.webkitTransition = transition;
 		}
 	}),
+	
+	
+//
+//	scroll a child into view
+//
+	revealChild : function(child) {
+		var top = child.offsetTop,
+			bottom = top + child.height,
+			container = this.$contianer || this,
+			
+			scrollTop = container.scrollTop,
+			scrollBottom = scrollTop + container.height
+		;
+		if      (scrollBottom < top) container.scrollTop = top;
+		else if (scrollTop > top) container.scrollTop = top;
+//console.warn(top, bottom, scrollTop, scrollBottom);
+	}
 		
 });// end extendIf
 	

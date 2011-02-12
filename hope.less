@@ -28,9 +28,13 @@
 
 
 	/* make input boxes selectable */
-	input, textarea {
+	input {
 		.selectable;
 		line-height: 1.4;
+	}
+
+	textarea {
+		.selectable;
 	}
 	
 	/* add flex to an element by giving it a flex attribute */
@@ -64,6 +68,7 @@
 
 	// inline-block things
 	inline,
+	label,
 	output,
 	tabselector,
 	message
@@ -143,11 +148,19 @@
 		vertical-align:baseline;
 	}
 
+	row > row {
+		display:table-row !important;
+	}
+
 	// add a 'flex' attribute to things inside a <row> to make them full width
 	row > *[flex] {
 		width:100%;
 	}
 
+
+	cell {
+		display: table-cell !important;
+	}
 
 /*** Generic inputs ***/
 
@@ -165,29 +178,6 @@
 	input[appearance~=translucent] {
 		background-color: rgba(255, 255, 255, 0.3);
 		color: white;
-	}
-
-	input[type=number] {
-		text-align:right;
-		width: 8em;
-	}
-
-	input[appearance~=small] {
-		width: 5em;
-	}
-
-	input[type=currency] {
-		background-image:url(theme/widgets/field-currency-dollar.png);
-		background-position:3px center;
-		background-repeat:no-repeat;
-		padding-left: 12px;
-		width: 8em;
-		text-align:right;
-	}
-	
-
-	input[type=url] {
-		width:100%;
 	}
 
 
@@ -220,6 +210,32 @@
 	}
 
 
+/*** [appearance=inset] for sections, editors, etc ***/
+
+	*[appearance~=inset] {
+		.insetPanel;
+	}
+
+	*[appearance~=inset] > header {
+		.insetPanelHeader;
+	}
+
+	*[appearance~=inset] > container {
+		.insetPanelContainer;
+	}
+
+	*[appearance~=inset] > footer {
+		.insetPanelFooter;
+	}
+
+	/* center and enlarge title of inset panel */
+	*[appearance~=inset] > header > label {
+		display: block;
+		font-weight: bold;
+		text-align:center;
+		font-size: 150%;
+	}
+
 
 
 /*** Action elements - basically, buttons ***/
@@ -241,9 +257,21 @@
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 			margin-left:2px;
 		    margin-right:2px;
-			.ButtonBorder(url(theme/ios/btn-black.png));
 		}
 		
+		action:hover {
+			.ButtonBorder(url(theme/ios/btn-black-active.png));
+		}
+		
+		action:active,
+		action.active
+		{
+			.ButtonBorder(url(theme/ios/btn-yellow.png));
+			color:black;
+		    text-shadow: rgba(255, 255, 255, 0.4) 0px -1px 0;
+		}
+
+
 		action[icon] {
 			padding:0 5px;
 		}
@@ -275,7 +303,13 @@
 		action[appearance~=black],
 		toolbar[appearance~=black] action
 		{
-//			.ButtonBorder(url(theme/ios/btn-black.png));
+			.ButtonBorder(url(theme/ios/btn-black.png));
+		}
+
+		action[appearance~=black]:hover,
+		toolbar[appearance~=black] action:hover,
+		{
+			.ButtonBorder(url(theme/ios/btn-black-active.png));
 		}
 
 		action[appearance~=black]:active,
@@ -283,8 +317,9 @@
 		toolbar[appearance~=black] action:active,
 		toolbar[appearance~=black] action.active
 		{
-			.ButtonBorder(url(theme/ios/btn-black-active.png));
+			.ButtonBorder(url(theme/ios/btn-yellow-active.png));
 		}
+		
 
 		action[appearance~=blue] {
 			.ButtonBorder(url(theme/ios/btn-blue.png));
@@ -492,14 +527,41 @@
 	section > container > * {
 		display: block;
 	}
+
+
+	/* if a section is supposed to scroll, scroll its contianer instead */
+		section[scroll=vertical] {
+			overflow:hidden;
+		}
 	
-	/* inset-look for section/panel */
-	panel[appearance~=inset],
-	section[appearance~=inset] > container 
-	{
-		.insetPanel;
-		padding: 10px;
+		section[scroll=vertical] > container {
+			overflow-y:auto;
+		}
+	
+
+
+/*** Editor: section subclass that manages item ***/
+	editor {
+		.box(vertical,stretch);
+		.flex;
 	}
+
+	// container is the main body of a editor, etc.  Stick a scroller in it to make it scroll.
+	editor > container {
+		.flex;
+		.box(vertical, stretch);
+	}
+
+	editor > container > * {
+		display: block;
+	}
+	
+	editor > container > rows > row > label {
+		text-align:right;
+		padding-right: 5px;
+	}
+
+
 	
 	
 	
@@ -521,13 +583,14 @@
 
 /*** ListViewer ***/
 	listviewer {
-		display:block;
 		.box(vertical,stretch);
 	}
 	
 	listviewer > container {
 		.flex;
-		overflow:hidden;
+		.box(vertical,stretch);
+		overflow-y:auto;
+		overflow-x:hidden;
 	}
 
 	listviewer > container > rows {
@@ -550,7 +613,7 @@
 	listviewer > container > rows > row > label {
 		padding:7px 5px;
 	}
-	listviewer > container > rows > row > output {
+	listviewer > container > rows > row > cell {
 		padding:7px 5px;
 	}
 
@@ -559,10 +622,7 @@
 
 	listviewer[appearance=inset] {}
 	
-	listviewer[appearance=inset] > container {
-		.insetPanel;
-		padding:10px;
-	}
+	listviewer[appearance=inset] > container {}
 
 	listviewer[appearance=inset] > container > rows > row > * {
 		border-bottom:1px solid #ccc;
@@ -590,7 +650,10 @@
 
 /*** ItemViewer ***/
 	itemviewer {
-		display:block;
+		.box(vertical,stretch);
+	}
+	itemViewer > container {
+		.flex;
 	}
 	
 	itemviewer > container > rows {}
@@ -602,9 +665,7 @@
 		cursor: default;
 	}
 
-	itemViewer[appearance~=inset] {
-		.insetPanel;	
-	}
+
 
 /*** Menu elements ***/
 // menu outer element
@@ -614,7 +675,13 @@
 		z-index:10000;
 		display:inline-block;
 		margin:0;
-		.borderImage(url(theme/ios/alert-decoration.png), 14 14 14 13, 14px 14px 14px 13px);
+		.round(10px);
+		.borderImage(url(theme/ios/frame-popover.png), 25 15 30 15, 25px 15px 30px 15px);
+//		.borderImage(url(theme/ios/popup-black.png), 50 15 15 15, 50px 15px 15px 15px);
+	}
+
+	contextmenu > container {
+		margin:-18px -2px -13px -2px;
 	}
 
 	.desktop contextmenu {
@@ -716,7 +783,6 @@
 
 	/* "inset" appearance toolbar */
 		toolbar[appearance~=inset] {
-			.insetPanel;
 			padding: 3px 10px 0 10px;
 		}
 
@@ -819,10 +885,12 @@
 		font-size:1.5em;
 	}
 
-	notice[appearance=smoke] {
+	*[appearance~=inset] notice,
+	notice[appearance=smoke] 
+	{
 		.round(20px);
 		opacity: .6;
-		margin: 3em;
+		margin: 2em;
 		padding: 2em;
 		border:5px solid white;
 		background-color: black;
@@ -987,6 +1055,11 @@
 		padding-right:5px;
 	}
 
+
+
+
+/*** panel ***/
+	panel {}
 
 
 
@@ -1211,12 +1284,88 @@
 	}
 
 
+/*** Textfield -- managed input field w/error semantics/etc ***/
+	textfield {
+		display:inline-block;
+	}
+
+	textfield[multiline] {
+		.box(vertical,stretch);	
+	}
+
+
+	textfield > input {
+		width:100%;
+	}
+
+	textfield > textarea {
+		.flex;
+	}
+
+
+	textfield.focus input {
+		background-color:#fffec7;
+	}
+
+	textfield.error input {
+		background-color:pink;
+	}
+	
+	textfield > message {
+		display: block;
+		margin-bottom: 3px;
+		height: 16px;
+	}
+	
+	textfield > message.hint {
+		color: #666;
+		font-style: italic;
+		font-size: 90%;
+		padding-left: 1em;
+		padding-right: 1em;
+	}
+	
+	textfield > message.error {
+		color: darkred;
+		font-weight: bold;
+		padding-left: 18px;
+		background:url(theme/silk/critical.png) left center no-repeat;
+		line-height: 16px;
+	}
+
+
+/* specific type/apperance management */
+	textfield[type=number] input {
+		text-align:right;
+		width: 8em;
+	}
+
+	textfield[appearance~=small] input {
+		width: 5em;
+	}
+
+	textfield[type=currency] input {
+		background-image:url(theme/widgets/field-currency-dollar.png);
+		background-position:3px center;
+		background-repeat:no-repeat;
+		padding-left: 12px;
+		width: 8em;
+		text-align:right;
+	}
+	
+
+	textfield[type=url] input {
+		width:100%;
+	}
+
+
+
 
 /*** Icons ***/
 
 	/* icon element -- use this inside a button with border-image */
 		icon {
-			.backgroundFullWidth;
+//			.backgroundFullWidth;
 			display:inline-block;
 			position:relative;
 			background-position:left center;
@@ -1283,9 +1432,11 @@
 		*[icon=circle-right-blue] > icon 	{	background-image:url(theme/ios/circle-right-blue.png);	}
 
 	/* status dots */
-		*[icon|=dot] > icon					{	width: 16px; height: 16px;	}
-		*[icon=dot-green] > icon			{	background-image:url(theme/ios/dot-green.png);			}
-		*[icon=dot-yellow] > icon			{	background-image:url(theme/ios/dot-yellow.png);			}
-		*[icon=dot-red] > icon				{	background-image:url(theme/ios/dot-red.png);			}
+		*[icon|=dot] > icon,		icon[icon|=dot]		{	width: 16px; height: 16px;	}
+		*[icon=dot-blue] > icon,	icon[icon=dot-blue]	{	background-image:url(theme/ios/dot-blue.png);	}
+		*[icon=dot-gold] > icon,	icon[icon=dot-gold]	{	background-image:url(theme/ios/dot-gold.png);	}
+		*[icon=dot-green] > icon,	icon[icon=dot-green]{	background-image:url(theme/ios/dot-green.png);	}
+		*[icon=dot-grey] > icon,	icon[icon=dot-grey]	{	background-image:url(theme/ios/dot-grey.png);	}
+		*[icon=dot-red] > icon,		icon[icon=dot-red]	{	background-image:url(theme/ios/dot-red.png);	}
 		
 		

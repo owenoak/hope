@@ -17,6 +17,8 @@ Script.require("{{hope}}Element-attach.js", function(){
 new Element.Subclass("hope.Menu", {
 	tag : "contextmenu",
 	properties : {
+		template : "<container></container>",
+
 		visible : false,
 		autoHide : new Attribute({name:"autoHide", type:"flag", falseIf:[false,"false","no"]}),
 		
@@ -27,7 +29,6 @@ new Element.Subclass("hope.Menu", {
 			//	to make it easy to reference the menu
 			var menu = this;
 			this.recurse(function() { this.menu = menu; this.context = element; });
-
 			// show the menu immediately (may do an animation)
 			this.visible = true;
 

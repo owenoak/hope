@@ -64,11 +64,11 @@ Saveable.prototype = {
 			var saveUrl = this.saveUrl.expand(this);
 			
 			function saved() {
-				this.fire("saved");
+				this.fire("saved", this);
 				if (callback) callback.call(scope, this);
 			}
 			function saveError() {
-				this.fire("saveError");
+				this.fire("saveError", this);
 				if (errback) errback.call(scope, this);
 			}
 			

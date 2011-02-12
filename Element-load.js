@@ -4,7 +4,7 @@ Script.require("{{hope}}Element.js", function(){
 
 Element.prototype.extend({
 	// url to load from
-	url : new Attribute({name:"url", update:true}),
+	url : new Attribute({name:"url", update:true, inherited:true}),
 	
 	// if true, we load automatically once we've been set up
 	autoLoad : new Attribute({name:"autoLoad", type:"flag", trueIf:["",true,"true","yes"]}),
@@ -39,7 +39,7 @@ Element.prototype.extend({
 	
 		var onLoaded = function(html, request) {
 			// clear the errbackHandler in case we're loaded again
-			if (errbackHandler) this.un(errbackHandler);
+			if (errbackHandler) this.un("loadError", errbackHandler);
 			
 			// call .processLoad() to set the html
 			this.processLoad(html, request);
@@ -47,11 +47,12 @@ Element.prototype.extend({
 			this.isLoaded = true;
 			this.fire("loaded", html, request);
 			if (this.global) hope.setReady(this.global, true, this);
+			this.isReady = true;
 			this.fire("ready");
 		};
 		var onError = function(status, request) {
 			// clear the callbackHandler in case we're loaded again
-			if (callbackHandler) this.un(callbackHandler);
+			if (callbackHandler) this.un("loaded", callbackHandler);
 
 			this.isLoading = this.isLoaded = false;
 			this.loadError = true;
@@ -59,6 +60,7 @@ Element.prototype.extend({
 			this.fire("loadError", status, request);
 		}
 
+		this.isReady = false;
 		if (this.global) hope.clearReady(this.global);
 
 		XHR.get(url, onLoaded, onError, this, false);

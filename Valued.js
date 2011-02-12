@@ -19,22 +19,29 @@ var Valued = {
 			},
 			
 			set : function(newValue) {
-				var oldValue = this.value;
-				if (oldValue === newValue) return;
-				
-				var binding = this.binding;
-				if (binding) {
-					hope.set(binding, newValue);
-				} else {
-					this._value = newValue;
-				}
-				this.update();
-				this.fire("valueChanged", newValue, oldValue, this);
+				if (this._updateValue(newValue) == false) return;
+				this.soon("update");
 			}
 		}),
+		
+		// update our bound value without updating the display
+		//	returns true if value was actually changed, false if no change
+		_updateValue : function(newValue) {
+			var oldValue = this.value;
+			if (oldValue === newValue) return false;
+			
+			var binding = this.binding;
+			if (binding) {
+				hope.set(binding, newValue);
+			} else {
+				this._value = newValue;
+			}
+			this.bubble("valueChanged", newValue, oldValue, this);
+			return true;
+		},
 	
 		onShown : function() {
-			this.update();
+			this.soon("update");
 		}
 	}
 };

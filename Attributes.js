@@ -245,7 +245,7 @@ Attribute.normalizers.event = Attribute.normalizers["function"];
 window.Child = function Child(options) {
 	if (typeof options === "string") options = {selector:options};
 	return new Getter(function() {
-		return this.select(options.selector).innerHTML;
+		return this.getChild(options.selector).innerHTML;
 	});
 }
 
@@ -253,7 +253,7 @@ window.Child = function Child(options) {
 window.ChildHTML = function ChildHTML(options) {
 	if (typeof options === "string") options = {selector:options};
 	return new Getter(function() {
-		var it = this.select(options.selector);
+		var it = this.getChild(options.selector);
 		return (it ? it.innerHTML : "");
 	});
 }
@@ -262,7 +262,7 @@ window.ChildHTML = function ChildHTML(options) {
 window.Children = function Children(options) {
 	if (typeof options === "string") options = {selector:options};
 	return new Getter(function() {
-		return this.selectAll(options.selector);
+		return this.getChildren(options.selector);
 	});
 }
 
@@ -274,7 +274,7 @@ window.ChildWhere = function ChildWhere(options) {
 	;
 	return function(value) {
 		var selector = prefix + value + suffix;
-		return this.select(selector);
+		return this.getChild(selector);
 	}
 }
 
@@ -285,7 +285,7 @@ window.ChildrenWhere = function ChildrenWhere(options) {
 	;
 	return function(value) {
 		var selector = prefix + value + suffix;
-		return this.selectAll(selector);
+		return this.getChildren(selector);
 	}
 }
 

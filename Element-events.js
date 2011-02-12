@@ -2,6 +2,10 @@
 
 Script.require("{{hope}}Element.js", function(){
 
+	// The global string STOP can be used to cancel events from propagating (eg: from .bubble)
+	window.STOP = "***STOP***";
+	
+
 	// debug events
 	Event.debug = hope.debug("Events");
 	Event.showEvents = hope.debug("showEvents");
@@ -321,12 +325,17 @@ Script.require("{{hope}}Element.js", function(){
 			return this;
 		},
 		
-		// Tell our parents to fire some event.
-//TODO: stop semantics???
+		// Fire some event at our level and continue up through our parents
+		//	until we get to the top or someone returns false.
+//TODO: when caught, don't re-bubble unless passed?
 		bubble : function(event) {
-			var args = $args(1);
-			this.fire(event, args);
-			if (this.parentNode) this.parentNode.bubble.apply(this.parentNode, arguments);
+			var node = this, returned;
+			while (node) {
+				returned = node.fire.apply(node, arguments);
+				if (returned == STOP) return false;
+				node = node.parentNode;
+			}
+			return true;
 		},
 
 		// Fire an event 'soon'.

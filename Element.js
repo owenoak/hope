@@ -29,8 +29,8 @@ E.toRef = function(){ return "Element" };
 //	global select/selectAll functions (equivalent of jQuery's $)
 //
 
-// return an ElementList which matches the selector windowly
-window.selectAll = document.selectAll = function selectAll(selector, includeMe) {
+// return an ElementList which matches the selector globally
+window.selectAll = document.selectAll = document.getChildren = function selectAll(selector, includeMe) {
 	if (typeof selector !== "string") return selector;
 	var root = (this === window ? document : this);
 	// NOTE: ElementList is declared in ElementList.js
@@ -42,11 +42,16 @@ window.selectAll = document.selectAll = function selectAll(selector, includeMe) 
 	return elements;
 }
 
-// return a single E which matches the selector windowly
-window.select = document.select = function select(selector, error) {
+// return a single E which matches the selector globally
+window.select = document.select = document.getChild = function select(selector, error) {
 	if (typeof selector !== "string") return selector;
-	var root = (this === window ? document : this);
-	var it = root.querySelector(selector);
+	var root = (this === window ? document : this), it;
+	try {
+		it = root.querySelector(selector);
+	} catch (e) {
+	debugger;
+		console.debug("Error thrown attempting to query selector ",selector," of ",element,":\n",e);
+	}
 	if (!it && error) throw error;
 	return it;
 }
@@ -115,7 +120,7 @@ hope.extend(E, {
 	inflate : function(html, selector) {
 		__CONTAINER.html = html;
 		if (selector) {
-			var child = __CONTAINER.select(selector);
+			var child = __CONTAINER.getChild(selector);
 			return (child ? __CONTAINER.removeChild(child) : null);
 		}
 		return new ElementList(__CONTAINER.childNodes);
@@ -275,6 +280,8 @@ EP.extendIf({
 		return this;
 	},
 	
+	// tag name, but ALWAYS lower case
+	tag : Getter(function(){return this.tagName.toLowerCase()}),
 
 	//
 	// css checking and subsetting
@@ -282,10 +289,10 @@ EP.extendIf({
 
 	// return all descendants which match selector
 	// if includeMe is true, includes the element in the potential matches (first)
-	selectAll : window.selectAll,
+	getChildren : document.getChildren,
 	
 	// return first descendant which matches selector
-	select : window.select,
+	getChild : document.getChild,
 	
 	// return first parent (including us if @includeUs is not false) which matches selector
 	selectUp : function(selector, includeUs) {
@@ -443,6 +450,7 @@ EP.extendIf({
 		if (typeof it === "string") {	
 			it = E.inflate(it);
 			if (setupTags !== false) Element.initializeElements(it);
+			if (it.length == 1) it = it[0];
 		}
 		if (typeof it == "string" || typeof it == "number") {
 			it = document.createTextNode(it);
@@ -488,11 +496,19 @@ EP.extendIf({
 	
 	
 	//
-	// list of children which are elements, as an ElementList
+	// List of children which are elements, as an ElementList.
+	//	Note:  `element.children`, while similar, doesn't always report children properly!
 	//
 	elements : new Property({
 		get : function() {
-			return new ElementList(this.children);
+			var elements = new ElementList(),
+				child = this.firstChild
+			;
+			while (child) {
+				if (child.tagName) elements.append(child);
+				child = child.nextSibling;
+			}
+			return elements;
 		},
 	
 		set : function(elements) {
@@ -545,6 +561,7 @@ EP.extendIf({
 	//	@method is a function or name of a method on each element to call.
 	//	@this in the method will be the element
 	//	@args is optional array of arguments
+//TODO: this seems wrong -- shouldn't we tell the kids to recurse with the same arguments?
 	recurse : function(method, scope, args) {
 		if (typeof method === "function") {
 			method.apply(scope||this, args);
@@ -552,7 +569,11 @@ EP.extendIf({
 			if (typeof this[method] === "function") this[method].apply(scope||this, argument);
 		}
 		var kids = this.elements;
-		if (kids.length) kids.apply(method, scope, args);
+		if (kids.length) {
+			kids.forEach(function(kid) {
+				kid.recurse(method, scope, args);
+			});
+		}
 	}	
 });// end extendIf
 
@@ -729,6 +750,7 @@ new Class("hope.Element", {
 		var selector = options.selector;
 		
 		if (!selector && _TagMap[tag]) {
+debugger;
 			throw "You can't define two Element subclasses with the tag "+tag;
 		} else if (selector) {
 			_SelectorMap[tag] = _SelectorMap[tag] || {};
@@ -755,7 +777,7 @@ new Class("hope.Element", {
 		// if options.itemSelector is defined, that allows us to:
 		//
 		//	1) find an instance of the tag by calling 
-		//			ElementClass.select({props})
+		//			ElementClass.getInstance({props})
 		//
 		//	2) create/find a singleton instance by calling 
 		//			ElementClass.create({props})
@@ -765,7 +787,7 @@ new Class("hope.Element", {
 			var subMatches = itemSelector.match(/{{(.*?)}}/g);
 			
 			// return the first instance we find that matches the global itemSelector
-			constructor.select = function(props) {
+			constructor.getInstance = function(props) {
 				var container = this.itemContainer || document,
 					selector = itemSelector
 				;
@@ -777,16 +799,16 @@ new Class("hope.Element", {
 				} else {
 					selector = selector.expand(props);
 				}
-				return container.select(selector);
+				return container.getChild(selector);
 			}
 
 			// return all instances we find that match the global itemSelector, 
 			//		expanded through properties passed in
 			// pass null props to select all on the page/in the itemContainer
-			constructor.selectAll = function(props) {
+			constructor.getInstances = function(props) {
 				var container = this.itemContainer || document;
 				if (props == null) {
-					return container.selectAll(this.tag);
+					return container.getChildren(this.tag);
 				}
 				var	selector = itemSelector;
 				if (typeof props === "string") {
@@ -797,7 +819,7 @@ new Class("hope.Element", {
 				} else {
 					selector = selector.expand(props);
 				}
-				return container.selectAll(selector);
+				return container.getChildren(selector);
 			}
 			
 			// either:
@@ -805,7 +827,7 @@ new Class("hope.Element", {
 			//	- create one with {props}
 			// if we have an 'itemContainer' defined, will append to that automatically.
 			constructor.create = function(props) {
-				var it = this.select(props);
+				var it = this.getInstance(props);
 				if (!it) {
 					it = new this(props);
 					if (this.itemContainer) {

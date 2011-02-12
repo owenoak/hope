@@ -148,7 +148,7 @@ hope.extendIf(String.prototype, {
 	
 	// expand tags (eg: `<foo ... />` ) to binary tags (eg `<foo ...></foo>` )
 	expandUnaryTags : function() {
-		return this.replace(/<([^! \/]+)([^>]*?) ?\/>/g, "<$1$2></$1>");
+		return this.replace(/<([^! \/>]+)([^>]*?)?\/>/g, "<$1$2></$1>");
 	}
 });
 

@@ -9,7 +9,6 @@ var _slice = Array.prototype.slice,
 ;
 
 
-
 hope.extend(Element, {
 	// initialize a list of elements, no type checking
 	initializeElements : function(elements) {
@@ -32,7 +31,10 @@ hope.extend(Element, {
 		// handle text nodes, comments, etc
 		if (!element.initialize) return;
 		
-		if (element.hasOwnProperty("initialized")) return;
+		if (element.hasOwnProperty("initialized")) {
+			if (Element.debug) console.info(element," already initialized");
+			return;
+		}
 		
 		// if we have an adapter for this type of element, reassign the element's prototype
 		// so it 'becomes' an instance of that class
@@ -46,6 +48,8 @@ hope.extend(Element, {
 			//		Add an "adapter" property instead.
 			element._adapter = adapter;
 			element._setUpData(properties);
+		} else {
+			if (Element.debug) console.info("NO ADAPTER FOR ",element);
 		}
 		// extend with any properties passed in
 		if (properties) element.extend(properties);
@@ -78,7 +82,7 @@ Element.prototype.extend({
 
 	// the 'container' is the element who owns our logical children, defaults to this element.
 	//	set up in `.initialize()`, may be modified in `.initTemplate()`
-	container : undefined,
+	$container : undefined,
 
 	// set to true to remove TextNodes which are only whitespace during `.initChildren()`
 	//	use this if whitespace between children is causing your HTML to get wonky
@@ -101,7 +105,13 @@ Element.prototype.extend({
 		this.processAttributes();
 
 		// recursively initialize all element children.
-		if (this.adaptChildren && this.children.length) Element.initializeElements(this.children);
+		var children = this.elements;
+		if (this.adaptChildren && children.length) {
+			if (Element.debug) console.info(this, " processing children ", children);
+			Element.initializeElements(this.elements);
+		} else {
+			if (Element.debug) console.info(this, " NOT PROCESSING CHILDREN ", children);
+		}
 		
 		// initialize any listeners we have defined
 		if (this.listeners) this.on(this.listeners);
@@ -122,6 +132,7 @@ Element.prototype.extend({
 		// otherwise tell the system we're ready
 		else {
 			if (this.global && !this.url) hope.setReady(this.global);
+			this.isReady = true;
 			this.fire("ready");
 		}
 
@@ -150,34 +161,41 @@ Element.prototype.extend({
 			// completely replace our innerHTML with the template
 			this.innerHTML = this.template.expand(this).expandUnaryTags();
 			// reset our 'container' to the first <container> child, or us
-			this.container = (this.select(this.childContainerSelector) || this);
+			this.$container = (this.getChild(this.childContainerSelector) || this);
 		} else {
-			this.container = this;
+			this.$container = this;
 			if (children.length === 0) return;
 		}
 //console.warn(children);
 		
-		var container = this.container,
+		var container = this.$container,
 			i = -1, 
 			child, 
 			handlerMap = this.childProcessors || _emptyObject,
 			handler, 
 			result,
-			type
+			type,
+			childType
 		;
 		while (child = children[++i]) {
 			switch ((type = child.nodeType)) {
 				case _TEXT:
-				case _CDATA:	handler = "processTextNode"; 
+				case _CDATA:	childType = "_TEXT_NODE_";
+								handler = "processTextNode"; 
 								break;
-				case _ELEMENT: 	handler = handlerMap[child.tagName.toLowerCase()] || "processChild";
+				case _ELEMENT: 	childType = child.tagName;
+								handler = handlerMap[child.tagName.toLowerCase()] || "processChild";
 								break;
 				default:		handler = null;
 			}
 			result = (handler ? this[handler](child) : child);
 
-			if (Element.debug && child.nodeType === _ELEMENT) 
-				console.warn(this.tagName,"processing ",child.tagName,"w/handler ",handler,"result",result);
+			if (Element.debug && childType !== "_TEXT_NODE_") {
+				console.warn(this.tagName+(this.id ? "#"+this.id : ""),"processed ",
+								childType,"w/handler:'",handler,"' result:",result
+							);
+			}
+			
 			if (templated) {
 				if (result != null) container.appendChild(result);
 			} else {
@@ -217,7 +235,7 @@ Element.prototype.extend({
 //
 // special child element initializers.  In all of them:
 //		- `this` is the parent element.
-//		- `this.container` is the container for normal child elements.
+//		- `this.$container` is the container for normal child elements.
 //
 //TOOD: some way to set this up automatically?
 Element.prototype.childProcessors = {
@@ -290,9 +308,17 @@ Element.prototype.extend({
 	part : new Attribute({
 		name : "part",
 		onChange : function(what) {
-			what = what.split(":");
-			var parentSelector = what[0], partId = what[1];
-			var parent = this.selectUp(parentSelector);
+			var parent, partId;
+			if (what.contains(":")) {
+				what = what.split(":");
+				var parentSelector = what[0];
+				parent = this.selectUp(parentSelector);
+				partId = what[1];				
+			} else {
+				parent = this.parentNode;
+				partId = what;
+			}
+			
 			if (!parent) {
 				return console.error("Couldn't find parent id "+parentSelector+" for part",partId,"for",this);
 			}

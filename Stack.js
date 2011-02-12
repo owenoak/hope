@@ -23,7 +23,7 @@ new hope.Section.Subclass("hope.Stack", {
 		initialize : function() {
 			var selector = this.attr("itemSelector") || this.itemSelector;
 			if (typeof selector === "string") {
-				this.itemSelector = this.select(selector) || select(selector);
+				this.itemSelector = this.getChild(selector) || select(selector);
 			}
 			this.as(hope.Section);
 			
@@ -78,8 +78,9 @@ new hope.Section.Subclass("hope.Stack", {
 			}
 		},
 
-		getItem : function(id) {
-			return this.container.select("#"+id);
+		getItem : function(it) {
+			if (typeof it == "string") return this.$container.getChild("#"+it);
+			return it;
 		},
 
 		// process children to:
@@ -97,7 +98,7 @@ new hope.Section.Subclass("hope.Stack", {
 		// selector item for each section
 		getSelectorFor : function(id) {
 			if (this.itemSelector instanceof Element)
-				return this.itemSelector.select("[for='"+id+"']");
+				return this.itemSelector.getChild("*[for='"+id+"']");
 		},
 		
 		makeSelectorFor : function(section) {
@@ -107,11 +108,11 @@ new hope.Section.Subclass("hope.Stack", {
 			;
 			if (!title || !id) return;
 			
-			var container = this,
+			var stack = this,
 				selector = new this.selectorConstructor({
 					html 	: title,
 					handler : function() {
-						container.selection = id;
+						stack.selection = id;
 					},
 					attrs : { "for" : id }
 				})

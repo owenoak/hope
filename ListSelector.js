@@ -16,7 +16,7 @@ new hope.Menu.Subclass("hope.ListSelector", {
 		},
 		
 		update : function() {
-			var old = this.select("row[selected]"),
+			var old = this.getChild("row[selected]"),
 				selected = this._selectedItem()
 			;
 			if (old && old != selected) old.selected = false;
@@ -33,13 +33,13 @@ new hope.Menu.Subclass("hope.ListSelector", {
 		
 		
 		_selectedItem : function() {
-			return this.select("row[value='"+this.value+"']")
+			return this.getChild("row[value='"+this.value+"']")
 		},
 		
 		selectedLabel : function() {
 			var item = this._selectedItem();
 			if (item) {
-				item = item.select("label");
+				item = item.getChild("label");
 				if (item) return item.innerHTML;
 			}
 			return this.value;

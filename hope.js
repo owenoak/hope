@@ -310,6 +310,12 @@ hope.get = function get(scope, path) {
 		scope = window;
 	}
 	if (typeof path !== "string") return path;
+	
+	// hard-code if we path starts with "window." to set scope to window (???)
+	if (path.substr(0,7) === "window.") {
+		scope = window;
+		path = path.substr(7);
+	}
 
 	if (_DOTTED_PATH_PATTERN.test(path)) {
 	 	// if it's a simple property name, just dereference
@@ -484,7 +490,7 @@ hope.preference.number = function(key, value) {
 // store a number as a preference (retrieved as a number)
 hope.preference.boolean = function(key, value) {
 	value = hope.preference(key,value);
-	if (value && typeof value == "string") return (value == "true");
+	if (value && typeof value == "string") return (value == "true");	
 	return value;
 }
 

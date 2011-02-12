@@ -100,7 +100,7 @@ Resizable.prototype = {
 		if (event.button !== 0) return;
 		
 		// stop default event processing or we'll start a drag
-		event.stop();
+		event.preventDefault();
 
 		var element = this,
 			bounds = element.pageBounds,
@@ -225,9 +225,6 @@ Resizable.prototype = {
 		this.style.cursor = info.cursor;
 		document.body.style.cursor = "";
 
-//HACK
-		if (info.cloned) this.prompt();
-
 		// clear the resize data
 		delete this._resizeInfo;
 		
@@ -324,44 +321,7 @@ Resizable.prototype = {
 //console.warn(this.attr("style"));
 	},
 	
-	
-	//
-	//	bring to front/send to back/etc
-	//
-	moveForwards : function() {
-		this.moveToIndex(this.index()+2);
-	},
-	
-	moveBackwards : function() {
-		this.moveToIndex(this.index()-1);
-	},
-	
-	moveToFront : function() {
-		this.moveToIndex(-1);
-	},
-	
-	moveToBack : function() {
-		this.moveToIndex(0);
-	},
-	
-	moveToIndex : function(index) {
-		var parent = this.parentNode,
-			element = parent.elements[index]
-		;
-		
-		if (index === -1 || !element) {
-			parent.appendChild(this);
-		} else {
-			parent.insertBefore(this, element);
-		}
-	},
-	
-	index : function() {
-		return (this.parentNode ? this.parentNode.elements.indexOf(this) : -1);
-	},
-
-
-	//
+		//
 	// "edge" detection  (TODO: move this somewhere else?)
 	//
 

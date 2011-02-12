@@ -6,7 +6,7 @@
 
 Script.require("{{hope}}Element-attach.js", function(){
 
-new Element.Subclass("$Dataset", {
+new Element.Subclass("hope.Dataset", {
 	tag : "dataset",
 	properties : {
 		listeners : "save",
@@ -46,7 +46,7 @@ new Element.Subclass("$Dataset", {
 		save : function(callback, errback, scope) {
 			var url = this.url;
 			if (!this.url) throw "No @url specified for dataset "+this;
-			if (!this._loaded) return console.warn(this,"not loading, nothing to save, exiting");
+			if (!this.isLoaded) return console.warn(this,"not loading, nothing to save, exiting");
 			var saveUrl = this.saveUrl.expand(this);
 			
 			if (typeof callback == "function") {

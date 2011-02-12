@@ -157,7 +157,7 @@ new Element.Subclass("hope.IScroller", {
 		// scroll an element into view
 		//	attempts to leave things where they are if possible
 		scrollToElement: function (el, runtime) {
-			el = this.select(el);
+			el = this.getChild(el);
 			if (!el) return;
 	
 			var info = this._scrollInfo;
@@ -223,7 +223,7 @@ new Element.Subclass("hope.IScroller", {
 
 		// center a child element in the view -- this almost always moves
 		centerElement: function (el, runtime) {
-			el = this.select(el);
+			el = this.getChild(el);
 			if (!el) return;
 	
 			var info = this._scrollInfo;
