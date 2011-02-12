@@ -423,19 +423,7 @@ action {
   margin-left: 2px;
   margin-right: 2px;
 }
-action:hover {
-  border-color: transparent;
-  border-width: 0px 5px 0px 5px;
-  border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 repeat;
-  -moz-border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 repeat;
-  -webkit-border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 repeat;
-}
 action:active, action.active {
-  border-color: transparent;
-  border-width: 0px 5px 0px 5px;
-  border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 repeat;
-  -moz-border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 repeat;
-  -webkit-border-image: url(theme/ios/btn-yellow.png) 0 5 0 5 repeat;
   color: black;
   text-shadow: rgba(255, 255, 255, 0.4) 0px -1px 0;
 }
