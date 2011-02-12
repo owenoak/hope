@@ -1615,18 +1615,18 @@ icon[disabled] {
 }
 /* light icons */
 *[icon=light-action] > icon {
-  background-image: url(theme/ios/icon-light-action.png);
-  width: 23px;
-  height: 18px;
+  background-image: url(theme/ios/icon-action-light.png);
+  width: 28px;
+  height: 28px;
 }
 *[icon=light-left] > icon {
-  background-image: url(theme/ios/icon-light-left.png);
+  background-image: url(theme/ios/icon-left-light.png);
   width: 16px;
   height: 19px;
   left: -1px;
 }
 *[icon=light-right] > icon {
-  background-image: url(theme/ios/icon-light-right.png);
+  background-image: url(theme/ios/icon-right-light.png);
   width: 16px;
   height: 19px;
   left: 1px;

@@ -45,28 +45,35 @@ new hope.Section.Subclass("hope.Stack", {
 				var oldValue, pref = this.preference;
 				if (pref) 	oldValue = hope.preference(pref);
 				else		oldValue = this.data.selection;
-				if (oldValue === newValue) return;
-				if (oldValue) this.fire("deselected", oldValue);
-
-				if (pref) 	hope.preference(pref, newValue);
-				else		this.data.selection = newValue;
-				this.attr("selection", newValue);
-				if (newValue) this.fire("selected", newValue);
+				if (oldValue !== newValue) {
+					if (oldValue) this.fire("deselected", oldValue);
+	
+					if (pref) 	hope.preference(pref, newValue);
+					else		this.data.selection = newValue;
+					this.attr("selection", newValue);
+					if (newValue) this.fire("selected", newValue);
+				}
 			}
 		}),
 		
 		// pointer to our selected section
 		$selection : Getter(function() {
-			var selection = this.selection;
-			return (selection ? select("#"+selection) : undefined);
+			return this.getItem(this.selection);
 		}),
 
 		// called when one of our items is selected
 		onSelected : function(event, newSection) {
 			var element;
 			if (newSection) {
-				if (element = this.getSelectorFor(newSection)) 	element.selected = true;
-				if (element = this.getItem(newSection))			element.visible = true;
+				// update the selector button
+				if (element = this.getSelectorFor(newSection)) {
+					element.selected = true;
+				}
+				// show the element and tell it to update
+				if (element = this.getItem(newSection))	{
+					element.visible = true;
+					element.soon("update");
+				}
 			}
 		},
 
