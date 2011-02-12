@@ -160,12 +160,20 @@ Script.require("{{hope}}Element.js", function(){
 		showHidePairs : {},
 		
 		getShowHideOperation : function(show, element, callback) {
-			var animation = element.animation;
+			var animation = element.animation, name;
 			if (animation === "none") return;
-			var pair = this.showHidePairs[animation];
-			if (!pair) return;
-			var name = (show ? pair.show : pair.hide).toLowerCase();
-			return new this.constructors[name](element, {callback:callback, speed:element.animationSpeed});
+			if (animation.contains(":")) {
+				animation = animation.split(":");
+				name = (show ? animation[0] : animation[1]);
+			} else {
+				var pair = this.showHidePairs[animation];
+				if (!pair) return;
+				var name = (show ? pair.show : pair.hide);
+			}
+			var constructor = this.constructors[name.toLowerCase()];
+			if (!constructor) console.warn("Animation "+name+" not found for ",this);
+			
+			return new constructor(element, {callback:callback, speed:element.animationSpeed});
 		},
 		
 		// create a new animation for a particular element
@@ -377,6 +385,8 @@ Script.require("{{hope}}Element.js", function(){
 	});
 
 	Animation.showHidePairs.slideDown = {"show" : "slideDown", "hide" : "slideUp"};
+
+
 
 	
 Script.loaded("{{hope}}Animation.js");

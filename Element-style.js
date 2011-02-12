@@ -6,9 +6,17 @@ var CSS_PREFIX = Browser.CSS_PREFIX;
 
 EP.extendIf({
 
-		// @animation is the style of animation we run when showing/hiding
-		//	(only works on browsers with CSS3 animation support - Safari & Chrome)
-		animation : new Attribute({name:"animation", value:"none", inherit:true}),
+	// @animation is the style of animation we run when showing/hiding
+	//	(only works on browsers with CSS3 animation support - Safari & Chrome)
+	//
+	//	If you set it to a single animation name, that will be used for show
+	//	and it's opposite will be used for hide, 
+	//		eg:  "slideDown" = show: slideDown, hide, slideUp
+	//
+	//	If you want to do a non-standard show/hide pairing, provide two styles with colon, 
+	//		eg:   "slideDown:fadeOut"
+	//
+	animation : new Attribute({name:"animation", value:"none", inherit:true}),
 
 	//
 	//	show/hide
