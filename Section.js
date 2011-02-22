@@ -8,7 +8,7 @@ new hope.Panel.Subclass("hope.Section", {
 	properties : {
 		template : "<container></container>",
 
-		childProcessors : "header:initHeader,footer:initFooter",
+		childProcessors : "header:initHeader,footer:initFooter,notice:initNotice",
 
 		label 			: Attribute("label"), 
 
@@ -35,6 +35,33 @@ new hope.Panel.Subclass("hope.Section", {
 			}
 			this.classList.add("hasFooter");
 			this.$footer = footer;
+		},
+		
+		// TODO: merge with "Noticeable" mixin?
+		initNotice : function(notice) {
+			if (Element.debug) console.info(this, "processing notice", notice);
+			var templateNotice = this.getChild("notice");
+			if (templateNotice) {
+				templateNotice.parentNode.replaceChild(notice, templateNotice);
+			} else {
+				this.$container.parentNode.insertBefore(notice, this.$container);
+			}
+
+			this.classList.add("hasNotice");
+			this.$notice = notice;
+		},
+		
+		
+		// Set our notice to some HTML message.
+		// If notice is not empty, shows the notice and hides our container.
+		// If notice is empty, shows the container and hides the notice.
+		setNotice : function(message) {
+			if (!this.$notice) {
+				this.initNotice(new hope.Notice());
+			}
+			
+			this.$notice.message = message;
+			this.$container.visible = (!this.$notice.visible);
 		}
 	}
 });

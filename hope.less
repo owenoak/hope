@@ -79,9 +79,66 @@
 
 
 /*** horizontal and vertical stretch boxes ***/
+
+	/* add layout=vertical to make children fill the space vertically and stretch horizontally */
+	*[layout=vertical] {
+		.box(vertical,stretch);
+	}
+	*[layout=vertical] > * {
+		display: block;
+	}
+
+	/* add layout=vcenter to make children fill the space vertically and center horizontally */
+	*[layout=vcenter] {
+		.box(vertical,stretch);
+	}
+	*[layout=vcenter] > * {
+		display: block;
+	}
+
+
+	/* add layout=horizontal to make children fill the space horizontally and stretch vertically */
+	*[layout=horizontal] {
+		.box(horizontal,stretch);
+	}
+	*[layout=horizontal] > * {
+		display: block;
+	}
+
+	/* add layout=hcenter to make children fill the space horizontally and center vertically */
+	*[layout=hcenter] {
+		.box(vertical,stretch);
+	}
+	*[layout=hcenter] > * {
+		display: block;
+	}
+
+	/* add layout=center to make children center horizontally and vertically.  
+		You'll need a nested <container> for this to work. 
+	*/
+	*[layout=center] {
+		.box(vertical,center);
+		position:absolute;
+		width: 100%;
+		height: 100%;
+	}
+	*[layout=center] > container {
+		.flex;
+		.box(horizontal,center);
+		height: 100%;
+	}
+	*[layout=center] > container > * {
+		display: block;
+	}
+
+
+
+	// deprecated
 	vbox {
 		.box(vertical,stretch);
 	}
+	
+
 
 /*** Blocks of inline javascript or xml ***/
 	 js,
@@ -518,11 +575,6 @@
 	// container is the main body of a section, etc.  Stick a scroller in it to make it scroll.
 	section > container {
 		.flex;
-		.box(vertical, stretch);
-	}
-
-	section > container > * {
-		display: block;
 	}
 
 
@@ -932,6 +984,12 @@
 		margin-top:10px;
 	}
 
+	overlay > mask > border > container {
+		width: 100%; height:100%;
+		.box(vertical,stretch);
+	}
+	
+	
 	overlay > mask > border > close {
 		display:block;
 		position:absolute;

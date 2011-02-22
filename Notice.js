@@ -11,14 +11,16 @@ Script.require("{{hope}}Element-attach.js", function(){
 new Element.Subclass("hope.Notice", {
 	tag : "notice",
 	properties : {
-		message : Attribute({	name : "message", 
+		template : "<container></container>",
+		message : Attribute({	
+			name : "message", 
 			onChange : function(newMessage) {
 				if (newMessage == null) {
 					newMessage = "";
 				} else if (typeof newMessage !== "string") {
 					newMessage = ""+newMessage;
 				}
-				this.html = newMessage;
+				this.$container.html = newMessage;
 				this.visible = (newMessage != "");
 			}
 		})
@@ -26,6 +28,8 @@ new Element.Subclass("hope.Notice", {
 });
 
 
+
+//TODO: I like the pattern that Section uses for this better.
 var Noticeable = {
 	mixinTo : function(it) {
 		if (it.isAClass) it = it.prototype;

@@ -2,6 +2,9 @@
 .noTapHighlight {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+.tapHighlightGold {
+  -webkit-tap-highlight-color: rgba(230, 181, 70, 0.5);
+}
 /* shadow from above */
 .verticalShadow {
   box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.8);
@@ -209,6 +212,107 @@ message {
   display: inline-block;
 }
 /*** horizontal and vertical stretch boxes ***/
+/* add layout=vertical to make children fill the space vertically and stretch horizontally */
+*[layout=vertical] {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-align: stretch;
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+}
+*[layout=vertical] > * {
+  display: block;
+}
+/* add layout=vcenter to make children fill the space vertically and center horizontally */
+*[layout=vcenter] {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-align: stretch;
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+}
+*[layout=vcenter] > * {
+  display: block;
+}
+/* add layout=horizontal to make children fill the space horizontally and stretch vertically */
+*[layout=horizontal] {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: horizontal;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-align: stretch;
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+}
+*[layout=horizontal] > * {
+  display: block;
+}
+/* add layout=hcenter to make children fill the space horizontally and center vertically */
+*[layout=hcenter] {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-align: stretch;
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+}
+*[layout=hcenter] > * {
+  display: block;
+}
+/* add layout=center to make children center horizontally and vertically.  
+		You'll need a nested <container> for this to work. 
+	*/
+*[layout=center] {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-align: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+*[layout=center] > container {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: horizontal;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-align: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  height: 100%;
+}
+*[layout=center] > container > * {
+  display: block;
+}
 vbox {
   position: relative;
   display: box !important;
@@ -695,19 +799,6 @@ section > container {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
   box-flex: 1;
-  position: relative;
-  display: box !important;
-  display: -webkit-box !important;
-  display: -moz-box !important;
-  box-orient: vertical;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-align: stretch;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-}
-section > container > * {
-  display: block;
 }
 /* if a section is supposed to scroll, scroll its contianer instead */
 section[scroll=vertical] {
@@ -1137,6 +1228,20 @@ overlay > mask > border {
   min-height: 100px;
   max-height: 740px;
   margin-top: 10px;
+}
+overlay > mask > border > container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-align: stretch;
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
 }
 overlay > mask > border > close {
   display: block;
