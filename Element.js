@@ -118,12 +118,14 @@ hope.extend(E, {
 	//	otherwise we'll return an ElementList of the childNodes
 	// NOTE: this does not initialize() the returned elements!
 	inflate : function(html, selector) {
-		__CONTAINER.html = html;
+		__CONTAINER.innerHTML = html;
+		Element.initializeElements(__CONTAINER.childNodes);
 		if (selector) {
 			var child = __CONTAINER.getChild(selector);
 			return (child ? __CONTAINER.removeChild(child) : null);
 		}
-		return new ElementList(__CONTAINER.childNodes);
+		var list = new ElementList(__CONTAINER.childNodes);
+		return list;
 	}
 });
 
@@ -396,7 +398,7 @@ EP.extendIf({
 		},
 		
 		set : function(it) {
-			if (typeof it === "string" || typeof it === "number") {
+			if (typeof it === "string") {
 				// expand unary tags in the input string
 				it = it.expandUnaryTags();
 				this.innerHTML = it;
