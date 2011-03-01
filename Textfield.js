@@ -187,5 +187,5 @@ new Element.Subclass("hope.Textfield", {
 
 
 
-Script.loaded("{{hope}}Section.js");
+Script.loaded("{{hope}}Textfield.js");
 });

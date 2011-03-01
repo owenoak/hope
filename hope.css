@@ -213,7 +213,7 @@ message {
 }
 /*** horizontal and vertical stretch boxes ***/
 /* add layout=vertical to make children fill the space vertically and stretch horizontally */
-*[layout=vertical] {
+*[layout=vertical] > container {
   position: relative;
   display: box !important;
   display: -webkit-box !important;
@@ -224,12 +224,9 @@ message {
   box-align: stretch;
   -webkit-box-align: stretch;
   -moz-box-align: stretch;
-}
-*[layout=vertical] > * {
-  display: block;
 }
 /* add layout=vcenter to make children fill the space vertically and center horizontally */
-*[layout=vcenter] {
+*[layout=vcenter] > container {
   position: relative;
   display: box !important;
   display: -webkit-box !important;
@@ -237,15 +234,12 @@ message {
   box-orient: vertical;
   -webkit-box-orient: vertical;
   -moz-box-orient: vertical;
-  box-align: stretch;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-}
-*[layout=vcenter] > * {
-  display: block;
+  box-align: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
 }
 /* add layout=horizontal to make children fill the space horizontally and stretch vertically */
-*[layout=horizontal] {
+*[layout=horizontal] > container {
   position: relative;
   display: box !important;
   display: -webkit-box !important;
@@ -257,11 +251,8 @@ message {
   -webkit-box-align: stretch;
   -moz-box-align: stretch;
 }
-*[layout=horizontal] > * {
-  display: block;
-}
 /* add layout=hcenter to make children fill the space horizontally and center vertically */
-*[layout=hcenter] {
+*[layout=hcenter] > container {
   position: relative;
   display: box !important;
   display: -webkit-box !important;
@@ -272,9 +263,6 @@ message {
   box-align: stretch;
   -webkit-box-align: stretch;
   -moz-box-align: stretch;
-}
-*[layout=hcenter] > * {
-  display: block;
 }
 /* add layout=center to make children center horizontally and vertically.  
 		You'll need a nested <container> for this to work. 
@@ -543,24 +531,21 @@ action[icon][label] {
 action[icon][label] > icon {
   left: -3px;
 }
-action[appearance~=black], toolbar[appearance~=black] action {
+action[appearance~=black] {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-black.png) 0 5 0 5 repeat;
   -moz-border-image: url(theme/ios/btn-black.png) 0 5 0 5 repeat;
   -webkit-border-image: url(theme/ios/btn-black.png) 0 5 0 5 repeat;
 }
-action[appearance~=black]:hover, toolbar[appearance~=black] action:hover {
+action[appearance~=black]:hover {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 repeat;
   -moz-border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 repeat;
   -webkit-border-image: url(theme/ios/btn-black-active.png) 0 5 0 5 repeat;
 }
-action[appearance~=black]:active,
-action[appearance~=black].active,
-toolbar[appearance~=black] action:active,
-toolbar[appearance~=black] action.active {
+action[appearance~=black]:active, action[appearance~=black].active {
   border-color: transparent;
   border-width: 0px 5px 0px 5px;
   border-image: url(theme/ios/btn-yellow-active.png) 0 5 0 5 repeat;
@@ -1626,6 +1611,43 @@ textfield[type=currency] input {
 textfield[type=url] input {
   width: 100%;
 }
+/*** Combobox -- input field with menu semantics ***/
+combobox {
+  position: relative;
+  display: box !important;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  box-orient: horizontal;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-align: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+}
+combobox > input {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  display: inline-block;
+}
+combobox > action {
+  border-color: transparent;
+  border-width: 0px 5px 0px 5px;
+  border-image: url(theme/ios/combo-action.png) 0 5 0 5 repeat;
+  -moz-border-image: url(theme/ios/combo-action.png) 0 5 0 5 repeat;
+  -webkit-border-image: url(theme/ios/combo-action.png) 0 5 0 5 repeat;
+  height: 25px !important;
+  line-height: 25px;
+  margin: 1px 3px 0 -3px;
+}
 /*** Icons ***/
 /* icon element -- use this inside a button with border-image */
 icon {
@@ -1721,21 +1743,33 @@ icon[disabled] {
 }
 /* light icons */
 *[icon=light-action] > icon {
-  background-image: url(theme/ios/icon-action-light.png);
+  background-image: url(theme/ios/icon-light-action.png);
   width: 28px;
   height: 28px;
 }
 *[icon=light-left] > icon {
-  background-image: url(theme/ios/icon-left-light.png);
+  background-image: url(theme/ios/icon-light-left.png);
   width: 16px;
   height: 19px;
   left: -1px;
 }
 *[icon=light-right] > icon {
-  background-image: url(theme/ios/icon-right-light.png);
+  background-image: url(theme/ios/icon-light-right.png);
   width: 16px;
   height: 19px;
   left: 1px;
+}
+/* small-light icons */
+*[icon=small-light-down] > icon {
+  background-image: url(theme/ios/icon-small-light-down.png);
+  width: 11px;
+  height: 9px;
+  margin-top: -1px;
+}
+*[icon=small-light-up] > icon {
+  background-image: url(theme/ios/icon-small-light-up.png);
+  width: 11px;
+  height: 9px;
 }
 /* circle icons */
 *[icon|=circle] > icon {

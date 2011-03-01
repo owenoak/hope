@@ -81,36 +81,44 @@
 /*** horizontal and vertical stretch boxes ***/
 
 	/* add layout=vertical to make children fill the space vertically and stretch horizontally */
-	*[layout=vertical] {
+	*[layout=vertical] {}
+
+	*[layout=vertical] > container {
 		.box(vertical,stretch);
 	}
-	*[layout=vertical] > * {
-		display: block;
+	*[layout=vertical] > container > * {
+//		display: block;
 	}
 
 	/* add layout=vcenter to make children fill the space vertically and center horizontally */
-	*[layout=vcenter] {
-		.box(vertical,stretch);
+	*[layout=vcenter] {}
+	
+	*[layout=vcenter] > container {
+		.box(vertical,center);
 	}
-	*[layout=vcenter] > * {
-		display: block;
+	*[layout=vcenter] > container > * {
+//		display: block;
 	}
 
 
 	/* add layout=horizontal to make children fill the space horizontally and stretch vertically */
-	*[layout=horizontal] {
+	*[layout=horizontal] {}
+
+	*[layout=horizontal] > container {
 		.box(horizontal,stretch);
 	}
-	*[layout=horizontal] > * {
-		display: block;
+	*[layout=horizontal] > container > * {
+//		display: block;
 	}
 
 	/* add layout=hcenter to make children fill the space horizontally and center vertically */
-	*[layout=hcenter] {
+	*[layout=hcenter] {}
+
+	*[layout=hcenter] > container {
 		.box(vertical,stretch);
 	}
-	*[layout=hcenter] > * {
-		display: block;
+	*[layout=hcenter] > container > * {
+//		display: block;
 	}
 
 	/* add layout=center to make children center horizontally and vertically.  
@@ -343,7 +351,6 @@
 
 
 		action[appearance~=black],
-		toolbar[appearance~=black] action,
 		action[appearance~=blue],
 		action[appearance~=lightBlue],
 		action[appearance~=red],
@@ -354,22 +361,18 @@
 		}
 
 
-		action[appearance~=black],
-		toolbar[appearance~=black] action
+		action[appearance~=black]
 		{
 			.ButtonBorder(url(theme/ios/btn-black.png));
 		}
 
-		action[appearance~=black]:hover,
-		toolbar[appearance~=black] action:hover,
+		action[appearance~=black]:hover
 		{
 			.ButtonBorder(url(theme/ios/btn-black-active.png));
 		}
 
 		action[appearance~=black]:active,
-		action[appearance~=black].active,
-		toolbar[appearance~=black] action:active,
-		toolbar[appearance~=black] action.active
+		action[appearance~=black].active
 		{
 			.ButtonBorder(url(theme/ios/btn-yellow-active.png));
 		}
@@ -576,7 +579,6 @@
 	section > container {
 		.flex;
 	}
-
 
 	/* if a section is supposed to scroll, scroll its contianer instead */
 		section[scroll=vertical] {
@@ -1416,6 +1418,26 @@
 
 
 
+/*** Combobox -- input field with menu semantics ***/
+	combobox {
+		.box(horizontal, center);
+	}
+
+	combobox > input {
+		.flex(1);
+		.roundLeft(5px);
+		.roundRight(0);
+		display:inline-block;
+	}
+
+	combobox > action {
+		.borderImage(url(theme/ios/combo-action.png), 0 5 0 5, 0px 5px 0px 5px);
+		height:25px !important;
+		line-height:25px;
+		margin:1px 3px 0 -3px;
+	}
+
+
 
 /*** Icons ***/
 
@@ -1469,9 +1491,14 @@
 
 
 	/* light icons */
-		*[icon=light-action] > icon	{	background-image:url(theme/ios/icon-action-light.png);	width:28px; height:28px; }
-		*[icon=light-left] > icon 	{	background-image:url(theme/ios/icon-left-light.png);	width:16px; height:19px; left: -1px; }
-		*[icon=light-right] > icon 	{	background-image:url(theme/ios/icon-right-light.png);	width:16px; height:19px; left: 1px; }
+		*[icon=light-action] > icon	{	background-image:url(theme/ios/icon-light-action.png);	width:28px; height:28px; }
+		*[icon=light-left] > icon 	{	background-image:url(theme/ios/icon-light-left.png);	width:16px; height:19px; left: -1px; }
+		*[icon=light-right] > icon 	{	background-image:url(theme/ios/icon-light-right.png);	width:16px; height:19px; left: 1px; }
+
+
+	/* small-light icons */
+		*[icon=small-light-down] > icon 	{	background-image:url(theme/ios/icon-small-light-down.png);	width:11px; height:9px; margin-top:-1px; }
+		*[icon=small-light-up] > icon 		{	background-image:url(theme/ios/icon-small-light-up.png);	width:11px; height:9px; }
 
 
 	/* circle icons */
