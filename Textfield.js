@@ -16,8 +16,21 @@ new Element.Subclass("hope.Textfield", {
 			this.fire("update");
 		},
 		
+		keypressDelay : Attribute({name:"keypressDelay", type:"number", update:true, 
+									inherit:true, value:500}),
+		
 		// template is our message display -- the input is created in initializeInput
 		template : "<message part='$message' visible='no'/>",
+
+		// if trim is true, we trim whitespace into and out of the field
+		trim : Attribute({name:"trim", update:true,
+						type:"flag", trueIf:["",true,"true","yes"], 
+						// when changed, call initializeInput to switch type
+						//	(no-op if we're not ready yet)
+						onChange : function(newValue) {
+							this.soon("update");
+						}
+					}),
 
 		// if multiline is true, our $input is a textarea
 		multiline : Attribute({name:"multiline", update:true,
@@ -32,6 +45,17 @@ new Element.Subclass("hope.Textfield", {
 		// if true, we translate return characters to/from <br>s
 		//	for multiline textfields only
 		interpretReturns : Attribute({name:"interpretReturns", update:true,
+						type:"flag", trueIf:["",true,"true","yes"], 
+						// when changed, call initializeInput to switch type
+						//	(no-op if we're not ready yet)
+						onChange : function(newValue) {
+							this.soon("update");
+						}
+					}),
+
+		// if true, we translate return characters to/from <br>s
+		//	for multiline textfields only
+		asCDATA : Attribute({name:"asCDATA", update:true,
 						type:"flag", trueIf:["",true,"true","yes"], 
 						// when changed, call initializeInput to switch type
 						//	(no-op if we're not ready yet)
@@ -75,6 +99,11 @@ new Element.Subclass("hope.Textfield", {
 		updateInputValue : function() {
 			var value = this.value;
 			if (value == null) value = "";
+			if (this.trim) value = value.trim();
+			if (this.multiline && this.asCDATA) {
+				var match = /<!--\[CDATA\[(.*)\]\]-->/.exec(value);
+				if (match) value = match[1];
+			}
 			if (this.multiline && this.interpretReturns) value = value.replace(/<br>/g, "\n");
 			this.$input.value = value;
 		},
@@ -82,7 +111,9 @@ new Element.Subclass("hope.Textfield", {
 		// return the value actually stored in the input right now
 		getInputValue : function() {
 			var value = this.$input.value;
+			if (this.trim) value = value.trim();
 			if (this.multiline && this.interpretReturns) value = value.replace(/[\r\n]/g, "<br>");
+			if (this.multiline && this.asCDATA) value = "<!--[CDATA["+value+"]]-->";
 			return value;
 		},
 		
@@ -112,7 +143,8 @@ new Element.Subclass("hope.Textfield", {
 	//
 		
 		onInputKeyPressEvent : function(event) {
-			this.soon(200,"inputChanged");
+console.warn(this.keypressDelay);
+			this.soon(this.keypressDelay,"inputChanged");
 		},
 		
 		onInputChangeEvent : function(event) {

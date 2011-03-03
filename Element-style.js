@@ -401,19 +401,27 @@ EP.extendIf({
 	}),
 
 	
-	// move so we're under the mouse
+	// Move so we're under the mouse.
+	//	If allowOffscreen is true, we can go beyond the boundaries of the screen
 	// TODO: anchor
-	// TODO: don't go off-screen
-	moveToEvent : function(event) {
+	moveToEvent : function(event, allowOffscreen) {
 		var left = event.pageX,
-			top = event.pageY
+			top = event.pageY,
+			maxX = window.innerWidth,
+			maxY = window.innerHeight
 		;
 		if (this.offsetParent) {
 			left -= this.offsetParent.pageLeft;
 			top -= this.offsetParent.pageTop;
+			maxX = this.offsetParent.width;
+			maxY = this.offsetParent.height;
 		}
 		this.left = left;
 		this.top = top;
+		if (allowOffscreen != true) {
+			if (this.left + this.width > maxX) this.left = (maxX - this.width);
+			if (this.top + this.height > maxY) this.top = (maxY - this.height);
+		}
 	},
 	
 

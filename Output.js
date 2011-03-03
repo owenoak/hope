@@ -8,6 +8,7 @@ new Element.Subclass("hope.Output", {
 	mixins : "Valued",
 	properties : {
 		onUpdate : function() {
+			if (!this.binding) return;
 			var value = this.value;
 			if (value == null) value = "";
 			this.html = value;
