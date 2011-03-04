@@ -1562,10 +1562,15 @@ textfield[multiline] {
 textfield > input {
   width: 100%;
 }
-textfield > textarea {
+.gecko textfield > textarea {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
   box-flex: 1;
+}
+.webkit textfield > textarea {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 textfield.focus input {
   background-color: #fffec7;

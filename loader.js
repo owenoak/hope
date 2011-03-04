@@ -55,6 +55,7 @@ var scripts = [
 		"Editor.js",
 		"Valued.js",
 		"Output.js",
+		"Select.js",
 		"Textfield.js",
 		"Combobox.js",
 		"CheckSwitch.js",
