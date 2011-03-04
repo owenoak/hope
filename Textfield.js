@@ -143,7 +143,6 @@ new Element.Subclass("hope.Textfield", {
 	//
 		
 		onInputKeyPressEvent : function(event) {
-console.warn(this.keypressDelay);
 			this.soon(this.keypressDelay,"inputChanged");
 		},
 		
