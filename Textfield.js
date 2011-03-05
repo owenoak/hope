@@ -53,9 +53,9 @@ new Element.Subclass("hope.Textfield", {
 						}
 					}),
 
-		// if true, we translate return characters to/from <br>s
+		// if true, we translate  "<" to "&lt;" and ">" to "&gt;" automatically
 		//	for multiline textfields only
-		asCDATA : Attribute({name:"asCDATA", update:true,
+		htmlSafe : Attribute({name:"htmlSafe", update:true,
 						type:"flag", trueIf:["",true,"true","yes"], 
 						// when changed, call initializeInput to switch type
 						//	(no-op if we're not ready yet)
@@ -100,10 +100,7 @@ new Element.Subclass("hope.Textfield", {
 			var value = this.value;
 			if (value == null) value = "";
 			if (this.trim) value = value.trim();
-			if (this.multiline && this.asCDATA) {
-				var match = /<!--\[CDATA\[(.*)\]\]-->/.exec(value);
-				if (match) value = match[1];
-			}
+			if (this.multiline && this.htmlSafe) value = value.undoHTMLSafe();
 			if (this.multiline && this.interpretReturns) value = value.replace(/<br>/g, "\n");
 			this.$input.value = value;
 		},
@@ -113,7 +110,7 @@ new Element.Subclass("hope.Textfield", {
 			var value = this.$input.value;
 			if (this.trim) value = value.trim();
 			if (this.multiline && this.interpretReturns) value = value.replace(/[\r\n]/g, "<br>");
-			if (this.multiline && this.asCDATA) value = "<!--[CDATA["+value+"]]-->";
+			if (this.multiline && this.htmlSafe) value = value.makeHTMLSafe();
 			return value;
 		},
 		

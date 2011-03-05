@@ -60,16 +60,22 @@ hope.extendIf(String.prototype, {
 	},
 
 	makeQuoteSafe : function() {
-		return this.replace("'","\\'").replace("\n","\\n");
+		return this.replaceAll("'","\\'").replaceAll("\n","\\n");
 	},
 
 	makeDoubleQuoteSafe : function() {
-		return this.split('"').join('\\"').split("\n").join("\\n");
+		return this.replaceAll('"','\\"').replaceAll("\n","\\n");
 	},
 
 	makeHTMLSafe : function() {
-		return this.split('<').join('&lt;').split(">").join("&gt;");
+		return this.replaceAll("<","&lt;").replaceAll(">","&gt;");
 	},
+
+	undoHTMLSafe : function() {
+		return this.replaceAll("&lt;","<").replaceAll("&gt;",">");
+	},
+
+
 
 	// return the number of times substring occurs in this string
 	count : function(substring) {
@@ -82,6 +88,9 @@ hope.extendIf(String.prototype, {
 		return this.split(_SPLIT_LIST_PATTERN);
 	},
 	
+	replaceAll : function(toMatch, replacement) {
+		return this.split(toMatch).join(replacement);
+	},
 	
 	// append HTML parameters to a url
 	appendParameters : function(params) {
