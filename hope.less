@@ -313,15 +313,15 @@
 			border:1px outset black;
 			cursor:pointer;
 			white-space:nowrap;
-		}
-
-		/* NOTE: default to black button look */
-		action {
 			background-color:none;
 			color:white;
 		    text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
 			margin-left:2px;
 		    margin-right:2px;
+		}
+
+		action[disabled] {
+			opacity: .2;
 		}
 		
 		action:hover {}

@@ -96,6 +96,8 @@ Resizable.prototype = {
 	// TODO: have an element attribute which turns this off temporarily or something?
 	//
 	onResizeStart : function(event) {
+		//console.warn("onResizeStart");
+		
 		// skip right-click
 		if (event.button !== 0) return;
 		
@@ -104,22 +106,23 @@ Resizable.prototype = {
 
 		var element = this,
 			bounds = element.pageBounds,
-			edge = element.getEventEdge(event, bounds)	
+			edge = element.getEventEdge(event, bounds),
+			clone
 		;
 		if (!edge) return;
 
 		// if moving from the center, we're cloneable and the alt/option key is down
 		//	create a clone and move it instead.
 		if (element.cloneable && edge === "C" && event.altKey) {
-			var clone = element.clone(true);
-			element.parentNode.append(clone);
-			element = clone;
+			element = clone = element.clone(true, true);
 		}
 
-		var info = element._getResizeInfo(element, edge, !!clone);
 		
+		var info = element._getResizeInfo(element, edge, !!clone);
+
+
 		// call updateSize to set all properties initially
-		this.updateSize(null, info);
+		element.updateSize(null, info);
 
 		// set info.N true if we should resize the north side, etc
 		for (var i = 0; i < edge.length; i++) {
@@ -144,6 +147,9 @@ Resizable.prototype = {
 		
 		// have the body notify us of events so we can manipulate our size
 		document.body.hookup(Resizable.bodyEventMap, element);
+
+		// have the element fire resizeStarted so it can, eg, select itself
+		element.fire("resizeStarted");
 	},
 	
 	//PRIVATE
