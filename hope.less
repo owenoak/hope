@@ -1305,8 +1305,16 @@
 
 	webview > iframe {
 		border:0px;	
-		.flex;
 		background:white;
+	}
+	
+	.gecko webview > iframe {
+		.flex;
+	}
+
+	.webkit webview > iframe {
+		width: 100%;
+		height: 92%;
 	}
 
 
