@@ -75,6 +75,19 @@ hope.extendIf(String.prototype, {
 		return this.replaceAll("&lt;","<").replaceAll("&gt;",">");
 	},
 
+	// Convert mac-style special characters in this string to HTML entities.
+	// NOTE: NOT an exhaustive list.
+	// NOTE: this is fairly slow...
+	specialCharsToEntities : function() {
+		var string = this;
+		string = string.replace("®","&reg;");
+		string = string.replace("©","&copy;");
+		string = string.replace("“","&ldquo;");
+		string = string.replace("”","&rdquo;");
+		string = string.replace("‘","&lsquo;");
+		string = string.replace("’","&rsquo;");
+		return string;
+	},
 
 
 	// return the number of times substring occurs in this string
