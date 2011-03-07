@@ -1659,6 +1659,30 @@ combobox > action {
   line-height: 25px;
   margin: 1px 3px 0 -3px;
 }
+/*** DirtyBit -- dot which represents the state of a file ***/
+dirtybit {
+  width: 16px;
+  height: 16px;
+  background-image: url(theme/ios/dot-grey.png);
+}
+dirtybit[state=saved] {
+  background-image: url(theme/ios/dot-green.png);
+}
+dirtybit[state=unloaded] {
+  background-image: url(theme/ios/dot-grey.png);
+}
+dirtybit[state=loading] {
+  background-image: url(theme/ios/dot-blue.png);
+}
+dirtybit[state=dirty] {
+  background-image: url(theme/ios/dot-yellow.png);
+}
+dirtybit[state=loadError] {
+  background-image: url(theme/ios/dot-red.png);
+}
+dirtybit[state=error] {
+  background-image: url(theme/ios/dot-red.png);
+}
 /*** Icons ***/
 /* icon element -- use this inside a button with border-image */
 icon {

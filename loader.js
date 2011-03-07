@@ -59,7 +59,8 @@ var scripts = [
 		"Textfield.js",
 		"Combobox.js",
 		"CheckSwitch.js",
-		"ListSelector.js"
+		"ListSelector.js",
+		"DirtyBit.js"
 	]
 ;
 

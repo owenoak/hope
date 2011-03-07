@@ -25,6 +25,11 @@ Element.prototype.extend({
 	//		(element, html, XHRequest) AFTER the html has been set.
 	//		and should return (possibly massaged) html to insert.
 	load : function load(url, callback, errback, scope) {
+		if (this.dirtyBit) {
+			this.dirtyBit.state = "loading";
+			this.dirtyBit.fileName = url;
+		}
+		
 		this.url = XHR.expand(this.url);
 		url = XHR.expand(url) || this.url;
 		
@@ -38,6 +43,8 @@ Element.prototype.extend({
 		this.url = url;
 	
 		var onLoaded = function(html, request) {
+			if (this.dirtyBit) this.dirtyBit.state = "saved";
+			
 			// clear the errbackHandler in case we're loaded again
 			if (errbackHandler) this.un("loadError", errbackHandler);
 			
@@ -51,6 +58,8 @@ Element.prototype.extend({
 			this.fire("ready");
 		};
 		var onError = function(status, request) {
+			if (this.dirtyBit) this.dirtyBit.state = "error";
+			
 			// clear the callbackHandler in case we're loaded again
 			if (callbackHandler) this.un("loaded", callbackHandler);
 

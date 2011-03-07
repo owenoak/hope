@@ -24,7 +24,7 @@ new Element.Subclass("hope.Dataset", {
 
 		// generic save url -- note that we encode the file name based on dataset.url
 		// NOTE: THIS IS ALL KINDS OF UNSAFE!
-		saveUrl : "save.php?file={{url}}",
+		saveUrl : "editor/save.php?file={{url}}",
 		
 		// Mark this element as dirty (needing to be saved).
 		//	This will cause an actual save to be issued in about 1 second.

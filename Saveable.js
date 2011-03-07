@@ -29,7 +29,9 @@ hope.setGlobal("Saveable", Saveable);
 Saveable.prototype = {
 		// generic save url -- note that we encode the file name based on element.url
 // NOTE: THIS IS ALL KINDS OF UNSAFE!
-		saveUrl : "save.php?file={{url}}",
+		saveUrl : "editor/save.php?file={{url}}",
+		
+		saveCheckUrl : "editor/saveCheck.php?file={{url}}",
 
 		// if true, we automatically save after autoSaveDelay once we're set to dirty
 		autoSave : Attribute({name:"autoSave", type:"flag", update:true, inherit:true, 
@@ -49,6 +51,27 @@ Saveable.prototype = {
 			set : function(value) {
 				this._dirty = !!value;
 				if (this._dirty && this.autoSave) this.soon(this.autoSaveDelay*1000, "save");
+				if (this._dirty && this.dirtyBit) this.dirtyBit.state = "dirty";
+			}
+		}),
+		
+		// a DirtyBit element which will match our current state
+		dirtyBit : Attribute({name:"dirtyBit", 
+			onChange: function(newBit, oldBit) {
+				if (typeof newBit == "string") {
+					newBit = hope.get(newBit);
+					this.dirtyBit = newBit;
+					return;
+				}
+				if (!this.dirtyBit) return;
+				var state = "unloaded";
+				
+				if 		(this.isLoading) 	state = "loading";
+				else if (this._dirty)		state = "dirty";
+				else if (this.loadError)	state = "error";
+				else if (this.isLoaded)		state = "saved";
+
+				this.dirtyBit.state = state;
 			}
 		}),
 		
@@ -64,10 +87,12 @@ Saveable.prototype = {
 			var saveUrl = this.saveUrl.expand(this);
 			
 			function saved() {
+				if (this.dirtyBit) this.dirtyBit.state = "saved";
 				this.fire("saved", this);
 				if (callback) callback.call(scope, this);
 			}
 			function saveError() {
+				if (this.dirtyBit) this.dirtyBit.state = "error";
 				this.fire("saveError", this);
 				if (errback) errback.call(scope, this);
 			}
@@ -77,6 +102,22 @@ Saveable.prototype = {
 			this._dirty = false;
 
 			XHR.post(saveUrl, null, this.getSaveText(), saved, saveError, this);
+		},
+		
+		// Check to make sure we can be saved.
+		//	Fires "saveCheckOK" or "saveError".
+		runSaveCheck : function(callback, errback, scope) {
+			function success(){
+				this.fire("saveCheckOK"); 
+				if (callback) callback.apply(scope); 
+			};
+			function failure(){
+				if (this.dirtyBit) this.dirtyBit.state = "error";
+				this.fire("saveError");
+				if (errback) errback.apply(scope);
+			};
+			var url = this.saveCheckUrl.expand(this)
+			XHR.get(url, success, failure, this);
 		}
 };
 
