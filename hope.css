@@ -1163,7 +1163,7 @@ tabselector tab[selected]:last-child {
 }
 /** add tighter spacing to a tabselector by adding css class "tight" **/
 tabselector.tight tab {
-  padding: 0 10px;
+  padding: 0 5px;
 }
 /*** notice panels ***/
 notice {

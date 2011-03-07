@@ -24,12 +24,7 @@ new Element.Subclass("hope.Textfield", {
 
 		// if trim is true, we trim whitespace into and out of the field
 		trim : Attribute({name:"trim", update:true,
-						type:"flag", trueIf:["",true,"true","yes"], 
-						// when changed, call initializeInput to switch type
-						//	(no-op if we're not ready yet)
-						onChange : function(newValue) {
-							this.soon("update");
-						}
+						type:"flag", trueIf:["",true,"true","yes"]
 					}),
 
 		// if multiline is true, our $input is a textarea
@@ -45,24 +40,25 @@ new Element.Subclass("hope.Textfield", {
 		// if true, we translate return characters to/from <br>s
 		//	for multiline textfields only
 		interpretReturns : Attribute({name:"interpretReturns", update:true,
-						type:"flag", trueIf:["",true,"true","yes"], 
-						// when changed, call initializeInput to switch type
-						//	(no-op if we're not ready yet)
-						onChange : function(newValue) {
-							this.soon("update");
-						}
+						type:"flag", trueIf:["",true,"true","yes"]
 					}),
+
+		// if true, we escape/unescape special characters using url encoding
+		escape : Attribute({name:"escape", update:true,
+						type:"flag", trueIf:["",true,"true","yes"]
+					}),
+
 
 		// if true, we translate  "<" to "&lt;" and ">" to "&gt;" automatically
 		//	for multiline textfields only
 		htmlSafe : Attribute({name:"htmlSafe", update:true,
-						type:"flag", trueIf:["",true,"true","yes"], 
-						// when changed, call initializeInput to switch type
-						//	(no-op if we're not ready yet)
-						onChange : function(newValue) {
-							this.soon("update");
-						}
+						type:"flag", trueIf:["",true,"true","yes"]
 					}),
+
+		specialChars :	Attribute({name:"htmlSafe", update:true,
+						type:"flag", trueIf:["",true,"true","yes"]
+					}),
+
 
 
 		// hint to show below the field
@@ -100,6 +96,7 @@ new Element.Subclass("hope.Textfield", {
 			var value = this.value;
 			if (value == null) value = "";
 			if (this.trim) value = value.trim();
+			if (this.escape) value = unescape(value);
 			if (this.multiline && this.htmlSafe) value = value.undoHTMLSafe();
 			if (this.multiline && this.interpretReturns) value = value.replace(/<br>/g, "\n");
 			this.$input.value = value;
@@ -110,7 +107,9 @@ new Element.Subclass("hope.Textfield", {
 			var value = this.$input.value;
 			if (this.trim) value = value.trim();
 			if (this.multiline && this.interpretReturns) value = value.replace(/[\r\n]/g, "<br>");
+			if (this.escape) value = escape(value);
 			if (this.multiline && this.htmlSafe) value = value.makeHTMLSafe();
+			if (this.specialChars) value = value.specialCharsToEntities();
 			return value;
 		},
 		

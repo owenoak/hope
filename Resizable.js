@@ -175,6 +175,7 @@ Resizable.prototype = {
 	// called when we're actually resizing
 	onResizingMove : function(event) {
 		var info = this._resizeInfo;
+		info.resized = true;
 
 		if (info.C) {
 			// constrain if the shift key is held down
@@ -234,7 +235,7 @@ Resizable.prototype = {
 		// clear the resize data
 		delete this._resizeInfo;
 		
-		this.fire("resized");
+		if (info.resized) this.fire("resized");
 	},
 		
 	

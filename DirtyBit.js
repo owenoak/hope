@@ -13,8 +13,13 @@ new Element.Subclass("hope.DirtyBit", {
 		},
 
 		// states:  unloaded, loadError, saved, dirty, error		
-		state		: Attribute({name:"state", update:true,
-			onChange: function(newState) {
+		state		: Attribute({name:"state", 
+			get : function() {
+				return this._state || "unloaded";
+			},
+			set: function(newState) {
+				this._state = newState;
+				this.attr("state", newState);
 				var message = this[newState + "Message"];
 				this.message = (message ? message.expand(this) : "");
 			}

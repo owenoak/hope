@@ -50,6 +50,7 @@ Saveable.prototype = {
 			get : function(){return this._dirty},
 			set : function(value) {
 				this._dirty = !!value;
+//if (this._dirty) debugger;//console.warn(this);
 				if (this._dirty && this.autoSave) this.soon(this.autoSaveDelay*1000, "save");
 				if (this._dirty && this.dirtyBit) this.dirtyBit.state = "dirty";
 			}
